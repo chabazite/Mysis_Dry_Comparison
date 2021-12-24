@@ -1,0 +1,268 @@
+---
+title: "Mysis-Gemma Pilot Project"
+author: "Andrew Ingalls"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '5'
+  html_document:
+    toc: yes
+    toc_float: yes
+    collapsed: yes
+    toc_depth: 5
+    code_folding: hide
+    theme: sandstone
+    number_sections: no
+    highlight: tango
+fontsize: 12pt
+editor_options:
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE, messages=F)
+
+library(openxlsx)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(knitr)
+library(pander)
+library(DT)
+library(lsmeans)
+library(plotly)
+library(RColorBrewer)
+library(outliers)
+library(workflowr)
+
+gg_color_hue <- function(n) {
+  hues = seq(15, 375, length = n + 1)
+  hcl(h = hues, l = 65, c = 100)[1:n]
+}
+
+add.alpha <- function(col, alpha=1){
+  if(missing(col))
+    stop("Please provide a vector of colours.")
+  apply(sapply(col, col2rgb)/255, 2, 
+        function(x) 
+          rgb(x[1], x[2], x[3], alpha=alpha))  
+}
+
+```
+
+
+##Plot 0.1: Outlier detection
+
+This is to understand where our outliers lay.
+
+```{r Outleir, echo=FALSE, message=FALSE, warning=FALSE}
+dat<-read.xlsx("//ion/Reptile-Aquatics/Cavefish/Projects/Mysis/Pilot/Analysis/data/Mysis_Pilot.xlsx", sheet="Exp_1",detectDates=T)[1:734,]
+
+colnames(dat)<-c("sample_date", "same_time", "tank_location", "age", "age_category","Group", "length", "mass", "condition_factor")
+
+dat$age_category<-gsub( " ", "_", x=dat$age_category)
+
+dat$age_category<-factor(dat$age_category, levels = c("Three_Months", "Four_Months", "Five_Months", "Six_Months", "Eight_Months", "Nine_Months", "Twelve_Months" ))
+
+dat$Group<-factor(dat$Group,levels=c("Mysis","Gemma"))
+
+mycolors<-add.alpha(gg_color_hue(8), 0.8)
+names(mycolors)<-levels(dat$age_category)
+
+
+dat$color<-mycolors[match( dat$age_category, names(mycolors))]
+
+dat$age_category<-factor(dat$age_category, levels=names(mycolors))
+
+plot(lm(logm~logl,data=dat))
+
+mod <- lm(logm~logl,data=dat)
+ggplot(dat,aes(logl,logm))+geom_point()+stat_smooth(method="lm",col ="red")
+
+
+cooksdi <- cooks.distance(mod)
+sample_size <- nrow(dat)
+
+plot(cooksdi, pch="*", cex=2, main="Influential Obs by Cooks distance")  # plot cook's distance
+abline(h = 4/sample_size, col="red")  # add cutoff line
+text(x=1:length(cooksdi)+1, y=cooksdi, labels=ifelse(cooksdi>3*mean(cooksdi, na.rm=T),names(cooksdi),""), col="red")  # add labels
+
+
+influential <- as.numeric(names(cooksdi)[(cooksdi > 4/sample_size)])
+
+print(dat[influential,])
+
+
+rosnerTest(dat$condition_factor,k=6)
+
+```
+
+
+## Results
+
+
+### Image 1: Condition Factor vs. Categories
+
+
+```{r image1, echo=FALSE, message=FALSE, warning=FALSE}
+dat<-read.xlsx("//ion/Reptile-Aquatics/Cavefish/Projects/Mysis/Pilot/Analysis/data/Mysis_Pilot.xlsx", sheet="Exp_1",detectDates=T)[1:729,]
+
+colnames(dat)<-c("sample_date", "same_time", "tank_location", "age", "age_category","Group", "length", "mass", "condition_factor")
+
+dat$age_category<-gsub( " ", "_", x=dat$age_category)
+
+dat$age_category<-factor(dat$age_category, levels = c("Three_Months", "Four_Months", "Five_Months", "Six_Months", "Eight_Months", "Nine_Months", "Twelve_Months" ))
+
+mycolors<-add.alpha(gg_color_hue(8), 0.8)
+names(mycolors)<-levels(dat$age_category)
+
+dat$color<-mycolors[match( dat$age_category, names(mycolors))]
+
+dat$age_category<-factor(dat$age_category, levels=names(mycolors))
+
+p<-ggplot(dat, aes(age_category, length, fill=Group))
+p1<-p+geom_boxplot(outlier.alpha = 0)+geom_point(position=position_jitterdodge(jitter.width = 0.2,dodge.width = 0.75))+theme_bw()+labs(title="Length Comparison")+labs( x="Age post Fertilization", y = "Length(mm)")+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())+ theme(axis.text=element_text(size=16, face="bold", angle = 90, hjust = 1),axis.text.x=element_text(size=16,angle = 45, hjust = 1),axis.title=element_text(size=18,face="bold"),legend.title =element_blank(), title=element_text(size=30,face="bold"),plot.title = element_text(hjust = 0.5),legend.text=element_text(size=16),plot.margin = margin(t = 15, r = 15, b = 15, l = 15, unit = "pt"))
+
+
+p<-ggplot(dat, aes(age_category, mass, fill=Group))
+p2<-p+geom_boxplot(outlier.alpha = 0)+geom_point(position=position_jitterdodge(jitter.width = 0.2,dodge.width = 0.75))+theme_bw()+labs(title="Mass Comparison")+labs( x="Age post Fertilization", y = "Mass(mg)")+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + theme(axis.text=element_text(size=16, face="bold",angle = 90, hjust = 1),axis.text.x=element_text(size=16,angle = 45, hjust = 1),axis.title=element_text(size=18,face="bold"), legend.title =element_blank(),title=element_text(size=30,face="bold"),plot.title = element_text(hjust = 0.5),legend.text=element_text(size=16),plot.margin = margin(t = 15, r = 15, b = 15, l = 15, unit = "pt"))
+
+
+p<-ggplot(dat, aes(age_category, condition_factor, fill=Group))
+p3<-p+geom_boxplot(outlier.alpha = 0)+geom_point(position=position_jitterdodge(jitter.width = 0.2,dodge.width = 0.75))+theme_bw()+labs(title="Condition Factor Comparison")+ labs( x="Age post Fertilization", y = "Condition Factor")+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + theme(axis.text.y=element_text(size=16,angle = 90, hjust = 1),axis.text.x=element_text(size=16,angle = 45, hjust = 1),axis.title=element_text(size=18,face="bold"),legend.title =element_blank(), title=element_text(size=30,face="bold"),plot.title = element_text(hjust = 0.5),legend.text=element_text(size=16),plot.margin = margin(t = 15, r = 15, b = 15, l = 15, unit = "pt"))
+
+
+print(p1)
+
+print(p2)
+
+print(p3)
+
+```
+
+
+
+
+
+### Image 2: Length-Mass Relationship
+
+
+
+```{r image2, echo=FALSE, message=FALSE, warning=FALSE}
+
+#Log of both mass and length
+
+logm<-log(dat$mass)
+logl<-log(dat$length)
+
+#create a linear model for the log of mass and length
+
+growth_curve<-lm(logm~logl)
+est_a<-round(exp(growth_curve$coefficients[1]),4) #estimate intercept
+est_b<-round(growth_curve$coefficients[2],4) #estimate logl
+
+print(est_a)
+
+print(est_b)
+
+length_values<- data.frame(logl=seq(min(logl), max(logl), 0.01)) #chart of log length values
+mass_values <- predict(growth_curve,newdat=length_values, int="p") #create upper/lower mass
+mass_values_exp<-as.data.frame(apply(mass_values, c(1,2), exp)) #unlog the mass values
+
+
+#age category colors
+mycolors<-add.alpha(gg_color_hue(2), 0.6)
+names(mycolors)<-levels(dat$Group)
+
+dat$color<-mycolors[match(dat$Group, names(mycolors))]
+
+
+ #set parameters margin size using vector, xpd limits plotting to the figure
+par(mar=c(5.1, 5.1, 4.1, 1.0), xpd=TRUE)
+
+
+
+#plot the growth curve point
+plot(dat$length, dat$mass, pch=16,xlab = "Length (mm)", ylab = "Mass (mg)", main="Length - Mass Relationship", cex.main=2.5, cex.lab=1.25, col=dat$color)
+
+#plot growth curve & Confidence Intervals
+lines(exp(length_values[,1]), mass_values_exp$fit,lwd=3, col = "darkgray")
+lines(exp(length_values[,1]), mass_values_exp$lwr,lwd=2, col="darkgray", lty=2)
+lines(exp(length_values[,1]), mass_values_exp$upr,lwd=2, col="darkgray", lty=2)
+
+
+
+text(x=35,y=6000, labels = expression(paste("Fitted line: mass=0.011*(",length^3.20,")")),cex=1.5)
+text(x=35,y=5000, labels= expression(paste(R^2,"=0.8924")),cex=1.5)
+legend(x=50,y=1500, fill=gg_color_hue(2), legend=names(mycolors), cex=0.8)
+
+model <- lm(mass~length, data=dat)
+summary(model)
+
+```
+
+### Significance Testing
+
+```{r image5, echo=FALSE, message=FALSE, warning=FALSE}
+#test the correlation between length and mass, pvalue indicates trust that this is not a chance dataset
+cor.test(dat$mass,dat$length)
+
+dat2<-read.xlsx("//ion/Reptile-Aquatics/Cavefish/Projects/Mysis/Pilot/Analysis/data/Mysis_Pilot.xlsx", sheet="Survival Census (Progress)",detectDates=T)[1:49,]
+
+summary(dat2$Census)
+
+df <- dat2 %>%
+        filter(Group == "Gemma" | Group == "Mysis") %>%
+        select(Group, Census)
+
+
+p1 <- ggplot(df, aes(Group,Census)) + geom_boxplot()+labs(title="Significance Testing")+labs( x="Groups", y = "Total Loss per Tank")+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + theme(axis.text=element_text(size=16, face="bold",angle = 90, hjust = 1),axis.text.x=element_text(size=16,angle = 45, hjust = 1),axis.title=element_text(size=18,face="bold"),title=element_text(size=30,face="bold"),plot.title = element_text(hjust = 0.5),plot.margin = margin(t = 15, r = 15, b = 15, l = 15, unit = "pt"))+annotate(geom="text",x=2,y=10,label="p-value= 0.0455",color="black",fontface="bold")+annotate(geom="text",x=1,y=9,label="mean= 8.75",color="black",fontface="bold")+annotate(geom="text",x=2,y=4.75,label="mean= 4.25",color="black",fontface="bold")
+print(p1)
+
+t.test(Census ~ Group, data=df)
+
+```
+
+### Significance Testing
+
+```{r image5, echo=FALSE, message=FALSE, warning=FALSE}
+#test the correlation between length and mass, pvalue indicates trust that this is not a chance dataset
+cor.test(dat$mass,dat$length)
+
+dat2<-read.xlsx("//ion/Reptile-Aquatics/Cavefish/Projects/Mysis/Pilot/Analysis/data/Mysis_Pilot.xlsx", sheet="Survival Census_Final",detectDates=T)[1:9,]
+
+summary(dat2$Total)
+
+df <- dat2 %>%
+        filter(Group == "Gemma" | Group == "Mysis") %>%
+        select(Group, Total)
+
+
+p1 <- ggplot(df, aes(Group,Total)) + geom_boxplot()+labs(title="Significance Testing")+labs( x="Groups", y = "Total Loss per Tank")+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + theme(axis.text=element_text(size=16, face="bold",angle = 90, hjust = 1),axis.text.x=element_text(size=16,angle = 45, hjust = 1),axis.title=element_text(size=18,face="bold"),title=element_text(size=30,face="bold"),plot.title = element_text(hjust = 0.5),plot.margin = margin(t = 15, r = 15, b = 15, l = 15, unit = "pt"))+annotate(geom="text",x=2,y=10,label="p-value= 0.0455",color="black",fontface="bold")+annotate(geom="text",x=1,y=9,label="mean= 8.75",color="black",fontface="bold")+annotate(geom="text",x=2,y=4.75,label="mean= 4.25",color="black",fontface="bold")
+print(p1)
+
+t.test(Total ~ Group, data=df)
+
+```
+
+### Significance Testing Fecundity
+
+```{r image5, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+dat3<-read.xlsx("//ion/Reptile-Aquatics/Cavefish/Projects/Mysis/Pilot/Analysis/data/Mysis_Pilot.xlsx", sheet="Exp 2",detectDates=T)[1:40,]
+
+
+
+p1 <- ggplot(dat3, aes(Group,Embryo.Output)) + geom_boxplot()+labs(title="Significance Testing")+labs( x="Groups", y = "Total Viable Embryos per breeding day")+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+  theme(axis.text=element_text(size=16, face="bold",angle = 90, hjust = 1),axis.text.x=element_text(size=16,angle = 45, hjust = 1),axis.title=element_text(size=18,face="bold"),title=element_text(size=30,face="bold"),plot.title = element_text(hjust = 0.5),plot.margin = margin(t = 15, r = 15, b = 15, l = 15, unit = "pt"))+
+  annotate(geom="text",x=1.5,y=3000,label="p-value= 0.005893",color="black",fontface="bold")+annotate(geom="text",x=1,y=400,label="mean= 210.94",color="black",fontface="bold")+annotate(geom="text",x=2,y=900,label="mean= 705.42",color="black",fontface="bold")
+
+print(p1)
+
+t.test(Embryo.Quality ~ Group, data=dat3)
+
+```
