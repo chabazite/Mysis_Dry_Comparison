@@ -53,8 +53,47 @@ add.alpha <- function(col, alpha=1){
 
 ```
 
+## 1. Background
+“The ‘optimal’ diet for laboratory fish is one that efficiently promotes definition and stability in nutritional profile, biosecurity, and maximal performance (growth, survival, and reproduction)” (Lawrence et al. 2015). Mysis have been the standard breeding and adult growth supplement for the cavefish facility at Stowers, despite a lack of nutritional content and increased biosecurity risk. Addtionally, the feed was time consuming to thaw and allocate out to the fish in a standard way. See the Proposal Paper for more information.
 
-##Plot 0.1: Outlier detection
+The objectives of this experiment were to [1] raise A. mexicanus on an alternative feed and compare the growth rate and survivability to fish raised on the traditional Mysis feed; and [2] compare the embryo fecundity of adult broodstock raised using this alternative feed.
+
+These objectives, based on the optimal diet definition above, would provide us a clear understanding of which diet to continue.
+
+## 2. Experiment Methodology
+
+There were two experiments designed for this project: a growth experiment[1] and a fecundity experiment [2]. The growth experiment would take place starting at 100 dpf, the age we normally begin feeding Mysis and end at 365 dpf, the age we begin breeding. The fecundity experiment would take place starting at 365 dpf and end once we collected enough data to make an informed decision (~6 months to a year).
+
+General Guidelines
+•	Measurements will be taken at approximately the same time of day (13 00 -14 00 h) to eliminate introducing error.
+•	The second feed will be withheld on the day of weighing and measuring to reduce mass discrepancies due to gut loading.
+
+Experiment 1: Growth and Survival
+•	At the start of the experiment, the fish will be selected and split into groups using simple randomization until each tank has 20 fish. 
+•	Tanks will all be housed on the same rack, where possible, to reduce water quality variability.
+•	Fish will be placed on the designated feeding regime for the designated period during this growth trial.
+•	There will be 4 replicate tanks for each treatment group.
+•	There will be 4 replicate control tanks.
+•	Fish will be anesthetized during weighing and measuring to reduce stress and variability.
+Experiment 2: Fecundity
+•	Fish will be sexed and VIE tagged prior to the experiment. From there they will be redistributed within their groups into standard sex ratios for each tank until each tank has 14 fish and a 1:1 ratio. 
+•	Males and females will be allocated using simple randomization to reduce bias.
+•	There will be 4 replicate tanks for each treatment group.
+•	There will be 4 replicate controls tanks.
+•	All tanks will be placed on the same breeding schedule. They will be bred once every four weeks, per standard operating procedure.
+•	Embryos will be collected using facility standard breeding traps.
+•	This study will continue for up to one year and will be evaluated after each breeding event. 
+•	Total ova and fertilized embryos will be counted at time of collection. Survival will be monitored until 5 dpf and embryos will be counted before being discarded at 5 dpf.
+•	Photos will be taken of each dish daily for further analysis and confirmation. 
+•	Embryos produced can be claimed by the lab prior to discarding.
+
+
+## 3. Cleaning the Data
+
+
+
+
+
 
 This is to understand where our outliers lay.
 
@@ -101,7 +140,19 @@ rosnerTest(dat$condition_factor,k=6)
 ```
 
 
-## Results
+
+
+
+
+## 4. Exploratory Data Analysis
+
+
+
+
+
+
+## 5. Data Visualization
+
 
 
 ### Image 1: Condition Factor vs. Categories
@@ -266,3 +317,14 @@ print(p1)
 t.test(Embryo.Quality ~ Group, data=dat3)
 
 ```
+
+
+
+
+##6. Insights and Conclusions
+
+
+
+
+
+
