@@ -18,6 +18,7 @@ library(outliers)
 library(ggridges)
 library(viridis)
 library(hrbrthemes)
+library(ggResidpanel)
 
 ```
 
@@ -175,11 +176,30 @@ ggplot(df_growth, aes(x=Mass_mg, color=Feed_Group))+geom_density(alpha=0.2,fill=
 #Histogram Plot of Length for Ages and Groups
 ggplot(df_growth, aes(x=Length_mm, color=Feed_Group))+geom_density(alpha=0.2,fill='grey')+facet_wrap(~Age_Category)
 
-ggplot(df_growth, aes(x=Length_mm,y=Age_Category, fill=Age_Category))+geom_density_ridges()+
-  theme_ridges()
+ggplot(df_growth, aes(x=Length_mm,y=Age_Category, fill=..x..))+
+  geom_density_ridges_gradient(scale=3, rel_min_height=0.01)+
+  scale_fill_viridis(name="Length_mm",option="C")+
+  labs(title='Mass of Surface Morph by Age')+
+  theme_ipsum()+
+  theme(
+    legend.position = 'none',
+    panel.spacing = unit(0.1,'lines'),
+    strip.text.x = element_text(size=8)
+  ) +
+  facet_wrap(~Feed_Group,ncol=1)
 
-#Growth Curves of Gemma and Mysis Mass vs Length
-ggplot(df_growth, aes(x = Length_mm, y = Mass_mg, color = Feed_Group))+geom_point()+facet_wrap(~Feed_Group)+geom_smooth(method='lm',formula = y~poly(x,2,raw=TRUE),color='black')
+ggplot(df_growth, aes(x=Mass_mg,y=Age_Category, fill=..x..))+
+  geom_density_ridges_gradient(scale=3, rel_min_height=0.01)+
+  scale_fill_viridis(name="Mass_mg",option="C")+
+  labs(title='Mass of Surface Morph by Age')+
+  theme_ipsum()+
+  theme(
+    legend.position = 'none',
+    panel.spacing = unit(0.1,'lines'),
+    strip.text.x = element_text(size=8)
+  ) +
+  facet_wrap(~Feed_Group,ncol=1)
+
 
 #Box plot of Mass vs Age for Groups
 
@@ -202,5 +222,42 @@ ggplot(df_growth, aes(y=Age_Category,x=Length_mm, color=Feed_Group))+geom_point(
 
 
 ```
+We need to understand if a linear model if acceptable for Mass vs Length, or a 
+polynomial. We will use the Residual plot to help us understand.
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r Residuals}
+y <- df_growth$Mass_mg
+x <- df_growth$Length_mm
+
+mod <- lm(y~x)
+
+#Plot the residuals for a linear model. 
+resid_panel(mod, plots='resid')
+
+
+#Log transform both Mass and Length to compare a log transformed model against
+#the original model
+df_growth$Mass_log <- log(df_growth$Mass_mg)
+df_growth$Length_log <- log(df_growth$Length_mm)
+y2 <- df_growth$Mass_log
+x2 <- df_growth$Length_log
+
+mod_log <- lm(y2~x2)
+
+#Compare the linear model to a log transformed model 
+resid_compare(models=list(mod,
+                          mod_log),
+              plots= c("resid", "qq"),
+              smoother = TRUE,
+              qqbands = TRUE,
+              title.opt = FALSE)
+
+#The plot shows us a linear model is not appropriate, so we will use a 2nd order
+#polynomial 
+#Growth Curves of Gemma and Mysis Mass vs Length
+ggplot(df_growth, aes(x = Length_mm, y = Mass_mg, color = Feed_Group))+geom_point()+
+  geom_smooth(method='lm',formula = y~poly(x,2,raw=TRUE),se=TRUE)
+
+```
+
