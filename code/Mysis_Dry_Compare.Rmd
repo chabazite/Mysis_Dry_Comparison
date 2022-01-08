@@ -253,6 +253,8 @@ resid_compare(models=list(mod,
               qqbands = TRUE,
               title.opt = FALSE)
 
+#This log tranformed residuals indicates that this  is a power function. 
+
 #The plot shows us a linear model is not appropriate, so we will use a 2nd order
 #polynomial 
 #Growth Curves of Gemma and Mysis Mass vs Length
