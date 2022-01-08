@@ -1,6 +1,6 @@
 # Mysis Shimp vs. Micro Particulate Feed
 
-“The ‘optimal’ diet for laboratory fish is one that efficiently promotes definition and stability in nutritional profile, biosecurity, and maximal performance (growth, survival, and reproduction)” (Lawrence et al. 2015). Mysis have been the standard breeding and adult growth supplement for the cavefish facility at Stowers, despite a lack of nutritional content and increased biosecurity risk.
+“The ‘optimal’ diet for laboratory fish is one that efficiently promotes definition and stability in nutritional profile, biosecurity, and maximal performance (growth, survival, and reproduction)” (Lawrence et al. 2015). Mysis have been the standard breeding and adult growth supplement for the cavefish community, despite a lack of nutritional content and increased biosecurity risk.
 
 If these factors are what determines an optimal diet for laboratory fish, then an alternative to frozen Mysis should be studied. As a natural resource, Mysis is costly, variable, and can be contaminated. The following pilot proposal will focus on and attempt to identify the maximal performance of a new feeding regime for A. mexicanus compared with frozen Mysis. 
 
