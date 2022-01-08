@@ -15,6 +15,9 @@ library(tidyverse)
 library(lsmeans)
 library(plotly)
 library(outliers)
+library(ggridges)
+library(viridis)
+library(hrbrthemes)
 
 ```
 
@@ -140,7 +143,64 @@ Are we seeing any significant difference between the Feed Groups in the variable
 
 
 ```{r pressure, echo=FALSE}
-plot(pressure)
+
+#histogram for Mass (Right skewed)
+ggplot(df_growth, aes(x=Mass_mg))+geom_histogram(aes(y=..density..))+
+  geom_vline(aes(xintercept=mean(Mass_mg)), color="blue", linetype="dashed",size=1)+
+  geom_density(alpha=0.2,fill="#FF6666")+
+  theme_bw()
+
+#histogram for Length (double peak)
+ggplot(df_growth, aes(x=Length_mm))+geom_histogram(aes(y=..density..))+
+  geom_vline(aes(xintercept=mean(Length_mm)), color="blue", linetype="dashed",size=1)+
+  geom_density(alpha=0.2,fill="#FF6666")+
+  theme_bw()
+
+
+#Histogram by Groups
+
+#MASS
+ggplot(df_growth, aes(x=Mass_mg, color=Feed_Group))+geom_histogram(aes(y=..density..),fill='white',alpha=0.5)+
+  geom_vline(aes(xintercept=mean(Mass_mg)), color="blue", linetype="dashed",size=1)+
+  geom_density(alpha=0.2,fill="#FF6666")+
+  theme_bw()+scale_color_brewer(palette="Dark2")
+#Length
+ggplot(df_growth, aes(x=Length_mm, color=Feed_Group))+geom_histogram(aes(y=..density..),fill="white",alpha=0.5)+
+  geom_vline(aes(xintercept=mean(Length_mm)), color="blue", linetype="dashed",size=1)+
+  geom_density(alpha=0.2,fill="#FF6666")+
+  theme_bw()+scale_color_brewer(palette="Dark2")
+#Histogram Plot of Mass for Ages and Groups
+ggplot(df_growth, aes(x=Mass_mg, color=Feed_Group))+geom_density(alpha=0.2,fill='grey')+facet_wrap(~Age_Category)
+
+#Histogram Plot of Length for Ages and Groups
+ggplot(df_growth, aes(x=Length_mm, color=Feed_Group))+geom_density(alpha=0.2,fill='grey')+facet_wrap(~Age_Category)
+
+ggplot(df_growth, aes(x=Length_mm,y=Age_Category, fill=Age_Category))+geom_density_ridges()+
+  theme_ridges()
+
+#Growth Curves of Gemma and Mysis Mass vs Length
+ggplot(df_growth, aes(x = Length_mm, y = Mass_mg, color = Feed_Group))+geom_point()+facet_wrap(~Feed_Group)+geom_smooth(method='lm',formula = y~poly(x,2,raw=TRUE),color='black')
+
+#Box plot of Mass vs Age for Groups
+
+ggplot(df_growth,aes(y=Mass_mg, x=Age_Category,fill=Feed_Group)) + geom_boxplot(outlier.color='red',outlier.shape=1)
+
+#Box plot of Length vs Age for Groups
+
+ggplot(df_growth,aes(y=Length_mm, x=Age_Category,fill=Feed_Group)) + geom_boxplot(outlier.color='red',outlier.shape=1)
+
+#Violin plot
+ggplot(df_growth,aes(y=Mass_mg, x=Age_Category,fill=Feed_Group)) + geom_violin()+stat_summary(fun=median,geom='point',size=2,color='red')+
+  facet_wrap(~Feed_Group)+theme_bw()+theme(axis.text.x=element_text(angle=45,hjust=1))
+
+ggplot(df_growth,aes(y=Length_mm, x=Age_Category,fill=Feed_Group)) + geom_violin()+stat_summary(fun=median,geom='point',size=2,color='red')+
+  facet_wrap(~Feed_Group)+theme_bw()+theme(axis.text.x=element_text(angle=45,hjust=1))
+
+#Understanding growth based on Age category
+ggplot(df_growth, aes(y=Age_Category,x=Mass_mg, color=Feed_Group))+geom_point(alpha=0.5)
+ggplot(df_growth, aes(y=Age_Category,x=Length_mm, color=Feed_Group))+geom_point(alpha=0.5)
+
+
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
