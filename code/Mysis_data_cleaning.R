@@ -7,7 +7,7 @@ library(outliers)
 library(dplyr)
 
 #Reading in the data
-df_growth<-read.xlsx("H:/Data Science/Mysis/data/Mysis_Pilot.xlsx", sheet="Exp_1",detectDates=T)
+df_growth<-read.xlsx("../data/Mysis_Pilot.xlsx", sheet="Exp_1",detectDates=T)
 df_survival<-read.xlsx("H:/Data Science/Mysis/data/Mysis_Pilot.xlsx", sheet="Survival Census (Progress)",detectDates=T)
 df_sex_sort <-read.xlsx("H:/Data Science/Mysis/data/Mysis_Pilot.xlsx", sheet="Sexing",detectDates=T)
 
@@ -19,7 +19,7 @@ head(df_survival)
 #df_Growth Cleanup
 #remove unneeded columns from df_growth
 #removed age because samples were taken over the course of 3 days, which is why age-category was added
-df_growth <- subset(df_growth,select=-c(Time, Age)) 
+df_growth <- subset(df_growth,select=-c(Time, Age))
 #rename columns for ease of use
 colnames(df_growth) <- c("Date", "Tank", "Age_Category","Feed_Group","Length_mm","Mass_mg","Condition_Factor")
 head(df_growth)
@@ -34,7 +34,7 @@ sapply(df_growth,class)
 
 #reorder age and age category factor levels
 df_growth$Age_Category <- factor(df_growth$Age_Category, levels = c("Three Months", "Five Months",
-                                                                    "Six Months", "Eight Months", 
+                                                                    "Six Months", "Eight Months",
                                                                     "Nine Months","Twelve Months"))
 
 #Figure out what the NA and "Other" categories are for Age and Tank respectively
@@ -76,11 +76,11 @@ df_survival <- df_survival %>%
 summary(df_survival)
 
 #Change Tank and Group into Factors
-df_survival$Tank <- factor(df_survival$Tank) 
+df_survival$Tank <- factor(df_survival$Tank)
 df_survival$Group <- factor(df_survival$Group)
 
 #Drop total lost, male, female, unknown column
-df_survival <- subset(df_survival,select=-c(Lost,Total,Male,Female,Unknown)) 
+df_survival <- subset(df_survival,select=-c(Lost,Total,Male,Female,Unknown))
 
 #Cleanup Sex_sort data
 #remove time column

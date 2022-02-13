@@ -29,11 +29,11 @@ This section will be the cleaning stage of the project
 
 ```{r Data_Cleaning, include=TRUE}
 
-df_growth<-read.xlsx("H:/Data Science/Mysis/data/Mysis_Pilot.xlsx", 
+df_growth<-read.xlsx("../data/Mysis_Pilot.xlsx", 
                      sheet="Exp_1",detectDates=T)
-df_survival<-read.xlsx("H:/Data Science/Mysis/data/Mysis_Pilot.xlsx", 
+df_survival<-read.xlsx("../data/Mysis_Pilot.xlsx", 
                        sheet="Survival Census (Progress)",detectDates=T)
-df_sex_sort <-read.xlsx("H:/Data Science/Mysis/data/Mysis_Pilot.xlsx", 
+df_sex_sort <-read.xlsx("../data/Mysis_Pilot.xlsx", 
                         sheet="Sexing",detectDates=T)
 
 head(df_growth)
@@ -116,8 +116,6 @@ df_survival$Feed_Group <- factor(df_survival$Feed_Group)
 
 
 
-
-
 #Cleanup Sex_sort data
 
 #remove time column
@@ -171,10 +169,12 @@ ggplot(df_growth, aes(x=Length_mm, color=Feed_Group))+geom_histogram(aes(y=..den
   geom_density(alpha=0.2,fill="#FF6666")+
   theme_bw()+scale_color_brewer(palette="Dark2")
 #Histogram Plot of Mass for Ages and Groups
-ggplot(df_growth, aes(x=Mass_mg, color=Feed_Group))+geom_density(alpha=0.2,fill='grey')+facet_wrap(~Age_Category)
+ggplot(df_growth, aes(x=Mass_mg, color=Feed_Group))+geom_density(alpha=0.2,fill='grey') + 
+  facet_wrap(~Age_Category)
 
 #Histogram Plot of Length for Ages and Groups
-ggplot(df_growth, aes(x=Length_mm, color=Feed_Group))+geom_density(alpha=0.2,fill='grey')+facet_wrap(~Age_Category)
+ggplot(df_growth, aes(x=Length_mm, color=Feed_Group))+geom_density(alpha=0.2,fill='grey') + 
+  facet_wrap(~Age_Category)
 
 ggplot(df_growth, aes(x=Length_mm,y=Age_Category, fill=..x..))+
   geom_density_ridges_gradient(scale=3, rel_min_height=0.01)+
