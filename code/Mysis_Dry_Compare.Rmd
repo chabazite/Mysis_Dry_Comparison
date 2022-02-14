@@ -19,6 +19,8 @@ library(ggridges)
 library(viridis)
 library(hrbrthemes)
 library(ggResidpanel)
+library(qqplotr)
+library(EnvStats)
 
 ```
 
@@ -48,11 +50,11 @@ summary(df_sex_sort)
 #Remove unneeded columns from df_growth such as Time
 #Remove 'age' because samples were taken over the course of 3 days, 
 #which is why age-category was added
-df_growth <- subset(df_growth,select=-c(Time, Age,Possible.Outliers)) 
+df_growth <- subset(df_growth,select=-c(Time, Age,Possible.Outliers,Condition.Factor)) 
 
 #rename columns for ease of use
 colnames(df_growth) <- c("Date", "Tank", "Age_Category","Feed_Group",
-                         "Length_mm","Mass_mg","Condition_Factor")
+                         "Length_mm","Mass_mg")
 
 #changes types and create factors where needed
 cols <- c("Tank", "Age_Category","Feed_Group")
@@ -222,7 +224,67 @@ ggplot(df_growth, aes(y=Age_Category,x=Length_mm, color=Feed_Group))+geom_point(
 
 
 ```
-## Mass Outliers
+##Normal Probability Plot
+In order to understand our outliers, we need to assume that there is a normal
+distribution of data. We will check our normality assumoption with a normal probabilty 
+plot.
+
+```{r Normal Probability Plot of Each Age Category for Mass and Length}
+#Mass
+#iterate through the age levels of the gemma database, create a normal plot for each
+#age group using qqplotr and ggplot
+for (AgeCategory in levels(growth_gemma_outlier_df$Age_Category)){
+  Group_df <- growth_gemma_outlier_df %>%
+  filter(Age_Category == AgeCategory)
+  #Mass Normal Distribution for each Age
+  v <- ggplot(mapping = aes(sample =Group_df$Mass_mg)) + stat_qq_point(size = 2) +
+    stat_qq_line(color = "green") + xlab("Normal N(0,1) Order Statistic Medians") +
+    ylab("Ordered Response") + labs(title = paste("Gemma Mass Normal Probabilty Plot: ", AgeCategory))
+  print(v)
+  }
+
+#same for Mysis
+for (AgeCategory in levels(growth_mysis_outlier_df$Age_Category)){
+  Group_df <- growth_mysis_outlier_df %>%
+  filter(Age_Category == AgeCategory)
+  #Mass Normal Distribution for each Age
+  v <- ggplot(mapping = aes(sample =Group_df$Mass_mg)) + stat_qq_point(size = 2) +
+    stat_qq_line(color = "green") + xlab("Normal N(0,1) Order Statistic Medians") +
+    ylab("Ordered Response") + labs(title = paste("Mysis Mass Normal Probabilty Plot: ", AgeCategory))
+  print(v)
+  }
+#Length Normal Distribution for each Age
+#iterate through the age levels of the gemma database, create a normal plot for each
+#age group using qqplotr and ggplot
+for (AgeCategory in levels(growth_gemma_outlier_df$Age_Category)){
+  Group_df <- growth_gemma_outlier_df %>%
+  filter(Age_Category == AgeCategory)
+  #Mass Normal Distribution for each Age
+  v <- ggplot(mapping = aes(sample =Group_df$Length_mm)) + stat_qq_point(size = 2) +
+    stat_qq_line(color = "green") + xlab("Normal N(0,1) Order Statistic Medians") +
+    ylab("Ordered Response") + labs(title = paste("Gemma Length Normal Probabilty Plot: ", AgeCategory))
+  print(v)
+  }
+
+#same for Mysis
+for (AgeCategory in levels(growth_mysis_outlier_df$Age_Category)){
+  Group_df <- growth_mysis_outlier_df %>%
+  filter(Age_Category == AgeCategory)
+  #Mass Normal Distribution for each Age
+  v <- ggplot(mapping = aes(sample =Group_df$Length_mm)) + stat_qq_point(size = 2) +
+    stat_qq_line(color = "green") + xlab("Normal N(0,1) Order Statistic Medians") +
+    ylab("Ordered Response") + labs(title = paste("Mysis Length Normal Probabilty Plot: ", AgeCategory))
+  print(v)
+  }
+
+
+```
+Although the outliers are causing our distribution to skew, because we have over 
+50 samples per age per group, we will use the CLT to assume normality. 
+
+
+
+## Mass Boxplot Outliers
 Lets take a look at our outliers from the previous analysis
 
 ```{r Mass Outliers Boxplots}
@@ -282,43 +344,10 @@ mysis_outliers <- growth_mysis_outlier_df %>%
 #Using the previous work, we can add the which() function to tell us where these
 #outliers live and then filter our dataset around that.
 
-gemma_outlier_loc <- which(growth_gemma_outlier_df$Mass_mg %in% c(gemma_outliers$...1))
+#Finding outliers by value without filtering for age, causes issues where
+#an outlier for a certain age is not an outlier elsewhere but is chosen elsewhere 
+#because it has the same value (e.g. 2337 @ Five Months and Twelve Months)
 
-gemma_mass_outlier_df <- growth_gemma_outlier_df[gemma_outlier_loc,]
-
-
-mysis_outlier_loc <- which(growth_mysis_outlier_df$Mass_mg %in% c(mysis_outliers$...1))
-
-mysis_mass_outlier_df <- growth_mysis_outlier_df[mysis_outlier_loc,]
-
-
-
-#Same outlier dataframes for the Length
-
-
-
-#Find outliers from earlier using stats. First we need to summarize a list from groups
-gemma_outliers <- growth_gemma_outlier_df %>%
-  group_by(Age_Category) %>%
-  summarize(boxplot =boxplot.stats(Length_mm)$out) %>%
-  
-#using tidyr unnest_wider function we can pull out the stats information
-
-  unnest_wider(boxplot)
-
-#Find outliers from earlier using stats. First we need to summarize a list from groups
-mysis_outliers <- growth_mysis_outlier_df %>%
-  group_by(Age_Category) %>%
-  summarize(boxplot = boxplot.stats(Mass_mg)$out) %>%
-  
-#using tidyr unnest_wider function we can pull out the stats information
-
-  unnest_wider(boxplot)
-
-
-#Now that we know there are outliers, lets grab a dataframe from each of them.
-#Using the previous work, we can add the which() function to tell us where these
-#outliers live and then filter our dataset around that.
 
 gemma_outlier_loc <- which(growth_gemma_outlier_df$Mass_mg %in% c(gemma_outliers$...1))
 
@@ -331,7 +360,7 @@ mysis_mass_outlier_df <- growth_mysis_outlier_df[mysis_outlier_loc,]
 
 ```
 
-
+# Mass Percentile Outliers
 Percentile outliers will flag any sample outside 2.5 and 97.5 percentiles. 
 
 ```{r Mass Outliers Percentiles}
@@ -358,29 +387,84 @@ upper_bound_mysis <- growth_gemma_outlier_df %>%
   summarize(quantile(Mass_mg, 0.975))
 
 
-#location of the outliers
-
-for (AgeCategory in growth_gemma_outlier_df$Age_Category){
+#percentile df of the outliers
+mass_gemma_percentile_df <- data.frame()
+for (AgeCategory in levels(growth_gemma_outlier_df$Age_Category)){
   #iterate through all age categories filtering any values outside the category's bounds
   temp_df <- growth_gemma_outlier_df %>%
     filter(Age_Category == AgeCategory) %>%
     filter(Mass_mg < lower_bound_gemma$`quantile(Mass_mg, 0.025)`[lower_bound_gemma$Age_Category==AgeCategory] | 
            Mass_mg > upper_bound_gemma$`quantile(Mass_mg, 0.975)`[upper_bound_gemma$Age_Category==AgeCategory])
-  Mass_gemma_percentile_loc <-rbind(Mass_gemma_percentile_loc,temp_df)
+  mass_gemma_percentile_df <-rbind(mass_gemma_percentile_df,temp_df)
   }
   
-#percentile df of the outliers
-mass_gemma_percentile_df <- growth_gemma_outlier_df[Mass_gemma_percentile_loc,]
 
+mass_mysis_percentile_df <- data.frame()
+for (AgeCategory in levels(growth_mysis_outlier_df$Age_Category)){
+  #iterate through all age categories filtering any values outside the category's bounds
+    temp_df_mysis <- growth_mysis_outlier_df %>%
+    filter(Age_Category == AgeCategory) %>%
+    filter(Mass_mg < lower_bound_mysis$`quantile(Mass_mg, 0.025)`[lower_bound_mysis$Age_Category==AgeCategory] | 
+           Mass_mg > upper_bound_mysis$`quantile(Mass_mg, 0.975)`[upper_bound_mysis$Age_Category==AgeCategory])
+  mass_mysis_percentile_df <-rbind(mass_mysis_percentile_df,temp_df_mysis)
+  }
+  
 
-mass_mysis_percentile_df <- growth_mysis_outlier_df[Mass_mysis_percentile_loc,]
+```
 
+## Mass Generalized ESD Test for Outliers
+Generalized ESD test is used to detect one or more outliers in a univariate dataset
+for approximate normal distribution. We do not have to specify the number of outliers, just an upper bound.
+
+```{r Rosner's GESD Test for Mass Outliers}
+#Create empty dataframe
+mass_gemma_rosner_df <- data.frame()
+#iterate through age categories and create temp df for that age category
+for (AgeCategory in levels(growth_gemma_outlier_df$Age_Category)){
+  Group_df <- growth_gemma_outlier_df %>%
+  filter(Age_Category == AgeCategory)
+
+  #use rosner test function to find outliers (max 10) for each age category 
+  
+  gemma_rosner_mass <- rosnerTest(Group_df$Mass_mg,k=10, alpha = 0.05)
+  #create temp df where only outliers exist
+  temp_df <- gemma_rosner_mass[["all.stats"]] %>%
+    filter(Outlier == TRUE)
+  #filter the age df based on the observation row number provided
+  gemma_rosner_outlier_loc <- Group_df %>% filter(row_number() %in% temp_df$Obs.Num)
+  #append to new df
+  mass_gemma_rosner_df <-rbind(mass_gemma_rosner_df,gemma_rosner_outlier_loc)
+}
+
+#Create empty dataframe
+mass_mysis_rosner_df <- data.frame()
+#iterate through age categories and create temp df for that age category
+for (AgeCategory in levels(growth_mysis_outlier_df$Age_Category)){
+  Group_df <- growth_mysis_outlier_df %>%
+  filter(Age_Category == AgeCategory)
+
+  #use rosner test function to find outliers (max 10) for each age category 
+  
+  mysis_rosner_mass <- rosnerTest(Group_df$Mass_mg,k=10, alpha = 0.05)
+  #create temp df where only outliers exist
+  temp_df <- mysis_rosner_mass[["all.stats"]] %>%
+    filter(Outlier == TRUE)
+  #filter the age df based on the observation row number provided
+  mysis_rosner_outlier_loc <- Group_df %>% filter(row_number() %in% temp_df$Obs.Num)
+  #append to new df
+  mass_mysis_rosner_df <-rbind(mass_mysis_rosner_df,mysis_rosner_outlier_loc)
+}
 
 
 ```
 
 
-## Length Outliers
+#Mass 
+
+
+
+
+## Length Boxplot Outliers
 
 
 ```{r Length Outlier Boxplot}

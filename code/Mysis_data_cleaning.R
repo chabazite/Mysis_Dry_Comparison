@@ -7,9 +7,9 @@ library(outliers)
 library(dplyr)
 
 #Reading in the data
-df_growth<-read.xlsx("../data/Mysis_Pilot.xlsx", sheet="Exp_1",detectDates=T)
-df_survival<-read.xlsx("H:/Data Science/Mysis/data/Mysis_Pilot.xlsx", sheet="Survival Census (Progress)",detectDates=T)
-df_sex_sort <-read.xlsx("H:/Data Science/Mysis/data/Mysis_Pilot.xlsx", sheet="Sexing",detectDates=T)
+df_growth<-read.xlsx("data/Mysis_Pilot.xlsx", sheet="Exp_1",detectDates=T)
+df_survival<-read.xlsx("data/Mysis_Pilot.xlsx", sheet="Survival Census (Progress)",detectDates=T)
+df_sex_sort <-read.xlsx("data/Mysis_Pilot.xlsx", sheet="Sexing",detectDates=T)
 
 #checking data parameters
 head(df_growth)
