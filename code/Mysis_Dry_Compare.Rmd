@@ -222,6 +222,243 @@ ggplot(df_growth, aes(y=Age_Category,x=Length_mm, color=Feed_Group))+geom_point(
 
 
 ```
+## Mass Outliers
+Lets take a look at our outliers from the previous analysis
+
+```{r Mass Outliers Boxplots}
+#descriptive statistics
+growth_gemma_outlier_df <- df_growth %>% filter(Feed_Group == "Gemma")
+
+growth_mysis_outlier_df <- df_growth %>% filter(Feed_Group == "Mysis")
+
+summary(growth_mysis_outlier_df$Mass_mg)
+
+
+#Find boxplot statistics. First we need to summarize a list from groups
+growth_gemma_outlier_df %>%
+  group_by(Age_Category) %>%
+  summarize(boxplot = list(setNames(boxplot.stats(Mass_mg)$stats, 
+                                    c('lower_whisker','lower quartile',
+                                      'median','upper quartile','upper whisker')))) %>%
+  
+#using tidyr unnest_wider function we can pull out the stats information
+
+  unnest_wider(boxplot)
+
+#Find boxplot statistics. First we need to summarize a list from groups
+growth_mysis_outlier_df %>%
+  group_by(Age_Category) %>%
+  summarize(boxplot = list(setNames(boxplot.stats(Mass_mg)$stats, 
+                                    c('lower_whisker','lower quartile',
+                                      'median','upper quartile','upper whisker')))) %>%
+  
+#using tidyr unnest_wider function we can pull out the stats information
+
+  unnest_wider(boxplot)
+
+
+
+
+#Find outliers from earlier using stats. First we need to summarize a list from groups
+gemma_outliers <- growth_gemma_outlier_df %>%
+  group_by(Age_Category) %>%
+  summarize(boxplot =boxplot.stats(Mass_mg)$out) %>%
+  
+#using tidyr unnest_wider function we can pull out the stats information
+
+  unnest_wider(boxplot)
+
+#Find outliers from earlier using stats. First we need to summarize a list from groups
+mysis_outliers <- growth_mysis_outlier_df %>%
+  group_by(Age_Category) %>%
+  summarize(boxplot = boxplot.stats(Mass_mg)$out) %>%
+  
+#using tidyr unnest_wider function we can pull out the stats information
+
+  unnest_wider(boxplot)
+
+
+#Now that we know there are outliers, lets grab a dataframe from each of them.
+#Using the previous work, we can add the which() function to tell us where these
+#outliers live and then filter our dataset around that.
+
+gemma_outlier_loc <- which(growth_gemma_outlier_df$Mass_mg %in% c(gemma_outliers$...1))
+
+gemma_mass_outlier_df <- growth_gemma_outlier_df[gemma_outlier_loc,]
+
+
+mysis_outlier_loc <- which(growth_mysis_outlier_df$Mass_mg %in% c(mysis_outliers$...1))
+
+mysis_mass_outlier_df <- growth_mysis_outlier_df[mysis_outlier_loc,]
+
+
+
+#Same outlier dataframes for the Length
+
+
+
+#Find outliers from earlier using stats. First we need to summarize a list from groups
+gemma_outliers <- growth_gemma_outlier_df %>%
+  group_by(Age_Category) %>%
+  summarize(boxplot =boxplot.stats(Length_mm)$out) %>%
+  
+#using tidyr unnest_wider function we can pull out the stats information
+
+  unnest_wider(boxplot)
+
+#Find outliers from earlier using stats. First we need to summarize a list from groups
+mysis_outliers <- growth_mysis_outlier_df %>%
+  group_by(Age_Category) %>%
+  summarize(boxplot = boxplot.stats(Mass_mg)$out) %>%
+  
+#using tidyr unnest_wider function we can pull out the stats information
+
+  unnest_wider(boxplot)
+
+
+#Now that we know there are outliers, lets grab a dataframe from each of them.
+#Using the previous work, we can add the which() function to tell us where these
+#outliers live and then filter our dataset around that.
+
+gemma_outlier_loc <- which(growth_gemma_outlier_df$Mass_mg %in% c(gemma_outliers$...1))
+
+gemma_mass_outlier_df <- growth_gemma_outlier_df[gemma_outlier_loc,]
+
+
+mysis_outlier_loc <- which(growth_mysis_outlier_df$Mass_mg %in% c(mysis_outliers$...1))
+
+mysis_mass_outlier_df <- growth_mysis_outlier_df[mysis_outlier_loc,]
+
+```
+
+
+Percentile outliers will flag any sample outside 2.5 and 97.5 percentiles. 
+
+```{r Mass Outliers Percentiles}
+
+#For each age category we will find the 2.5% bound  using the qunatile() func.
+lower_bound_gemma <- growth_gemma_outlier_df %>%
+  group_by(Age_Category) %>%
+  summarize(quantile(Mass_mg, 0.025))
+
+
+#For each age category we will find the 97.5% bound  using the qunatile() func.
+upper_bound_gemma <- growth_gemma_outlier_df %>%
+  group_by(Age_Category) %>%
+  summarize(quantile(Mass_mg, 0.975))
+
+#For each age category we will find the 2.5% bound  using the qunatile() func.
+lower_bound_mysis <- growth_gemma_outlier_df %>%
+  group_by(Age_Category) %>%
+  summarize(quantile(Mass_mg, 0.025))
+
+#For each age category we will find the 97.5% bound  using the qunatile() func.
+upper_bound_mysis <- growth_gemma_outlier_df %>%
+  group_by(Age_Category) %>%
+  summarize(quantile(Mass_mg, 0.975))
+
+
+#location of the outliers
+
+for (AgeCategory in growth_gemma_outlier_df$Age_Category){
+  #iterate through all age categories filtering any values outside the category's bounds
+  temp_df <- growth_gemma_outlier_df %>%
+    filter(Age_Category == AgeCategory) %>%
+    filter(Mass_mg < lower_bound_gemma$`quantile(Mass_mg, 0.025)`[lower_bound_gemma$Age_Category==AgeCategory] | 
+           Mass_mg > upper_bound_gemma$`quantile(Mass_mg, 0.975)`[upper_bound_gemma$Age_Category==AgeCategory])
+  Mass_gemma_percentile_loc <-rbind(Mass_gemma_percentile_loc,temp_df)
+  }
+  
+#percentile df of the outliers
+mass_gemma_percentile_df <- growth_gemma_outlier_df[Mass_gemma_percentile_loc,]
+
+
+mass_mysis_percentile_df <- growth_mysis_outlier_df[Mass_mysis_percentile_loc,]
+
+
+
+```
+
+
+## Length Outliers
+
+
+```{r Length Outlier Boxplot}
+
+summary(growth_mysis_outlier_df$Length_mm)
+summary(growth_gemma_outlier_df$Length_mm)
+
+#Find boxplot statistics. First we need to summarize a list from groups
+Length_Gemma_Stats <- growth_gemma_outlier_df %>%
+  group_by(Age_Category) %>%
+  summarize(boxplot = list(setNames(boxplot.stats(Length_mm)$stats, 
+                                    c('lower_whisker','lower quartile',
+                                      'median','upper quartile','upper whisker')))) %>%
+  
+#using tidyr unnest_wider function we can pull out the stats information
+
+  unnest_wider(boxplot)
+
+#Find boxplot statistics. First we need to summarize a list from groups
+Length_Mysis_Stats <- growth_mysis_outlier_df %>%
+  group_by(Age_Category) %>%
+  summarize(boxplot = list(setNames(boxplot.stats(Length_mm)$stats, 
+                                    c('lower_whisker','lower quartile',
+                                      'median','upper quartile','upper whisker')))) %>%
+  
+#using tidyr unnest_wider function we can pull out the stats information
+
+  unnest_wider(boxplot)
+
+
+
+
+#Find outliers from earlier using stats. First we need to summarize a list from groups
+gemma_outliers_length <- growth_gemma_outlier_df %>%
+  group_by(Age_Category) %>%
+  summarize(boxplot =boxplot.stats(Length_mm)$out) %>%
+  
+#using tidyr unnest_wider function we can pull out the stats information
+
+  unnest_wider(boxplot)
+
+#Find outliers from earlier using stats. First we need to summarize a list from groups
+mysis_outliers_length <- growth_mysis_outlier_df %>%
+  group_by(Age_Category) %>%
+  summarize(boxplot = boxplot.stats(Length_mm)$out) %>%
+  
+#using tidyr unnest_wider function we can pull out the stats information
+
+  unnest_wider(boxplot)
+
+
+#Now that we know there are outliers, lets grab a dataframe from each of them.
+#Using the previous work, we can add the which() function to tell us where these
+#outliers live and then filter our dataset around that.
+
+gemma_length_outlier_loc <- which(growth_gemma_outlier_df$Length_mm %in% c(gemma_outliers_length$...1))
+
+gemma_length_outlier_df <- growth_gemma_outlier_df[gemma_length_outlier_loc,]
+
+
+mysis_length_outlier_loc <- which(growth_mysis_outlier_df$Length_mm %in% c(mysis_outliers_length$...1))
+
+mysis_length_outlier_df <- growth_mysis_outlier_df[mysis_length_outlier_loc,]
+
+
+```
+
+
+
+## Condition Factor Outliers
+
+
+```{r Condition Factor Outliers}
+
+```
+
+
+
 We need to understand if a linear model if acceptable for Mass vs Length, or a 
 polynomial. We will use the Residual plot to help us understand.
 
