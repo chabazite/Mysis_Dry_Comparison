@@ -302,10 +302,9 @@ growth_gemma_outlier_df %>%
   summarize(boxplot = list(setNames(boxplot.stats(Mass_mg)$stats, 
                                     c('lower_whisker','lower quartile',
                                       'median','upper quartile','upper whisker')))) %>%
-  
 #using tidyr unnest_wider function we can pull out the stats information
-
   unnest_wider(boxplot)
+
 
 #Find boxplot statistics. First we need to summarize a list from groups
 growth_mysis_outlier_df %>%
@@ -313,30 +312,19 @@ growth_mysis_outlier_df %>%
   summarize(boxplot = list(setNames(boxplot.stats(Mass_mg)$stats, 
                                     c('lower_whisker','lower quartile',
                                       'median','upper quartile','upper whisker')))) %>%
-  
-#using tidyr unnest_wider function we can pull out the stats information
-
   unnest_wider(boxplot)
-
-
 
 
 #Find outliers from earlier using stats. First we need to summarize a list from groups
 gemma_outliers <- growth_gemma_outlier_df %>%
   group_by(Age_Category) %>%
   summarize(boxplot =boxplot.stats(Mass_mg)$out) %>%
-  
-#using tidyr unnest_wider function we can pull out the stats information
-
   unnest_wider(boxplot)
 
 #Find outliers from earlier using stats. First we need to summarize a list from groups
 mysis_outliers <- growth_mysis_outlier_df %>%
   group_by(Age_Category) %>%
   summarize(boxplot = boxplot.stats(Mass_mg)$out) %>%
-  
-#using tidyr unnest_wider function we can pull out the stats information
-
   unnest_wider(boxplot)
 
 
@@ -459,7 +447,59 @@ for (AgeCategory in levels(growth_mysis_outlier_df$Age_Category)){
 ```
 
 
-#Mass 
+#Mass Cooks Distance Outliers
+This wonderful outlier detection method estimates the amount of influence each 
+observation has on the over all regression model. It does this by removing each 
+observation and calculating the change in the model. A general rule is outliers
+are 3x the mean of all the distances. Because it's based on regression model,
+only the X variable has impact on the outcome, which allows us to see the amount
+of influce a sample has on the predicted outcome. The measurement is the change in Y
+for all observations with and without the sample.
+
+```{r Cooks Distance Outliers}
+for (AgeCategory in levels(growth_mysis_outlier_df$Age_Category)){
+  Group_df <- growth_mysis_outlier_df %>%
+  filter(Age_Category == AgeCategory)
+
+#create linear regression model for Mass. We will use the Log of Mass and  Length
+  #we use the log based on previous information telling us length-mass is not a 
+  #strictly linear relationship
+  model <- lm(Mass_mg ~ Length_mm, data = Group_df)
+  summary(model)
+  
+#look at diagnostic plots for outliers
+  par(mfrow = c(2,2))
+  plot(model)
+
+  #based on the residual vs leverage models, we can see some outliers have large 
+  #impact on our models
+  
+  #looking at cooks distance. picking out any observations that are 3x the mean of cooksD
+ cooksD <- cooks.distance(model)
+ influencial <- cooksD[(cooksD > (3 * mean(cooksD, na.rm =TRUE)))]
+ 
+ plot(cooksD, pch="*", cex=2, main = "Influential Obs by Cooks distance") #plot cooks distance
+ abline(h = 3 * mean(cooksD, na.rm =TRUE),col="red") # add cutoff line
+ text(x=1:length(cooksD)+1, y=cooksD, labels =ifelse(cooksD>3 * mean(cooksD, na.rm =TRUE),names(cooksD),""),col="red") #add labels
+ 
+}
+
+```
+```{r Most Extreme Outlier of Each Group}
+#finds the largest difference from the mean
+
+for (AgeCategory in levels(growth_mysis_outlier_df$Age_Category)){
+  Group_df <- growth_mysis_outlier_df %>%
+  filter(Age_Category == AgeCategory)
+  print(grubbs.test(Group_df$Mass_mg,type=11)) 
+}
+
+for (AgeCategory in levels(growth_gemma_outlier_df$Age_Category)){
+  Group_df <- growth_gemma_outlier_df %>%
+  filter(Age_Category == AgeCategory)
+  print(grubbs.test(Group_df$Mass_mg,type=11)) 
+}
+```
 
 
 
@@ -534,17 +574,27 @@ mysis_length_outlier_df <- growth_mysis_outlier_df[mysis_length_outlier_loc,]
 
 
 
-## Condition Factor Outliers
+## Summarize Outlier Testing
+Now that we have an understanding of different methods for outlier collection,
+I was curious how similar these methods would be. Which outliers would recieve marks 
+from the most methods for detection? Which would only mark one. Do the Mass outliers
+correspond to the Length Outliers?
+
+```{r Summary of Oultiers}
+
+# We have made Boxplots, percentile, Rosner, Cooks Distance, and Grubbs. 
 
 
-```{r Condition Factor Outliers}
+
 
 ```
 
 
 
-We need to understand if a linear model if acceptable for Mass vs Length, or a 
-polynomial. We will use the Residual plot to help us understand.
+## Linear Model
+Based on our outlier plots, we can be pretty certain a linear model is not appropriate
+for our models. However,we will use the Residual plot to help us understand. Using these
+plots its pretty clear a polynomial model is more appropriate. 
 
 
 ```{r Residuals}
