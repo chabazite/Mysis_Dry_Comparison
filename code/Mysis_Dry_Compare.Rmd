@@ -642,7 +642,7 @@ for (method in methods_list){
 
 for (sample_ID in mysis_mass_outlier_method_df$Sample_ID){
   if (sample_ID %in% mysis_mass_boxplot_outlier_df$Sample_ID){
-    mysis_mass_outlier_method_df["Boxplot"][mysis_mass_outlier_method_df["Sample_ID"] == sample_ID] <-1
+    mysis_mass_outlier_method_df["Boxplot"][mysis_mass_outlier_method_df["Sample_ID"] == sample_ID] <- 1
   }
 
   if (sample_ID %in% mysis_mass_percentile_outlier_df$Sample_ID){
@@ -661,11 +661,35 @@ for (sample_ID in mysis_mass_outlier_method_df$Sample_ID){
   
 }
 
+#gemma
+for (sample_ID in gemma_mass_outlier_method_df$Sample_ID){
+  if (sample_ID %in% gemma_mass_boxplot_outlier_df$Sample_ID){
+    gemma_mass_outlier_method_df["Boxplot"][gemma_mass_outlier_method_df["Sample_ID"] == sample_ID] <-1
+  }
+
+  if (sample_ID %in% gemma_mass_percentile_outlier_df$Sample_ID){
+    gemma_mass_outlier_method_df["Percentile"][gemma_mass_outlier_method_df["Sample_ID"] == sample_ID] <-1
+  }
+  
+
+  if (sample_ID %in% gemma_mass_rosner_outlier_df$Sample_ID){
+    gemma_mass_outlier_method_df["Rosner"][gemma_mass_outlier_method_df["Sample_ID"] == sample_ID] <-1
+  }
+  
+  if (sample_ID %in% gemma_mass_cooksd_outlier_df$Sample_ID){
+    gemma_mass_outlier_method_df["CooksD"][gemma_mass_outlier_method_df["Sample_ID"] == sample_ID] <-1
+  }
+  
+  
+}
+
 #Create a total of outlier methods detecting one sample
 
 mysis_mass_outlier_method_df <- mysis_mass_outlier_method_df %>%
  mutate(Total = select(., Boxplot:CooksD) %>% rowSums(na.rm =TRUE))
 
+gemma_mass_outlier_method_df <- gemma_mass_outlier_method_df %>%
+ mutate(Total = select(., Boxplot:CooksD) %>% rowSums(na.rm =TRUE))
 
 
 #Add a Mass_outlier column and place the total numbers for each outlier sample 
@@ -683,17 +707,50 @@ for (Sample in growth_mysis_outlier_df$Sample_ID) {
     
 }
 
+
+
+for (Sample in growth_gemma_outlier_df$Sample_ID) {
+  if (Sample %in% gemma_mass_outlier_method_df$Sample_ID){
+    growth_gemma_outlier_df$Mass_Outlier[growth_gemma_outlier_df["Sample_ID"]==Sample] <- 
+      gemma_mass_outlier_method_df$Total[gemma_mass_outlier_method_df["Sample_ID"] == Sample]
+    
+  } 
+  else{
+    growth_gemma_outlier_df$Mass_Outlier[growth_gemma_outlier_df["Sample_ID"]==Sample] <- 0
+  }
+    
+}
+
+
+
 #create factor levels to map discrete rather than continuous values for outlier count
 growth_mysis_outlier_df$Mass_Outlier <-factor(growth_mysis_outlier_df$Mass_Outlier, 
                                  levels = c("4","3","2","1","0"))
 
-ggplot(growth_mysis_outlier_df, aes(x = Length_mm, y = Mass_mg, color = Mass_Outlier)) +
-  geom_point()
+growth_gemma_outlier_df$Mass_Outlier <-factor(growth_gemma_outlier_df$Mass_Outlier, 
+                                 levels = c("4","3","2","1","0"))
 
+
+
+#plot outlier frequency based on method selection
+ggplot(growth_mysis_outlier_df, aes(x = Length_mm, y = Mass_mg, color = Mass_Outlier)) +
+  geom_point()+scale_color_brewer(palette="Set1") 
+ggplot(growth_gemma_outlier_df, aes(x = Length_mm, y = Mass_mg, color = Mass_Outlier)) +
+  geom_point()+scale_color_brewer(palette="Set1") 
 
 
 ggplot(growth_mysis_outlier_df, aes(y=Mass_mg, x=Age_Category)) + geom_boxplot() + 
   geom_point(aes(color = Mass_Outlier))+scale_color_brewer(palette="Set1") + theme_classic()
+
+ggplot(growth_gemma_outlier_df, aes(y=Mass_mg, x=Age_Category)) + geom_boxplot() + 
+  geom_point(aes(color = Mass_Outlier))+scale_color_brewer(palette="Set1") + theme_classic()
+
+
+ggplot(growth_mysis_outlier_df, aes(y=Mass_mg, x=Tank,color=Age_Category)) + geom_boxplot(aes(color=Age_Category))+
+ theme_classic()
+
+ggplot(growth_mysis_outlier_df, aes(y=Mass_mg, x=Age_Category,color=Tank)) + geom_boxplot(aes(color=Tank))+
+  theme_classic()
 ```
 
 
@@ -713,9 +770,6 @@ Length_Gemma_Stats <- growth_gemma_outlier_df %>%
   summarize(boxplot = list(setNames(boxplot.stats(Length_mm)$stats, 
                                     c('lower_whisker','lower quartile',
                                       'median','upper quartile','upper whisker')))) %>%
-  
-#using tidyr unnest_wider function we can pull out the stats information
-
   unnest_wider(boxplot)
 
 #Find boxplot statistics. First we need to summarize a list from groups
@@ -724,9 +778,6 @@ Length_Mysis_Stats <- growth_mysis_outlier_df %>%
   summarize(boxplot = list(setNames(boxplot.stats(Length_mm)$stats, 
                                     c('lower_whisker','lower quartile',
                                       'median','upper quartile','upper whisker')))) %>%
-  
-#using tidyr unnest_wider function we can pull out the stats information
-
   unnest_wider(boxplot)
 
 
@@ -736,18 +787,12 @@ Length_Mysis_Stats <- growth_mysis_outlier_df %>%
 gemma_outliers_length <- growth_gemma_outlier_df %>%
   group_by(Age_Category) %>%
   summarize(boxplot =boxplot.stats(Length_mm)$out) %>%
-  
-#using tidyr unnest_wider function we can pull out the stats information
-
   unnest_wider(boxplot)
 
 #Find outliers from earlier using stats. First we need to summarize a list from groups
 mysis_outliers_length <- growth_mysis_outlier_df %>%
   group_by(Age_Category) %>%
   summarize(boxplot = boxplot.stats(Length_mm)$out) %>%
-  
-#using tidyr unnest_wider function we can pull out the stats information
-
   unnest_wider(boxplot)
 
 
@@ -755,19 +800,414 @@ mysis_outliers_length <- growth_mysis_outlier_df %>%
 #Using the previous work, we can add the which() function to tell us where these
 #outliers live and then filter our dataset around that.
 
-gemma_length_outlier_loc <- which(growth_gemma_outlier_df$Length_mm %in% c(gemma_outliers_length$...1))
+gemma_length_outlier_loc <- which(growth_gemma_outlier_df$Length_mm %in% c(gemma_outliers_length$...1) & 
+                             growth_gemma_outlier_df$Age_Category %in% c(gemma_outliers$Age_Category))
 
-gemma_length_outlier_df <- growth_gemma_outlier_df[gemma_length_outlier_loc,]
+gemma_length_boxplot_outlier_df <- growth_gemma_outlier_df[gemma_length_outlier_loc,]
 
 
-mysis_length_outlier_loc <- which(growth_mysis_outlier_df$Length_mm %in% c(mysis_outliers_length$...1))
+mysis_length_outlier_loc <- which(growth_mysis_outlier_df$Length_mm %in% c(mysis_outliers_length$...1) & 
+                             growth_mysis_outlier_df$Age_Category %in% c(gemma_outliers$Age_Category))
 
-mysis_length_outlier_df <- growth_mysis_outlier_df[mysis_length_outlier_loc,]
+mysis_length_boxplot_outlier_df <- growth_mysis_outlier_df[mysis_length_outlier_loc,]
+
+
+```
+
+# Length Percentile Outliers
+Percentile outliers will flag any sample outside 2.5 and 97.5 percentiles. 
+
+```{r Length Outliers Percentiles}
+
+#For each age category we will find the 2.5% bound  using the qunatile() func.
+lower_bound_gemma <- growth_gemma_outlier_df %>%
+  group_by(Age_Category) %>%
+  summarize(quantile(Length_mm, 0.025))
+
+
+#For each age category we will find the 97.5% bound  using the qunatile() func.
+upper_bound_gemma <- growth_gemma_outlier_df %>%
+  group_by(Age_Category) %>%
+  summarize(quantile(Length_mm, 0.975))
+
+#For each age category we will find the 2.5% bound  using the qunatile() func.
+lower_bound_mysis <- growth_gemma_outlier_df %>%
+  group_by(Age_Category) %>%
+  summarize(quantile(Length_mm, 0.025))
+
+#For each age category we will find the 97.5% bound  using the qunatile() func.
+upper_bound_mysis <- growth_gemma_outlier_df %>%
+  group_by(Age_Category) %>%
+  summarize(quantile(Length_mm, 0.975))
+
+
+#percentile df of the outliers
+gemma_length_percentile_outlier_df <- data.frame()
+for (AgeCategory in levels(growth_gemma_outlier_df$Age_Category)){
+  #iterate through all age categories filtering any values outside the category's bounds
+  temp_df <- growth_gemma_outlier_df %>%
+    filter(Age_Category == AgeCategory) %>%
+    filter(Length_mm < lower_bound_gemma$`quantile(Length_mm, 0.025)`[lower_bound_gemma$Age_Category==AgeCategory] | 
+           Length_mm > upper_bound_gemma$`quantile(Length_mm, 0.975)`[upper_bound_gemma$Age_Category==AgeCategory])
+  gemma_length_percentile_outlier_df <-rbind(gemma_length_percentile_outlier_df,temp_df)
+  }
+  
+
+mysis_length_percentile_outlier_df <- data.frame()
+for (AgeCategory in levels(growth_mysis_outlier_df$Age_Category)){
+  #iterate through all age categories filtering any values outside the category's bounds
+    temp_df_mysis <- growth_mysis_outlier_df %>%
+    filter(Age_Category == AgeCategory) %>%
+    filter(Length_mm < lower_bound_mysis$`quantile(Length_mm, 0.025)`[lower_bound_mysis$Age_Category==AgeCategory] | 
+           Length_mm > upper_bound_mysis$`quantile(Length_mm, 0.975)`[upper_bound_mysis$Age_Category==AgeCategory])
+  mysis_length_percentile_outlier_df  <-rbind(mysis_length_percentile_outlier_df,temp_df_mysis)
+  }
+  
+
+```
+
+## length Generalized ESD Test for Outliers
+Generalized ESD test is used to detect one or more outliers in a univariate dataset
+for approximate normal distribution. We do not have to specify the number of outliers, just an upper bound.
+
+```{r Rosner's GESD Test for length Outliers}
+#Create empty dataframe
+gemma_length_rosner_outlier_df <- data.frame()
+#iterate through age categories and create temp df for that age category
+for (AgeCategory in levels(growth_gemma_outlier_df$Age_Category)){
+  Group_df <- growth_gemma_outlier_df %>%
+  filter(Age_Category == AgeCategory)
+
+  #use rosner test function to find outliers (max 10) for each age category 
+  
+  gemma_rosner_length <- rosnerTest(Group_df$Length_mm,k=10, alpha = 0.05)
+  #create temp df where only outliers exist
+  temp_df <- gemma_rosner_length[["all.stats"]] %>%
+    filter(Outlier == TRUE)
+  #filter the age df based on the observation row number provided
+  gemma_rosner_outlier_loc <- Group_df %>% filter(row_number() %in% temp_df$Obs.Num)
+  #append to new df
+  gemma_length_rosner_outlier_df <-rbind(gemma_length_rosner_outlier_df,gemma_rosner_outlier_loc)
+}
+
+#Create empty dataframe
+mysis_length_rosner_outlier_df <- data.frame()
+#iterate through age categories and create temp df for that age category
+for (AgeCategory in levels(growth_mysis_outlier_df$Age_Category)){
+  Group_df <- growth_mysis_outlier_df %>%
+  filter(Age_Category == AgeCategory)
+
+  #use rosner test function to find outliers (max 10) for each age category 
+  
+  mysis_rosner_length <- rosnerTest(Group_df$Length_mm,k=10, alpha = 0.05)
+  #create temp df where only outliers exist
+  temp_df <- mysis_rosner_length[["all.stats"]] %>%
+    filter(Outlier == TRUE)
+  #filter the age df based on the observation row number provided
+  mysis_rosner_outlier_loc <- Group_df %>% filter(row_number() %in% temp_df$Obs.Num)
+  #append to new df
+  mysis_length_rosner_outlier_df <-rbind(mysis_length_rosner_outlier_df,mysis_rosner_outlier_loc)
+}
 
 
 ```
 
 
+#length Cooks Distance Outliers
+This wonderful outlier detection method estimates the amount of influence each 
+observation has on the over all regression model. It does this by removing each 
+observation and calculating the change in the model. A general rule is outliers
+are 3x the mean of all the distances. Because it's based on regression model,
+only the X variable has impact on the outcome, which allows us to see the amount
+of influce a sample has on the predicted outcome. The measurement is the change in Y
+for all observations with and without the sample.
+
+```{r Cooks Distance Outliers}
+gemma_length_cooksd_outlier_df <- data.frame()
+mysis_length_cooksd_outlier_df <- data.frame()
+
+
+for (AgeCategory in levels(growth_gemma_outlier_df$Age_Category)){
+  Group_df <- growth_gemma_outlier_df %>%
+  filter(Age_Category == AgeCategory)
+
+#create linear regression model for length. We will use the Log of length and  Mss
+  #we use the log based on previous information telling us length is not a 
+  #strictly linear relationship
+  model <- lm(Mass_mg ~ Length_mm, data = Group_df)
+  summary(model)
+  
+#look at diagnostic plots for outliers
+  par(mfrow = c(2,2))
+  plot(model)
+
+  #based on the residual vs leverage models, we can see some outliers have large 
+  #impact on our models
+  
+  #looking at cooks distance. picking out any observations that are 3x the mean of cooksD
+ cooksD <- cooks.distance(model)
+ influencial <- cooksD[(cooksD > (3 * mean(cooksD, na.rm =TRUE)))]
+ 
+ plot(cooksD, pch="*", cex=2, main = "Influential Obs by Cooks distance") #plot cooks distance
+ abline(h = 3 * mean(cooksD, na.rm =TRUE),col="red") # add cutoff line
+ text(x=1:length(cooksD)+1, y=cooksD, labels =ifelse(cooksD>3 * mean(cooksD, na.rm =TRUE),names(cooksD),""),col="red") #add labels
+ 
+   #filter the age df based on the observation row number provided
+  gemma_cooksd_outlier_loc <- Group_df %>% filter(row_number() %in% names(influencial))
+  #append to new df
+  gemma_length_cooksd_outlier_df <-rbind(gemma_length_cooksd_outlier_df,gemma_cooksd_outlier_loc)
+ 
+ 
+}
+
+
+for (AgeCategory in levels(growth_mysis_outlier_df$Age_Category)){
+  Group_df <- growth_mysis_outlier_df %>%
+  filter(Age_Category == AgeCategory)
+
+#create linear regression model for Mass. We will use the Log of Mass and  Length
+  #we use the log based on previous information telling us length-mass is not a 
+  #strictly linear relationship
+  model <- lm(Mass_mg ~ Length_mm, data = Group_df)
+  summary(model)
+  
+#look at diagnostic plots for outliers
+  par(mfrow = c(2,2))
+  plot(model)
+
+  #based on the residual vs leverage models, we can see some outliers have large 
+  #impact on our models
+  
+  #looking at cooks distance. picking out any observations that are 3x the mean of cooksD
+ cooksD <- cooks.distance(model)
+ influencial <- cooksD[(cooksD > (3 * mean(cooksD, na.rm =TRUE)))]
+ 
+ plot(cooksD, pch="*", cex=2, main = "Influential Obs by Cooks distance") #plot cooks distance
+ abline(h = 3 * mean(cooksD, na.rm =TRUE),col="red") # add cutoff line
+ text(x=1:length(cooksD)+1, y=cooksD, labels =ifelse(cooksD>3 * mean(cooksD, na.rm =TRUE),names(cooksD),""),col="red") #add labels
+ 
+   #filter the age df based on the observation row number provided
+  mysis_cooksd_outlier_loc <- Group_df %>% filter(row_number() %in% names(influencial))
+  #append to new df
+  mysis_mass_cooksd_outlier_df <-rbind(mysis_length_cooksd_outlier_df,mysis_cooksd_outlier_loc)
+ 
+ 
+}
+
+```
+
+
+
+# Length Outlier Comparison
+Will all these potential outliers, this study actually becomes a great tool to 
+look at outliers and what they mean. this section will be comparing all the 
+different methods of outlier detection and the overlap in outliers detected
+
+```{r length Outlier Summary}
+
+#Grab Datasets from each detection method
+
+#BoxPlot
+mysis_length_boxplot_outlier_df
+gemma_length_boxplot_outlier_df
+
+#Percentile
+mysis_length_percentile_outlier_df
+gemma_length_percentile_outlier_df
+
+#Rosner
+mysis_length_rosner_outlier_df
+gemma_length_rosner_outlier_df
+
+#CooksD
+
+mysis_length_cooksd_outlier_df 
+gemma_length_cooksd_outlier_df
+
+
+#Create a dataframe for each group (mysis and gemma) that represents all distinct
+#outlier possibilities across the 4 methods
+
+#I will use dplyr anti-join to 
+
+#Mysis
+#create new summary df based on the first antijoin df
+mysis_length_summary_outlier_df <- mysis_length_boxplot_outlier_df
+
+#use anti join to find differences in dataframe
+mysis_list_outlier_df <- list(mysis_length_boxplot_outlier_df, mysis_length_percentile_outlier_df,
+                              mysis_length_rosner_outlier_df, mysis_length_cooksd_outlier_df)
+  
+
+for (outlier_dfs in mysis_list_outlier_df) {
+  outlier_difference <- anti_join(outlier_dfs,mysis_length_summary_outlier_df)
+
+  #append to summary df 
+  mysis_length_summary_outlier_df <-rbind(mysis_length_summary_outlier_df,outlier_difference)
+}
+#reorder and reset index of dataframe
+mysis_length_summary_outlier_df <- mysis_length_summary_outlier_df %>% arrange(Sample_ID)
+row.names(mysis_length_summary_outlier_df) <-NULL
+
+
+#Gemma
+#create new summary df based on the first antijoin df
+gemma_length_summary_outlier_df <- gemma_length_boxplot_outlier_df
+
+#use anti join to find differences in dataframe
+gemma_list_outlier_df <- list(gemma_length_boxplot_outlier_df, gemma_length_percentile_outlier_df,
+                              gemma_length_rosner_outlier_df, gemma_length_cooksd_outlier_df)
+  
+
+for (outlier_dfs in gemma_list_outlier_df) {
+  outlier_difference <- anti_join(outlier_dfs,gemma_length_summary_outlier_df)
+
+  #append to summary df 
+  gemma_length_summary_outlier_df <-rbind(gemma_length_summary_outlier_df,outlier_difference)
+}
+#reorder and reset index of dataframe
+gemma_length_summary_outlier_df <- gemma_length_summary_outlier_df %>% arrange(Sample_ID)
+row.names(gemma_length_summary_outlier_df) <-NULL
+
+
+#With the two summary tables, now we can strip the information and create a
+#dataframe that shows which outliers were counted by which methods
+
+
+mysis_length_outlier_method_df <-  subset(mysis_length_summary_outlier_df,
+                                        select=-c(Date, Tank, Feed_Group, Length_mm)) 
+gemma_length_outlier_method_df <-  subset(gemma_length_summary_outlier_df,
+                                        select=-c(Date, Tank, Feed_Group, Length_mm)) 
+
+#add columns for each method
+methods_list = list("Boxplot", "Percentile", "Rosner", "CooksD")
+
+for (method in methods_list){
+  mysis_length_outlier_method_df <- mysis_length_outlier_method_df %>% 
+    add_column(!!(method) :=0)
+  gemma_length_outlier_method_df <- gemma_length_outlier_method_df %>%
+    add_column(!!(method) :=0)
+}
+
+
+#Add +1 to any method that detected the sample ID. We are adding 1 so that when we
+#do this same process with length, we can see which are only length or length outliers
+#vs both outliers (which may just be a larger fish, but still falls on the growth curve)
+
+
+
+for (sample_ID in mysis_length_outlier_method_df$Sample_ID){
+  if (sample_ID %in% mysis_length_boxplot_outlier_df$Sample_ID){
+    mysis_length_outlier_method_df["Boxplot"][mysis_length_outlier_method_df["Sample_ID"] == sample_ID] <- 1
+  }
+
+  if (sample_ID %in% mysis_length_percentile_outlier_df$Sample_ID){
+    mysis_length_outlier_method_df["Percentile"][mysis_length_outlier_method_df["Sample_ID"] == sample_ID] <-1
+  }
+  
+
+  if (sample_ID %in% mysis_length_rosner_outlier_df$Sample_ID){
+    mysis_length_outlier_method_df["Rosner"][mysis_length_outlier_method_df["Sample_ID"] == sample_ID] <-1
+  }
+  
+  if (sample_ID %in% mysis_length_cooksd_outlier_df$Sample_ID){
+    mysis_length_outlier_method_df["CooksD"][mysis_length_outlier_method_df["Sample_ID"] == sample_ID] <-1
+  }
+  
+  
+}
+
+#gemma
+for (sample_ID in gemma_length_outlier_method_df$Sample_ID){
+  if (sample_ID %in% gemma_length_boxplot_outlier_df$Sample_ID){
+    gemma_length_outlier_method_df["Boxplot"][gemma_length_outlier_method_df["Sample_ID"] == sample_ID] <-1
+  }
+
+  if (sample_ID %in% gemma_length_percentile_outlier_df$Sample_ID){
+    gemma_length_outlier_method_df["Percentile"][gemma_length_outlier_method_df["Sample_ID"] == sample_ID] <-1
+  }
+  
+
+  if (sample_ID %in% gemma_length_rosner_outlier_df$Sample_ID){
+    gemma_length_outlier_method_df["Rosner"][gemma_length_outlier_method_df["Sample_ID"] == sample_ID] <-1
+  }
+  
+  if (sample_ID %in% gemma_length_cooksd_outlier_df$Sample_ID){
+    gemma_length_outlier_method_df["CooksD"][gemma_length_outlier_method_df["Sample_ID"] == sample_ID] <-1
+  }
+  
+  
+}
+
+#Create a total of outlier methods detecting one sample
+
+mysis_length_outlier_method_df <- mysis_length_outlier_method_df %>%
+ mutate(Total = select(., Boxplot:CooksD) %>% rowSums(na.rm =TRUE))
+
+gemma_length_outlier_method_df <- gemma_length_outlier_method_df %>%
+ mutate(Total = select(., Boxplot:CooksD) %>% rowSums(na.rm =TRUE))
+
+
+#Add a length_outlier column and place the total numbers for each outlier sample 
+#so they can be used to plot
+
+for (Sample in growth_mysis_outlier_df$Sample_ID) {
+  if (Sample %in% mysis_length_outlier_method_df$Sample_ID){
+    growth_mysis_outlier_df$length_Outlier[growth_mysis_outlier_df["Sample_ID"]==Sample] <- 
+      mysis_length_outlier_method_df$Total[mysis_length_outlier_method_df["Sample_ID"] == Sample]
+    
+  } 
+  else{
+    growth_mysis_outlier_df$length_Outlier[growth_mysis_outlier_df["Sample_ID"]==Sample] <- 0
+  }
+    
+}
+
+
+
+for (Sample in growth_gemma_outlier_df$Sample_ID) {
+  if (Sample %in% gemma_length_outlier_method_df$Sample_ID){
+    growth_gemma_outlier_df$length_Outlier[growth_gemma_outlier_df["Sample_ID"]==Sample] <- 
+      gemma_length_outlier_method_df$Total[gemma_length_outlier_method_df["Sample_ID"] == Sample]
+    
+  } 
+  else{
+    growth_gemma_outlier_df$length_Outlier[growth_gemma_outlier_df["Sample_ID"]==Sample] <- 0
+  }
+    
+}
+
+
+
+#create factor levels to map discrete rather than continuous values for outlier count
+growth_mysis_outlier_df$length_Outlier <-factor(growth_mysis_outlier_df$length_Outlier, 
+                                 levels = c("4","3","2","1","0"))
+
+growth_gemma_outlier_df$length_Outlier <-factor(growth_gemma_outlier_df$length_Outlier, 
+                                 levels = c("4","3","2","1","0"))
+
+
+
+#plot outlier frequency based on method selection
+ggplot(growth_mysis_outlier_df, aes(x = Length_mm, y = Length_mm, color = length_Outlier)) +
+  geom_point()+scale_color_brewer(palette="Set1") 
+ggplot(growth_gemma_outlier_df, aes(x = Length_mm, y = Length_mm, color = length_Outlier)) +
+  geom_point()+scale_color_brewer(palette="Set1") 
+
+
+ggplot(growth_mysis_outlier_df, aes(y=Length_mm, x=Age_Category)) + geom_boxplot() + 
+  geom_point(aes(color = length_Outlier))+scale_color_brewer(palette="Set1") + theme_classic()
+
+ggplot(growth_gemma_outlier_df, aes(y=Length_mm, x=Age_Category)) + geom_boxplot() + 
+  geom_point(aes(color = length_Outlier))+scale_color_brewer(palette="Set1") + theme_classic()
+
+
+ggplot(growth_mysis_outlier_df, aes(y=Length_mm, x=Tank,color=Age_Category)) + geom_boxplot(aes(color=Age_Category))+
+ theme_classic()
+
+ggplot(growth_mysis_outlier_df, aes(y=Length_mm, x=Age_Category,color=Tank)) + geom_boxplot(aes(color=Tank))+
+  theme_classic()
+```
 
 ## Summarize Outlier Testing
 Now that we have an understanding of different methods for outlier collection,
