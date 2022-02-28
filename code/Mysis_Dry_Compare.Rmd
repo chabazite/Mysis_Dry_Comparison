@@ -21,6 +21,8 @@ library(hrbrthemes)
 library(ggResidpanel)
 library(qqplotr)
 library(EnvStats)
+library(rstatix)
+library(janitor)
 
 ```
 
@@ -1397,6 +1399,106 @@ resid_compare(models=list(mod,
 #Growth Curves of Gemma and Mysis Mass vs Length
 ggplot(df_growth, aes(x = Length_mm, y = Mass_mg, color = Feed_Group))+geom_point()+
   geom_smooth(method='lm',formula = y~poly(x,2,raw=TRUE),se=TRUE)
+
+```
+
+## Exploritory Data Analysis for Sex Sort and Survival
+
+The next two datasets are a bit more concise and we won't be doing as deep a dive 
+into the outliers unless necessary. We are looking if there is any significant difference in either
+sexing or survival from the two groups.
+
+```{r Sex Sort Significance}
+df_sex_sort
+  
+#Summarize the two groups Gemma & Mysis into total female, male, and unknown
+#create a total column for each group
+# turn sum into percentage for easier comparison between groups
+df_sex_summary <-  df_sex_sort %>%
+  group_by(Group) %>%
+  summarise(female=sum(Female),male=sum(Male),unknown=sum(Unknown)) %>%
+   mutate(Total = select(., female:unknown) %>% rowSums(na.rm =TRUE)) %>%
+   mutate(female = round(female/Total,2),male = round(male/Total,2),unknown =
+            round(unknown/Total,2))
+
+#From a first glance there is hardly any difference beteween the two groups in terms
+#of sex, but we will run some Significance testing to make sure. An ANOVA is appropriate
+#in these situations
+
+#Summary Stats: Mean and sd
+df_sex_sort %>%
+  group_by(Group) %>%
+  get_summary_stats(Female,Male,Unknown, type = "mean_sd")
+
+#ANOVA
+df_sex_sort %>%
+  anova_test(Female ~ Group)
+
+df_sex_sort %>%
+  anova_test(Male ~ Group)
+
+df_sex_sort %>%
+  anova_test(Unknown ~ Group)
+
+#Not seeing any significant differences using ANOVA, which confirms what we saw
+# in the percentage comparison earlier
+```
+This second is a bit trickier. Rather than having one time data point to test
+We have taken survival from many different time points. First we will do some visualization
+Next, We can take the overall reduction in survival, to see which group had higher survivors
+Then we can see if there was any significant timeperiods.
+```{r Survival Significance}
+#Summarize data by feedgroup and date, the sum each group date, then plot
+df_survival %>%
+  group_by(Feed_Group,Date) %>%
+    summarise(Census=sum(Census)) %>%
+  ggplot(.,aes(x=Date,y=Census,color=Feed_Group)) +geom_line()
+
+#Summarize the data like above using average
+df_survival %>%
+  group_by(Feed_Group,Date) %>%
+    summarise(Census=mean(Census)) %>%
+  ggplot(.,aes(x=Date,y=Census,color=Feed_Group)) +geom_line()
+
+#individual tank survival grouped by feed type
+ggplot(df_survival, aes(x=Date, y=Census, group = Tank, color = Feed_Group))+geom_line()+geom_point()
+
+#create a df with just the differences in tank over the time period
+df_survival_summary_wide<-df_survival %>%
+  group_by(Date) %>%
+  filter(Date == '2020-10-15'|Date=='2021-07-06') %>%
+  pivot_wider(names_from = Tank, values_from = Census,values_fill = 0)
+
+
+#individual tank survival grouped by feed type
+ggplot(df_survival, aes(x=Date, y=Census, group = Tank, color = Feed_Group))+geom_point()+geom_smooth()
+
+
+#Convert POSIXct format to numeric for regression model
+df_survival$Date.numeric <-as.numeric(df_survival$Date)/(24*60*60)
+  
+#Build linear regression models for both survival rates
+
+linear_Mod_Mysis <- df_survival %>%
+  filter(Feed_Group == 'Mysis') %>%
+  lm(Date.numeric ~ Census, data=.)
+
+linear_Mod_Gemma <- df_survival %>%
+  filter(Feed_Group == 'Gemma') %>%
+  lm(Date.numeric ~ Census, data=.)
+
+#summary for linear modals. The shift from POSIXct fixed the issues I was having
+
+
+summary(linear_Mod_Mysis)
+
+
+
+#We will look to see if the regression lines of each summed group is statistically 
+#different using ANCOVA
+
+
+#differences in survival at every time period from the previous time period
 
 ```
 
