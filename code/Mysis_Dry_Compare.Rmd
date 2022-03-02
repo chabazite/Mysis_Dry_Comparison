@@ -216,7 +216,7 @@ ggplot(df_growth, aes(x=Mass_mg,y=Age_Category, fill=..x..))+
 
 #Box plot of Mass vs Age for Groups
 
-ggplot(df_growth,aes(y=Mass_mg, x=Age_Category,fill=Feed_Group)) + geom_boxplot(outlier.color='red',outlier.shape=1)
+ggplot(df_growth,aes(y=Mass_mg, x=Age_Category,fill=Feed_Group)) + geom_boxplot(outlier.color='red',outlier.shape=1)+geom_point(position=position_dodge(width=0.75))
 
 #Box plot of Length vs Age for Groups
 
@@ -1401,8 +1401,58 @@ resid_compare(models=list(mod,
 #The plot shows us a linear model is not appropriate, so we will use a 2nd order
 #polynomial 
 #Growth Curves of Gemma and Mysis Mass vs Length
+
+#SE represents the confidence interval
+
 ggplot(df_growth, aes(x = Length_mm, y = Mass_mg, color = Feed_Group))+geom_point()+
-  geom_smooth(method='lm',formula = y~poly(x,2,raw=TRUE),se=TRUE)
+  geom_smooth(method='lm',formula = y~poly(x,2,raw=TRUE),se=FALSE)
+
+
+ggplot(df_growth, aes(x = Length_log, y = Mass_log, color = Feed_Group))+geom_point()+
+  geom_smooth()
+
+#Spearman Correlation, which does not require normality
+df_growth_mysis <- df_growth %>%
+  filter(.,Feed_Group=="Mysis")  
+  cor(df_growth_mysis$Length_mm,df_growth_mysis$Mass_mg, method="spearman")
+
+df_growth_gemma <- df_growth %>%
+  filter(.,Feed_Group=="Gemma")  
+  cor(df_growth_gemma$Length_mm,df_growth_gemma$Mass_mg, method="spearman")
+
+#Visual representation of pearson correlation  
+ggscatter(df_growth_mysis, x='Length_log', y='Mass_log', add = "reg.line", conf.int=TRUE, 
+          cor.coef = TRUE, cor.method = "spearman", xlab = "Length (mm)", ylab = "Mass (mg)",
+          title = "Mysis: Length Mass Log Relationship")
+
+
+ggscatter(df_growth_gemma, x='Length_log', y='Mass_log', add = "reg.line", conf.int=TRUE, 
+          cor.coef = TRUE, cor.method = "spearman", xlab = "Length (mm)", ylab = "Mass (mg)",
+          title = "Gemma: Length Mass Log Relationship")
+
+
+#Create linear model.
+  
+  
+mysis_linear_model <- lm(Mass_log~Length_log,data=df_growth_mysis)
+gemma_linear_model <- lm(Mass_log~Length_log,data=df_growth_gemma) 
+
+model <- lm(Mass_log~Length_log*Feed_Group, df_growth)
+
+summary(model)  
+
+
+ggplot(df_growth, aes(x=Length_log, y=Mass_log,group=Feed_Group))+geom_point(aes(color=Feed_Group))+
+  geom_abline(intercept=)
+
+#since we know based on qq plots and shapiro test, our set isn't normal, we will transform teh data via log transformation
+#Do the transformed values pass the shapiro test?
+qqnorm()
+shapiro.test(resid(gemma_linear_model))
+
+
+
+#Using ANOVA to compare 
 
 ```
 
@@ -1444,8 +1494,13 @@ df_sex_sort %>%
 df_sex_sort %>%
   anova_test(Unknown ~ Group)
 
-#Not seeing any significant differences using ANOVA, which confirms what we saw
-# in the percentage comparison earlier
+
+t.test(df_sex_sort$Female~df_sex_sort$Group)
+t.test(df_sex_sort$Male~df_sex_sort$Group)
+t.test(df_sex_sort$Unknown~df_sex_sort$Group)
+
+#Not seeing any significant differences using ANOVA or Wlech Two Sample t-test,
+#which confirms what we saw in the percentage comparison earlier
 ```
 This second is a bit trickier. Rather than having one time data point to test
 We have taken survival from many different time points. First we will do some visualization
@@ -1497,7 +1552,7 @@ summary(mod2)
 
 #Now ANOVA
 
-anova(mod1_mysis,mod2_mysis)
+anova(mod1,mod2)
 
 #This ANOVA comparison shows us  that there is no significant result of removing
 #the interaction between the two graphs. 
@@ -1557,10 +1612,10 @@ ggscatter(df_survival, x="Date", y="Census", color= "Feed_Group", add="reg.line"
 model.metrics <- augment(mod2) %>%
 subset(.,select=c(-.hat,-.sigma,-.fitted))
 
-#shapiro wilk test if not significant (our case) tells us we can asusme normality
+#shapiro wilk test if not significant (our case) tells us we can assume normality
 shapiro_test(model.metrics$.resid)
 
-#now we figure equality of vareiance of the residuals using Leven's test for ANCOVA
+#now we figure equality of variance of the residuals using Leven's test for ANCOVA
 model.metrics %>% levene_test(.resid ~ Feed_Group) #this is also not significant
 
 #look at outliers for the dataset
@@ -1596,6 +1651,19 @@ pwc<-df_survival %>%
     )
 
   print(lp)  
+
+#ANOVA on final set
+ANOVA_df <- df_survival %>%
+  filter(.,Date=='2021-07-06')
+
+res2.aov <- ANOVA_df %>% anova_test(Census~Feed_Group) 
+
+get_anova_table(res2.aov)  
+
+#Compare the final set of data between groups using Welsh's T Test
+t.test(ANOVA_df$Census~ANOVA_df$Feed_Group)
+
+
 
 ```
 
