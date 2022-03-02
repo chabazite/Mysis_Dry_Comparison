@@ -23,6 +23,10 @@ library(qqplotr)
 library(EnvStats)
 library(rstatix)
 library(janitor)
+library(broom)
+library(datarium)
+library(ggplot2)
+library(ggpubr)
 
 ```
 
@@ -1474,31 +1478,124 @@ df_survival_summary_wide<-df_survival %>%
 ggplot(df_survival, aes(x=Date, y=Census, group = Tank, color = Feed_Group))+geom_point()+geom_smooth()
 
 
+
+#We will look to see if the regression lines of each  group is statistically 
+#different using ANCOVA. Feed_Group is out group variable, census is dependent,
+# and Date is our independent variable
+
+mod1 <- aov(Census~Date*Feed_Group, data=df_survival)
+summary(mod1)
+
+#The summary of these results show a significant effect of Census and Date, but
+#no significant interaction. Now we test for significant differences in the slope
+
+mod2 <- aov(Census~Date+Feed_Group, data=df_survival)
+summary(mod2)
+
+#This result shows that Feed_group as a significant impact on the dependent 
+#variable, which we interpret as a significant difference in intercepts.
+
+#Now ANOVA
+
+anova(mod1_mysis,mod2_mysis)
+
+#This ANOVA comparison shows us  that there is no significant result of removing
+#the interaction between the two graphs. 
+
+
+
+
 #Convert POSIXct format to numeric for regression model
 df_survival$Date.numeric <-as.numeric(df_survival$Date)/(24*60*60)
   
+#subset survival groups
+
+mysis_survival <-  df_survival %>%
+    filter(Feed_Group == 'Mysis')
+gemma_survival<-  df_survival %>%
+  filter(Feed_Group == 'Gemma')
 #Build linear regression models for both survival rates
 
-linear_Mod_Mysis <- df_survival %>%
-  filter(Feed_Group == 'Mysis') %>%
-  lm(Date.numeric ~ Census, data=.)
 
-linear_Mod_Gemma <- df_survival %>%
-  filter(Feed_Group == 'Gemma') %>%
-  lm(Date.numeric ~ Census, data=.)
+linear_Mod_Mysis <- mysis_survival %>%
+  lm(Census~Date.numeric, data=.)
+
+linear_Mod_Gemma <- gemma_survival %>%
+  lm(Census~Date.numeric, data=.)
 
 #summary for linear modals. The shift from POSIXct fixed the issues I was having
-
-
 summary(linear_Mod_Mysis)
+summary(linear_Mod_Gemma)
+
+#Summary indicates that Mysis and Gemma have similar intercepts 244.68,538.6,but gemma is higher which 
+#makes sense given their starting numbers were the same, but their slopes are different, eventually
+#Gemma will trace back at a higher y-intercept than Mysis. 
 
 
+plot(Census~Date.numeric, data = df_survival, type = 'n')+
+  points(mysis_survival$Date.numeric,mysis_survival$Census,pch=20)+
+  points(gemma_survival$Date.numeric,gemma_survival$Census,pch=1)+
+  abline(linear_Mod_Mysis,lty=1)+
+  abline(linear_Mod_Gemma,lty=2)+
+  legend("bottomleft", c("Mysis","Gemma"), lty=c(1,2), pch=c(20,1))
 
-#We will look to see if the regression lines of each summed group is statistically 
-#different using ANCOVA
+ggscatter(df_survival, x="Date", y="Census", color= "Feed_Group", add="reg.line")+
+  stat_regline_equation(aes(label = paste(..eq.label..,..rr.label..,sep="~~~~"), color=Feed_Group))
 
 
-#differences in survival at every time period from the previous time period
+#we can see that the models show a signficant difference between the two, with 
+#mysis having a smaller intercept, showing gemma has a higher  survival rate
+#
+
+#Looking at this a different way, we truely only care that there is a difference at 
+#the end of the high-aggression period. While it is interesting to see, where and
+#when there may be different trends or how one trend impacts the other, this is something
+#that requires a lot more study. 
+
+
+#We are going to test the normality of residuals. 
+model.metrics <- augment(mod2) %>%
+subset(.,select=c(-.hat,-.sigma,-.fitted))
+
+#shapiro wilk test if not significant (our case) tells us we can asusme normality
+shapiro_test(model.metrics$.resid)
+
+#now we figure equality of vareiance of the residuals using Leven's test for ANCOVA
+model.metrics %>% levene_test(.resid ~ Feed_Group) #this is also not significant
+
+#look at outliers for the dataset
+
+#Looking for standardized residuals greater than 3 in absolute value. Because we don't 
+#see any we can assume no outliers. 
+model.metrics %>%
+  filter(abs(.std.resid) > 3) %>%
+  as.data.frame()
+
+res.aov <- df_survival %>% anova_test(Census~Date+Feed_Group) 
+
+get_anova_table(res.aov)
+
+library(emmeans)
+
+#pairwise comparisons
+pwc<-df_survival %>%
+  emmeans_test(
+    Census~Feed_Group, covariate=Date,
+    p.adjust.method = "bonferroni")
+  get_emmeans(pwc)
+  
+#Line_Plot
+  
+  lp <- ggline(
+  get_emmeans(pwc), x = "Date", y = "emmean", 
+  color = "Feed_Group", palette = "jco"
+  ) +
+  geom_errorbar(
+    aes(ymin = conf.low, ymax = conf.high, color = Feed_Group), 
+    width = 0.1
+    )
+
+  print(lp)  
 
 ```
 
