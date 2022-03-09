@@ -2,13 +2,15 @@
 title: "Mysis_Dry_Compare"
 author: "Andrew Ingalls"
 date: "1/1/2022"
-output: html_document
+output: 
+  html_document:
+    df_print: paged
 ---
 #Mysis vs. Dry Feed Comparison Study
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+
 
 library(openxlsx)
 library(tidyverse)
@@ -27,8 +29,154 @@ library(broom)
 library(datarium)
 library(ggplot2)
 library(ggpubr)
+library(gt)
+library(extrafont)
+```
+
+## Creating Nutrition Chart
+```{r Nutrition = "png"}
+
+font_import(paths="../data/")
+
+
+
+yProduct <- c("Mysis", "Gemma")
+Protein <-c(.119,.57)
+Lipid <- c(.023,.15)
+Ash <- c(NA,.105)
+Fiber <- c(.005,.002)y
+Fatty_Acid <- c(.014,.03)
+Moisture <- c(.845, NA)
+
+nutrition <- data.frame(Product,Protein,Lipid,Ash,Fiber,Fatty_Acid,Moisture)
+
+nutrition_long<- nutrition %>%
+  pivot_longer(.,Protein:Moisture,names_to = "Nutrient", values_to = "Percentage")
+
+ggplot(nutrition_long, aes(x=Nutrient,y=Percentage, fill=Product))+geom_col(position="dodge")
+
+#Create table using grammar of tables package
+
+gt_table <-nutrition %>% gt()
+  
+#Change column labels
+gt_table <- gt_table %>%
+  cols_label(
+    Product = md("Product"),
+    Protein = md("Protein"),
+    Lipid  = md("Lipid"),
+    Ash =  md("Ash"),
+    Fiber = md("Fiber"),
+    Fatty_Acid =  md("Fatty Acid"),
+    Moisture = md("Moisture")
+  )
+
+#create header table
+gt_table <- gt_table %>%
+  tab_header (
+    title = "Nutrition of Mysis Shrimp vs. Skretting Gemma",
+    subtitle = "Macronutrient Percentage from Respective Companies"
+  )
+
+#format percentage
+gt_table <- gt_table %>%
+  fmt_percent(
+   c(Protein,Lipid,Ash,Fiber,Fatty_Acid,Moisture),
+   rows = everything(),
+   decimals = 1
+  )
+#format alignment
+gt_table <- gt_table %>%
+  cols_align(
+    align = "left",
+    columns = c("Product")
+  ) %>%
+  cols_align(
+    align = "center",
+    columns =  c("Protein","Lipid","Ash","Fiber","Fatty_Acid","Moisture")
+  )%>%
+  cols_width(
+    c("Product","Protein","Lipid","Ash","Fiber","Fatty_Acid","Moisture") ~ px(100)
+  ) %>%
+  opt_row_striping()
+
+#Adding footnote
+gt_table <- gt_table %>%
+  tab_footnote(
+    footnote = "Data not provided by manufacturer",
+    locations = cells_body(
+      columns = "Ash",
+      rows = is.na(Ash)
+    )
+  ) %>%
+  tab_footnote(
+    footnote = "Data not provided by manufacturer",
+    locations = cells_body(
+      columns = "Moisture",
+      rows = is.na(Moisture)
+    )
+  )
+
+#Text font, coloring, sizing, some borders gt is fun!
+
+gt_table %>%
+#title styling
+  tab_style(
+    style = list(
+      cell_text(
+        size =px(30),
+        weight = "normal",
+        align = "left",
+        font = "Bloomsbury"
+      )
+    ),
+    locations = list(
+      cells_title(groups = "title")
+    )
+  ) %>%
+#subtitle styling
+  tab_style(
+    style = list(
+      cell_text(
+        size =px(15),
+        align = "left"
+      )
+    ),
+    locations = list(
+      cells_title(groups = "subtitle")
+    ) 
+  ) %>% 
+#cell borders
+ tab_style(
+  style = list(
+   cell_text(
+    size = px(15)
+   ),
+   cell_borders(
+    sides = c("bottom", "top"),
+    color = 'black',
+    weight = px(1)
+   )
+  ),
+  locations = list(
+   cells_body(gt::everything())
+  )
+ ) %>%
+#Product styling  
+tab_style(
+  style = list(
+   cell_text(
+    font = "Bloomsbury", size = px(20), 
+    weight = "bold",
+    color = "#2f5375")
+  ),
+  location = list(
+   cells_body(columns = c(Product))
+  )
+ ) 
 
 ```
+
 
 ## Data Cleaning
 These data have some unecessary columns, some poorly titled columns, 
@@ -1437,6 +1585,14 @@ ggscatter(df_growth_gemma, x='Length_log', y='Mass_log', add = "reg.line", conf.
 mysis_linear_model <- lm(Mass_log~Length_log,data=df_growth_mysis)
 gemma_linear_model <- lm(Mass_log~Length_log,data=df_growth_gemma) 
 
+
+plot(mysis_linear_model)
+
+
+
+
+
+#model using one dataset for summary comparison
 model <- lm(Mass_log~Length_log*Feed_Group, df_growth)
 
 summary(model)  
