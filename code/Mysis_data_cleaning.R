@@ -14,14 +14,15 @@ df_sex_sort <-read.xlsx("data/Mysis_Pilot.xlsx", sheet="Sexing",detectDates=T)
 #checking data parameters
 head(df_growth)
 head(df_survival)
+head(df_sex_sort)
 
 
 #df_Growth Cleanup
 #remove unneeded columns from df_growth
 #removed age because samples were taken over the course of 3 days, which is why age-category was added
-df_growth <- subset(df_growth,select=-c(Time, Age))
+df_growth <- subset(df_growth,select=-c(Time, Age,Possible.Outliers, Condition.Factor))
 #rename columns for ease of use
-colnames(df_growth) <- c("Date", "Tank", "Age_Category","Feed_Group","Length_mm","Mass_mg","Condition_Factor")
+colnames(df_growth) <- c("Date", "Tank", "Age_Category","Feed_Group","Length_mm","Mass_mg")
 head(df_growth)
 
 #changes types and create factors where needed
@@ -61,6 +62,7 @@ df_growth <- df_growth %>%
 summary(df_growth)
 levels(df_growth$Tank)
 
+set <- setNames(new_tank_list, old_tank_list)
 
 #begin cleaning df_survival
 #batch change the tank locations based on the lists above which was the first mass move of tanks (readme.md)

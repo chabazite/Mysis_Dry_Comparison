@@ -40,11 +40,11 @@ font_import(paths="../data/")
 
 
 
-yProduct <- c("Mysis", "Gemma")
+Product <- c("Mysis", "Gemma")
 Protein <-c(.119,.57)
 Lipid <- c(.023,.15)
 Ash <- c(NA,.105)
-Fiber <- c(.005,.002)y
+Fiber <- c(.005,.002)
 Fatty_Acid <- c(.014,.03)
 Moisture <- c(.845, NA)
 
@@ -259,7 +259,7 @@ levels(df_growth$Tank)
 
 #Clean up df_survival
 
-#Remove columns that were just interm calculations in excel. Not needed
+#Remove columns that were just interim calculations in excel. Not needed
 df_survival <- subset(df_survival,select=-c(Lost,Total,Male,Female,Unknown)) 
 
 #rename columns for consistency
@@ -305,7 +305,7 @@ What does the confidence interval look like for both Feed Groups?
 Are we seeing any significant difference between the Feed Groups in the variables?
 
 
-```{r pressure, echo=FALSE}
+```{r EDA Growth, echo=FALSE}
 
 #histogram for Mass (Right skewed)
 ggplot(df_growth, aes(x=Mass_mg))+geom_histogram(aes(y=..density..))+
@@ -348,22 +348,50 @@ ggplot(df_growth, aes(x=Length_mm,y=Age_Category, fill=..x..))+
   theme(
     legend.position = 'none',
     panel.spacing = unit(0.1,'lines'),
-    strip.text.x = element_text(size=8)
+    strip.text.x = element_text(size=12)
   ) +
   facet_wrap(~Feed_Group,ncol=1)
 
-ggplot(df_growth, aes(x=Mass_mg,y=Age_Category, fill=..x..))+
-  geom_density_ridges_gradient(scale=3, rel_min_height=0.01)+
-  scale_fill_viridis(name="Mass_mg",option="C")+
-  labs(title='Mass of Surface Morph by Age')+
+ggplot(df_growth, aes(x=Mass_mg,y=Age_Category, fill=Feed_Group))+
+  geom_density_ridges(scale=2, rel_min_height=0.01)+
+  labs(title='Density Distributions', subtitle = "Mass of Surface Morph by Age", y = "Age Category", x = "Mass (mg)")+
   theme_ipsum()+
   theme(
-    legend.position = 'none',
     panel.spacing = unit(0.1,'lines'),
     strip.text.x = element_text(size=8)
   ) +
-  facet_wrap(~Feed_Group,ncol=1)
+  facet_wrap(~Feed_Group,ncol=1) + 
+  scale_color_brewer(palette="Dark2")
 
+p <- ggplot(df_growth, aes(x=Mass_mg,y=Age_Category, fill=factor(stat(quantile))))+
+  geom_density_ridges_gradient(
+    scale=2, 
+    rel_min_height=0.01,
+    calc_ecdf = TRUE,
+    quantiles = c(0.025,0.975)
+    )+
+    scale_fill_manual(
+    name = "Probability", values = c("#FF0000A0", "#A0A0A0A0", "#0000FFA0"),
+    labels = c("(0, 0.025]", "(0.025, 0.975]", "(0.975, 1]")
+    )+
+  labs(title='Density Distribution Tails', subtitle = " Mass of Surface Morph by Age", y = "Age Category", x = "Mass (mg)")+
+
+  theme(
+    axis.title = element_text(size = 20, face = "bold"),
+    panel.spacing = unit(0.1,'lines'),
+    strip.text.x = element_text(size=20)
+  ) +
+  facet_wrap(~Feed_Group,ncol=1) + 
+  scale_color_brewer(palette="Dark2")
+
+#Enlage and print graphic for medium
+library(ragg)
+
+pngfile <- fs::path(knitr::fig_path(),  "large_basis.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(p)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
 
 #Box plot of Mass vs Age for Groups
 
