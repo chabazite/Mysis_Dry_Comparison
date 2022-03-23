@@ -1056,8 +1056,6 @@ gemma_mass_cooksd_outlier_df
 #Create a dataframe for each group (mysis and gemma) that represents all distinct
 #outlier possibilities across the 4 methods
 
-#I will use dplyr anti-join to 
-
 #Mysis
 #create new summary df based on the first antijoin df
 mysis_mass_summary_outlier_df <- mysis_mass_boxplot_outlier_df
