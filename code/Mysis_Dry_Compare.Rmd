@@ -580,9 +580,10 @@ BP_LT <- ggplot(df_growth, aes(y=Length_mm, x=Age_Category)) +
 
 #Creating a Scatter Plot of Length Mass Relationship with Feed Groups as colors
 SP <- ggplot(df_growth, aes(x = Length_mm, y = Mass_mg, color = Feed_Group)) + 
-  geom_point(size=2) +
+  geom_point(size=2,alpha=0.7) +
   scale_color_brewer(palette="Dark2") +
   labs(title='Mass vs Length Relationship', 
+       subtitle = 'Feed Groups',
        y = "Mass (mg)", x = "Length (mm)") +
   theme_minimal() +
   theme(
@@ -598,12 +599,12 @@ SP <- ggplot(df_growth, aes(x = Length_mm, y = Mass_mg, color = Feed_Group)) +
 
 #Creating a Scatter Plot of Length Mass Relationship with Age as colors
 SP_Age <- ggplot(df_growth, aes(x = Length_mm, y = Mass_mg, color = Age_Category)) + 
-  geom_point(size=2) +
-  scale_color_brewer(palette="Set1") +
+  geom_point(size=2,alpha=0.7,aes(shape=Feed_Group)) +
+  scale_color_brewer(palette="YlGnBu",direction = -1) +
   labs(title='Mass vs Length Relationship Feed',
        subtitle='Age Categories',
        y = "Mass (mg)", x = "Length (mm)") +
-  theme_minimal() +
+  theme_dark() +
   theme(
     axis.title = element_text(size = 30),
     axis.text = element_text(size = 20),
