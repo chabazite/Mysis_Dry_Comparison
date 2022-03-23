@@ -31,6 +31,8 @@ library(ggplot2)
 library(ggpubr)
 library(gt)
 library(extrafont)
+library(ragg)
+library(gridExtra)
 ```
 
 ## Creating Nutrition Chart
@@ -320,26 +322,85 @@ ggplot(df_growth, aes(x=Length_mm))+geom_histogram(aes(y=..density..))+
   theme_bw()
 
 
-#Histogram by Groups
+#Denisty Graphs by Groups
 
 #MASS
-ggplot(df_growth, aes(x=Mass_mg, color=Feed_Group))+geom_histogram(aes(y=..density..),fill='white',alpha=0.5)+
-  geom_vline(aes(xintercept=mean(Mass_mg)), color="blue", linetype="dashed",size=1)+
-  geom_density(alpha=0.2,fill="#FF6666")+
-  theme_bw()+scale_color_brewer(palette="Dark2")
+D_M <- ggplot(df_growth, aes(x=Mass_mg))+
+  geom_density(alpha=0.5,aes(colour =  Feed_Group, fill = Feed_Group))+
+  scale_color_brewer(palette="Dark2")+ 
+    scale_fill_brewer(palette="Dark2")+
+labs(title='Density Distributions', subtitle = "Mass of Surface Morph by Feed Type",
+       y = "Density", x = "Mass (mg)")+
+theme_minimal()+
+  theme(
+    axis.title = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    plot.title = element_text(size = 40, face = "bold"),
+    plot.subtitle = element_text(size = 25),
+    legend.title = element_text(size =20),
+    legend.text = element_text(size =15)
+  ) 
+
 #Length
-ggplot(df_growth, aes(x=Length_mm, color=Feed_Group))+geom_histogram(aes(y=..density..),fill="white",alpha=0.5)+
-  geom_vline(aes(xintercept=mean(Length_mm)), color="blue", linetype="dashed",size=1)+
-  geom_density(alpha=0.2,fill="#FF6666")+
-  theme_bw()+scale_color_brewer(palette="Dark2")
-#Histogram Plot of Mass for Ages and Groups
-ggplot(df_growth, aes(x=Mass_mg, color=Feed_Group))+geom_density(alpha=0.2,fill='grey') + 
-  facet_wrap(~Age_Category)
+D_L <- ggplot(df_growth, aes(x=Length_mm))+
+  geom_density(alpha=0.5,aes(colour =  Feed_Group, fill = Feed_Group))+
+  scale_color_brewer(palette="Dark2")+
+    scale_fill_brewer(palette="Dark2")+
+labs(title='Density Distributions', subtitle = "Length of Surface Morph by Feed Type",
+       y = "Density", x = "Length (mm)")+
+theme_minimal()+
+  theme(
+    axis.title = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    plot.title = element_text(size = 40, face = "bold"),
+    plot.subtitle = element_text(size = 25),
+    legend.title = element_text(size =20),
+    legend.text = element_text(size =15)
+) 
 
-#Histogram Plot of Length for Ages and Groups
-ggplot(df_growth, aes(x=Length_mm, color=Feed_Group))+geom_density(alpha=0.2,fill='grey') + 
-  facet_wrap(~Age_Category)
 
+#Density Plot of Mass for Ages and Groups
+D_A_M <- ggplot(df_growth, aes(x=Mass_mg))+
+  geom_density(alpha=0.5, aes(fill=Feed_Group,color=Feed_Group)) + 
+  facet_wrap(~Age_Category)+
+    scale_color_brewer(palette="Dark2")+
+    scale_fill_brewer(palette="Dark2")+
+labs(title='Density Distributions', subtitle = "Mass of Surface Morph by Age & Feed Type",
+       y = "Density", x = "Mass (mg)")+
+theme_minimal()+
+  theme(
+    axis.title = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    plot.title = element_text(size = 40, face = "bold"),
+    plot.subtitle = element_text(size = 25),
+    legend.title = element_text(size =20),
+    legend.text = element_text(size =15),
+     strip.text.x = element_text(size=20)
+) 
+
+
+#Density Plot of Length for Ages and Groups
+D_A_L <- ggplot(df_growth, aes(x=Length_mm))+
+  geom_density(alpha=0.5, aes(fill=Feed_Group, color=Feed_Group))+ 
+  facet_wrap(~Age_Category)+
+    scale_color_brewer(palette="Dark2")+
+    scale_fill_brewer(palette="Dark2")+
+labs(title='Density Distributions', subtitle = "Length of Surface Morph by Age & Feed Type",
+       y = "Density", x = "Length (mm)")+
+theme_minimal()+
+  theme(
+    axis.title = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    plot.title = element_text(size = 40, face = "bold"),
+    plot.subtitle = element_text(size = 25),
+    legend.title = element_text(size =20),
+    legend.text = element_text(size =15),
+    strip.text.x = element_text(size=20)
+) 
+
+
+
+#Ridgeline plots of length for ages and groups
 ggplot(df_growth, aes(x=Length_mm,y=Age_Category, fill=..x..))+
   geom_density_ridges_gradient(scale=3, rel_min_height=0.01)+
   scale_fill_viridis(name="Length_mm",option="C")+
@@ -352,18 +413,26 @@ ggplot(df_growth, aes(x=Length_mm,y=Age_Category, fill=..x..))+
   ) +
   facet_wrap(~Feed_Group,ncol=1)
 
+
+#Ridgeline Graph Mass for ages and feed groups
 ggplot(df_growth, aes(x=Mass_mg,y=Age_Category, fill=Feed_Group))+
   geom_density_ridges(scale=2, rel_min_height=0.01)+
   labs(title='Density Distributions', subtitle = "Mass of Surface Morph by Age", y = "Age Category", x = "Mass (mg)")+
-  theme_ipsum()+
+theme_minimal()+
   theme(
+        legend.position = 'none',
+    axis.title = element_text(size = 30),
+     axis.text = element_text(size = 20),
+    plot.title = element_text(size = 40, face = "bold"),
+    plot.subtitle = element_text(size = 25),
     panel.spacing = unit(0.1,'lines'),
-    strip.text.x = element_text(size=8)
+    strip.text.x = element_text(size=30)
   ) +
   facet_wrap(~Feed_Group,ncol=1) + 
   scale_color_brewer(palette="Dark2")
 
-p <- ggplot(df_growth, aes(x=Mass_mg,y=Age_Category, fill=factor(stat(quantile))))+
+#Ridgeline Graph with 95% and 5% tails highlighted
+ggplot(df_growth, aes(x=Mass_mg,y=Age_Category, fill=factor(stat(quantile))))+
   geom_density_ridges_gradient(
     scale=2, 
     rel_min_height=0.01,
@@ -375,31 +444,67 @@ p <- ggplot(df_growth, aes(x=Mass_mg,y=Age_Category, fill=factor(stat(quantile))
     labels = c("(0, 0.025]", "(0.025, 0.975]", "(0.975, 1]")
     )+
   labs(title='Density Distribution Tails', subtitle = " Mass of Surface Morph by Age", y = "Age Category", x = "Mass (mg)")+
-
+  theme_dark()+
   theme(
-    axis.title = element_text(size = 20, face = "bold"),
+    axis.title = element_text(size = 20),
+    plot.title = element_text(size = 30, face = "bold"),
+    plot.subtitle = element_text(size = 16),
     panel.spacing = unit(0.1,'lines'),
     strip.text.x = element_text(size=20)
   ) +
   facet_wrap(~Feed_Group,ncol=1) + 
   scale_color_brewer(palette="Dark2")
 
-#Enlage and print graphic for medium
-library(ragg)
-
-pngfile <- fs::path(knitr::fig_path(),  "large_basis.png")
-agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
-plot(p)
-invisible(dev.off())
-knitr::include_graphics(pngfile)
 
 #Box plot of Mass vs Age for Groups
 
-ggplot(df_growth,aes(y=Mass_mg, x=Age_Category,fill=Feed_Group)) + geom_boxplot(outlier.color='red',outlier.shape=1)+geom_point(position=position_dodge(width=0.75))
+BP_M <- ggplot(df_growth,aes(y=Mass_mg, x=Age_Category)) + 
+   geom_boxplot(lwd=2, 
+               fill='grey', 
+               aes(color=Feed_Group), 
+               outlier.colour = NULL,
+               outlier.size = 3) +
+  scale_color_brewer(palette="Dark2") +
+  labs(title="Mass of Surface Morph by Age & Feed Type", 
+       subtitle = 'Box Plot' ,
+       y = "Mass (mg)", x = "Age Category") +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    plot.title = element_text(size = 40, face = "bold"),
+    plot.subtitle = element_text(size = 25),
+    legend.title = element_text(size =20),
+    legend.text = element_text(size =15),
+    legend.key.size = unit(2,"cm"),
+    strip.text.x = element_text(size=20)
+    ) 
+
 
 #Box plot of Length vs Age for Groups
 
-ggplot(df_growth,aes(y=Length_mm, x=Age_Category,fill=Feed_Group)) + geom_boxplot(outlier.color='red',outlier.shape=1)
+BP_L <- ggplot(df_growth,aes(y=Length_mm, x=Age_Category)) + 
+  geom_boxplot(lwd=2, 
+               fill='grey', 
+               aes(color=Feed_Group), 
+               outlier.colour = NULL,
+               outlier.size = 3) +
+  scale_color_brewer(palette="Dark2") +
+  labs(title='Length of Surface Morph by Age & Feed Type', 
+       subtitle = "Box Plot",
+       y = "Length (mm)", x = "Age Category") +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    plot.title = element_text(size = 40, face = "bold"),
+    plot.subtitle = element_text(size = 25),
+    legend.title = element_text(size =20),
+    legend.text = element_text(size =15),
+    legend.key.size = unit(2,"cm"),
+    strip.text.x = element_text(size=20)
+    ) 
+
 
 #Violin plot
 ggplot(df_growth,aes(y=Mass_mg, x=Age_Category,fill=Feed_Group)) + geom_violin()+stat_summary(fun=median,geom='point',size=2,color='red')+
@@ -413,7 +518,186 @@ ggplot(df_growth, aes(y=Age_Category,x=Mass_mg, color=Feed_Group))+geom_point(al
 ggplot(df_growth, aes(y=Age_Category,x=Length_mm, color=Feed_Group))+geom_point(alpha=0.5)
 
 
+#understanding Tanks and Age
+ggplot(df_growth, aes(y=Mass_mg, x=Tank,color=Age_Category)) + geom_boxplot(aes(color=Age_Category))+
+ theme_minimal()+
+  theme(
+        legend.position = 'none',
+    
+  ) +
+  facet_wrap(~Feed_Group,ncol=1)
+
+#looking at mass vs age through the lens of our different samples and groups
+
+BP_MT <- ggplot(df_growth, aes(y=Mass_mg, x=Age_Category)) + 
+  geom_boxplot(lwd=1,
+               fill = 'grey',
+               aes(color= Tank), 
+               outlier.colour = NULL,
+               outlier.size = 2) +
+  scale_color_brewer(palette="Dark2") +
+  labs(title='Mass by Age, Tank Location, & Feed Type', 
+       subtitle = "Box Plot",
+       y = "Mass (mg)", x = "Age Category") +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    plot.title = element_text(size = 40, face = "bold"),
+    plot.subtitle = element_text(size = 25),
+    legend.title = element_text(size =20),
+    legend.text = element_text(size =15),
+    legend.key.size = unit(2,"cm"),
+    strip.text.x = element_text(size=20)
+    ) +
+  facet_wrap(~Feed_Group,ncol=1)
+
+
+#Same graph but using Length
+
+BP_LT <- ggplot(df_growth, aes(y=Length_mm, x=Age_Category)) + 
+  geom_boxplot(lwd=1,
+               fill = 'grey',
+               aes(color= Tank), 
+               outlier.colour = NULL,
+               outlier.size = 2) +
+  scale_color_brewer(palette="Dark2") +
+  labs(title='Length by Age, Tank Location, & Feed Type', 
+       subtitle = "Box Plot",
+       y = "Length (mm)", x = "Age Category") +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    plot.title = element_text(size = 40, face = "bold"),
+    plot.subtitle = element_text(size = 25),
+    legend.title = element_text(size =20),
+    legend.text = element_text(size =15),
+    legend.key.size = unit(2,"cm"),
+    strip.text.x = element_text(size=20)
+    ) +
+  facet_wrap(~Feed_Group,ncol=1)
+
+#Creating a Scatter Plot of Length Mass Relationship with Feed Groups as colors
+SP <- ggplot(df_growth, aes(x = Length_mm, y = Mass_mg, color = Feed_Group)) + 
+  geom_point(size=2) +
+  scale_color_brewer(palette="Dark2") +
+  labs(title='Mass vs Length Relationship', 
+       y = "Mass (mg)", x = "Length (mm)") +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    plot.title = element_text(size = 40, face = "bold"),
+    plot.subtitle = element_text(size = 25),
+    legend.title = element_text(size =25),
+    legend.text = element_text(size =20),
+    legend.key.size = unit(2,"cm"),
+    strip.text.x = element_text(size=20)
+    )
+
+#Creating a Scatter Plot of Length Mass Relationship with Age as colors
+SP_Age <- ggplot(df_growth, aes(x = Length_mm, y = Mass_mg, color = Age_Category)) + 
+  geom_point(size=2) +
+  scale_color_brewer(palette="Set1") +
+  labs(title='Mass vs Length Relationship Feed',
+       subtitle='Age Categories',
+       y = "Mass (mg)", x = "Length (mm)") +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    plot.title = element_text(size = 40, face = "bold"),
+    plot.subtitle = element_text(size = 25),
+    legend.title = element_text(size =25),
+    legend.text = element_text(size =20),
+    legend.key.size = unit(2,"cm"),
+    strip.text.x = element_text(size=20)
+    )
 ```
+
+```{r Print EDA Graphics}
+
+
+
+#Density Mass by Category Plot
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/density_mass.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(D_M)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+
+
+
+#Density Length by Category Plot
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/density_length.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(D_L)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+
+
+
+
+#Density Mass by Age and Category Plot
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Density_Age_Mass.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(D_A_M)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+
+
+#Density Length by Age and Category Plot
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Density_Age_Length.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(D_A_L)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+
+#Box PLots
+
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/BoxPlot_Mass.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(BP_M)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/BoxPlot_Length.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(BP_L)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/BoxPlot_Tanks_Mass.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(BP_MT)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/BoxPlot_Tanks_Length.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(BP_LT)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+
+#Printing Length Mass Relationship Scatter Plot
+
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/LMR_SP.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(SP)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/LMR_SP_Age.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(SP_Age)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+```
+
+
+
+
 ## Mass Boxplot Outliers
 Lets take a look at our outliers from the previous analysis
 
@@ -498,7 +782,7 @@ for (i in 1:nrow(gemma_outliers_mass)) {
 
 ##Normal Probability Plot
 In order to understand our outliers, we need to assume that there is a normal
-distribution of data. We will check our normality assumoption with a normal probabilty 
+distribution of data. We will check our normality assumption with a normal probabilty 
 plot.
 
 ```{r Normal Probability Plot of Each Age Category for Mass and Length}
@@ -945,11 +1229,7 @@ ggplot(growth_gemma_outlier_df, aes(y=Mass_mg, x=Age_Category)) + geom_boxplot()
   geom_point(aes(color = Mass_Outlier))+scale_color_brewer(palette="Set1") + theme_classic()
 
 
-ggplot(growth_mysis_outlier_df, aes(y=Mass_mg, x=Tank,color=Age_Category)) + geom_boxplot(aes(color=Age_Category))+
- theme_classic()
 
-ggplot(growth_mysis_outlier_df, aes(y=Mass_mg, x=Age_Category,color=Tank)) + geom_boxplot(aes(color=Tank))+
-  theme_classic()
 ```
 
 
