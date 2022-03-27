@@ -519,13 +519,15 @@ ggplot(df_growth, aes(y=Age_Category,x=Length_mm, color=Feed_Group))+geom_point(
 
 
 #understanding Tanks and Age
-ggplot(df_growth, aes(y=Mass_mg, x=Tank,color=Age_Category)) + geom_boxplot(aes(color=Age_Category))+
+df_growth %>%
+  filter(Feed_Group == "Mysis") %>%
+ggplot(., aes(y=Mass_mg, x=Age_Category,color=Age_Category)) + geom_boxplot(aes(color=Age_Category))+
  theme_minimal()+
   theme(
         legend.position = 'none',
     
   ) +
-  facet_wrap(~Feed_Group,ncol=1)
+  facet_wrap(Tank~Feed_Group)
 
 #looking at mass vs age through the lens of our different samples and groups
 
@@ -896,7 +898,7 @@ for (AgeCategory in levels(growth_mysis_outlier_df$Age_Category)){
 
 ## Mass Generalized ESD Test for Outliers
 Generalized ESD test is used to detect one or more outliers in a univariate dataset
-for approximate normal distribution. We do not have to specify the number of outliers, just an upper bound.
+for approximate normal distribution (removing the influence of the outliers). We do not have to specify the number of outliers, just an upper bound. 
 
 ```{r Rosner's GESD Test for Mass Outliers}
 #Create empty dataframe
@@ -1805,8 +1807,23 @@ df_mysis_length_one_method<-mysis_length_outlier_method_df %>%
   filter(Sample_ID %in% df_outliers_one_method$Sample_ID)
 
 #Plotting only te outlines that received 1 method for both length and mass combined
-ggplot(growth_mysis_nofactor_outlier_df, aes(x=Length_mm,y=Mass_mg, color=Total_Outlier==1)) + 
-         geom_point()+scale_color_brewer(palette="Set1")
+ggplot(growth_mysis_nofactor_outlier_df, aes(x=Length_mm,y=Mass_mg, color=Total_Outlier==1)) +geom_point() + 
+  
+  scale_color_brewer(palette="Dark2") +
+  labs(title='Length by Age, Tank Location, & Feed Type', 
+       subtitle = "Box Plot",
+       y = "Length (mm)", x = "Age Category") +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    plot.title = element_text(size = 40, face = "bold"),
+    plot.subtitle = element_text(size = 25),
+    legend.title = element_text(size =20),
+    legend.text = element_text(size =15),
+    legend.key.size = unit(2,"cm"),
+    strip.text.x = element_text(size=20)
+    )
 
 #plotting outliers that received one method of detection for mass
 ggplot(growth_mysis_nofactor_outlier_df, aes(y=Mass_mg,x=Age_Category)) + 
@@ -1820,6 +1837,106 @@ ggplot(growth_mysis_nofactor_outlier_df, aes(y=Length_mm,x=Age_Category)) +
 
 ```
 
+```{r Medium Visuals}
+
+
+
+# We have made Boxplots, percentile, Rosner, Cooks Distance, and Grubbs. 
+
+growth_mysis_outlier_df
+growth_gemma_outlier_df
+
+growth_mysis_outlier_length_mass_df<- growth_mysis_outlier_df
+growth_gemma_outlier_length_mass_df <- growth_gemma_outlier_df
+
+
+
+#factors have to be converted to strings first, or the factor level will transform as numeric
+growth_mysis_outlier_length_mass_df$Mass_Outlier <- as.numeric(as.character(growth_mysis_outlier_length_mass_df$Mass_Outlier))
+growth_mysis_outlier_length_mass_df$length_Outlier <- as.numeric(as.character(growth_mysis_outlier_length_mass_df$length_Outlier))
+#gemma
+growth_gemma_outlier_length_mass_df$Mass_Outlier <- as.numeric(as.character(growth_gemma_outlier_length_mass_df$Mass_Outlier))
+growth_gemma_outlier_length_mass_df$length_Outlier <- as.numeric(as.character(growth_gemma_outlier_length_mass_df$length_Outlier))
+
+
+#create a sum of both length and mass outliers to see which observations are most impacted
+growth_mysis_outlier_length_mass_df <-  growth_mysis_outlier_length_mass_df %>%
+ mutate(Total_Outliers = select(., Mass_Outlier:length_Outlier) %>% rowSums(na.rm =TRUE))
+
+#create a sum of both length and mass outliers to see which observations are most impacted
+growth_gemma_outlier_length_mass_df <-  growth_gemma_outlier_length_mass_df %>%
+ mutate(Total_Outliers = select(., Mass_Outlier:length_Outlier) %>% rowSums(na.rm =TRUE))
+
+
+#refactor the total to get discrete values for ploting
+
+growth_mysis_outlier_length_mass_df$Total_Outlier <-factor(growth_mysis_outlier_length_mass_df$Total_Outlier, 
+                                 levels = c("8","7","6","5","4","3","2","1","0"))
+
+growth_gemma_outlier_length_mass_df$Total_Outlier <-factor(growth_gemma_outlier_length_mass_df$Total_Outlier, 
+                                 levels = c("8","7","6","5","4","3","2","1","0"))
+
+
+#Using the summary of values that were flagged as outliers in both length and mass features, I 
+#create a scatter plot that indicates where these outliers are located and how many of the 
+#methods detected said value (e.g. 8 means the values was flagged by 4 features in mass and 4 features for length)
+M_O_S <- ggplot(growth_mysis_outlier_length_mass_df, aes(y=Mass_mg, x=Length_mm, color= Total_Outlier ))+ 
+  geom_point(size=2)+
+  scale_color_brewer(palette="Set1")+
+  ylim(y=c(0,7000))+xlim(c(20,65))+
+  labs(title='Mysis Length vs. Mass Highlighting Outliers',
+       subtitle='Outlier detection count for both mass and length',
+       y = "Mass (mg)", x = "Length (mm)") +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    plot.title = element_text(size = 40, face = "bold"),
+    plot.subtitle = element_text(size = 25),
+    legend.title = element_text(size =25),
+    legend.text = element_text(size =20),
+    legend.key.size = unit(2,"cm"),
+    strip.text.x = element_text(size=20)
+    )
+
+
+#Using the summary of values that were flagged as outliers in both length and mass features, I 
+#create a scatter plot that indicates where these outliers are located and how many of the 
+#methods detected said value (e.g. 8 means the values was flagged by 4 features in mass and 4 features for length)
+G_O_S <- ggplot(growth_gemma_outlier_length_mass_df, aes(y=Mass_mg, x=Length_mm, color= Total_Outlier ))+
+   geom_point(size=2)+
+  scale_color_brewer(palette="Dark2")+
+  ylim(y=c(0,7000))+xlim(c(20,65))+
+  labs(title='Gemma Length vs. Mass Highlighting Outliers',
+       subtitle='Outlier detection count for both mass and length',
+       y = "Mass (mg)", x = "Length (mm)") +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    plot.title = element_text(size = 40, face = "bold"),
+    plot.subtitle = element_text(size = 25),
+    legend.title = element_text(size =25),
+    legend.text = element_text(size =20),
+    legend.key.size = unit(2,"cm"),
+    strip.text.x = element_text(size=20)
+    )
+
+#saving png files for medium post
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Mysis_Outlier_summary.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(M_O_S)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Gemma_Outlier_summary.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(G_O_S)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+
+
+```
 
 ## Linear Model
 Based on our outlier plots, we can be pretty certain a linear model is not appropriate
@@ -1934,21 +2051,86 @@ df_sex_sort
 #Summarize the two groups Gemma & Mysis into total female, male, and unknown
 #create a total column for each group
 # turn sum into percentage for easier comparison between groups
-df_sex_summary <-  df_sex_sort %>%
-  group_by(Group) %>%
-  summarise(female=sum(Female),male=sum(Male),unknown=sum(Unknown)) %>%
-   mutate(Total = select(., female:unknown) %>% rowSums(na.rm =TRUE)) %>%
-   mutate(female = round(female/Total,2),male = round(male/Total,2),unknown =
-            round(unknown/Total,2))
+ SS <- df_sex_sort %>%
+   mutate(Total = rowSums(df_sex_sort[4:6])) %>%
+    pivot_longer(.,Female:Unknown, names_to = "sex",values_to = "Census") %>%
+  group_by(Group,sex) %>%
+  summarise(Census=sum(Census), Total=sum(Total),Percent_total=(Census/Total)*100) %>%
+  ggplot(.,aes(x=sex,y=Percent_total,fill=Group))+geom_col(position="dodge2")+
+  scale_color_brewer(palette="Dark2") +
+  labs(title='Fish Sex Sort by Groups', 
+       y = "Percent of Group", x = "Sex") +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    plot.title = element_text(size = 40, face = "bold"),
+    legend.title = element_text(size =20),
+    legend.text = element_text(size =15),
+    legend.key.size = unit(2,"cm"),
+    strip.text.x = element_text(size=20)
+    )
+ 
+  #saving png files for medium post
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Sex_sort_percent.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(SS)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+  
+
+#tidy data, summarize for mean and standard error
+df_sex_mean<-df_sex_sort %>%
+   pivot_longer(.,Female:Unknown, names_to = "sex",values_to = "Census") %>%
+  group_by(Group,sex) %>%
+  summarise(Mean=mean(Census),Standard_Error=sd(Census)/sqrt(length(Census)))
+#create a dataframe using aggregate of the total count for each group
+Total<- aggregate(df_sex_mean$Mean, by=list(Group=df_sex_mean$Group), FUN=sum)
+#using the total count to normalize mean and standard error, iterate through rows
+#if the row is a mysis row, divide the mean and error by the mysis total
+#otherwise divide by the gemma total.
+for (i in 1:length(df_sex_mean$Group)){
+    if (df_sex_mean$Group[i] == "Mysis") {
+      df_sex_mean$Mean[i] <- df_sex_mean$Mean[i]/Total$x[2]
+      df_sex_mean$Standard_Error[i] <- df_sex_mean$Standard_Error[i]/Total$x[2]
+  } else {
+     df_sex_mean$Mean[i] <- df_sex_mean$Mean[i]/Total$x[1]
+     df_sex_mean$Standard_Error[i] <- df_sex_mean$Standard_Error[i]/Total$x[1]
+  }
+}
+
+  
+ S_A <- ggplot(df_sex_mean,aes(x=sex,y=Mean,fill=Group)) + 
+   geom_col(position="dodge2") +
+   geom_errorbar(df_sex_mean,
+                 aes(ymin=Mean-Standard_Error,
+                     ymax=Mean+Standard_Error),position="dodge2") +
+  scale_color_brewer(palette="Dark2") +
+  labs(title='Fish Sex Sort by Groups', 
+       y = "Percent of Group", x = "Sex") +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    plot.title = element_text(size = 40, face = "bold"),
+    legend.title = element_text(size =20),
+    legend.text = element_text(size =15),
+    legend.key.size = unit(2,"cm"),
+    strip.text.x = element_text(size=20)
+    )
+ 
+  #saving png files for medium post
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Sex_sort_mean.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(S_A)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+  
+  
 
 #From a first glance there is hardly any difference beteween the two groups in terms
 #of sex, but we will run some Significance testing to make sure. An ANOVA is appropriate
 #in these situations
-
-#Summary Stats: Mean and sd
-df_sex_sort %>%
-  group_by(Group) %>%
-  get_summary_stats(Female,Male,Unknown, type = "mean_sd")
 
 #ANOVA
 df_sex_sort %>%
@@ -1965,13 +2147,121 @@ t.test(df_sex_sort$Female~df_sex_sort$Group)
 t.test(df_sex_sort$Male~df_sex_sort$Group)
 t.test(df_sex_sort$Unknown~df_sex_sort$Group)
 
-#Not seeing any significant differences using ANOVA or Wlech Two Sample t-test,
+#Not seeing any significant differences using ANOVA or Welech Two Sample t-test,
 #which confirms what we saw in the percentage comparison earlier
 ```
 This second is a bit trickier. Rather than having one time data point to test
 We have taken survival from many different time points. First we will do some visualization
 Next, We can take the overall reduction in survival, to see which group had higher survivors
 Then we can see if there was any significant timeperiods.
+
+```{r Survival Viz}
+#individual tank survival grouped by feed type
+S_T <- ggplot(df_survival, aes(x=Date, y=Census, group = Tank, color = Feed_Group)) +
+  geom_line(size = 2) + geom_point(size=4) +
+  scale_color_brewer(palette="Dark2") +
+  labs(title='Fish Census per Sample Tank over Time', 
+       y = "Fish Census", x = "Date") +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    plot.title = element_text(size = 40, face = "bold"),
+    legend.title = element_text(size =20),
+    legend.text = element_text(size =15),
+    legend.key.size = unit(2,"cm"),
+    strip.text.x = element_text(size=20)
+    )
+
+#Summarize the data by feedgroup and date, using average
+#Summarize standard error of census per group per timepoint
+#plot census with standard error against time using feed groups
+S_A <- df_survival %>%
+  group_by(Feed_Group,Date) %>%
+  summarise(Census_avg=mean(Census), 
+            Standard_Error=sd(Census)/sqrt(length(Census))) %>%
+  ggplot(.,aes(x=Date,y=Census_avg,color=Feed_Group)) +geom_line(size=2)+
+  geom_point(size = 4)+ geom_errorbar(aes(ymin=Census_avg-Standard_Error,
+                                  ymax=Census_avg+Standard_Error),width=5) +
+  scale_color_brewer(palette="Dark2") +
+  labs(title='Average Feed Group Census over Time', 
+       subtitle = 'Standard Error for Comparison',
+       y = "Fish Census", x = "Date") +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    plot.title = element_text(size = 40, face = "bold"),
+    plot.subtitle = element_text(size = 25, face = "italic"),
+    legend.title = element_text(size =20),
+    legend.text = element_text(size =15),
+    legend.key.size = unit(2,"cm"),
+    strip.text.x = element_text(size=20)
+    )
+
+
+
+
+#saving png files for medium post
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Survival_Tanks.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(S_T)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Survival_Avg.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(S_A)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+
+
+
+#plot the difference in means from one census event to the next
+df_survival %>%
+  group_by(Feed_Group,Date) %>%
+  summarise(Census = mean(Census)) %>%
+  summarise(Census_Dead = diff(Census))%>%
+  ggplot(.,aes(y = Census_Dead, color=Feed_Group))+geom_bar()
+
+
+df_fake <- data.frame(Date = as.Date(c("2020-10-15", "2020-12-05","2021-01-29",
+                      "2021-03-13","2021-04-30","2021-07-06", "2020-10-15", "2020-12-05","2021-01-29",
+                      "2021-03-13","2021-04-30","2021-07-06")),
+                      Feed_Group =c("Gemma","Gemma","Gemma","Gemma","Gemma","Gemma",
+                                "Mysis","Mysis","Mysis","Mysis","Mysis","Mysis"),
+                      Census_Dead = c(0,6,1.25,.5,.5,.5,0,3.5,0.167,.167,.3,.45))
+
+ggplot(df_fake,aes(x=Date,y=Census_Dead,fill=Feed_Group))+
+  geom_col(position="dodge2")+ geom_line()+ scale_color_brewer(palette="Dark2") 
+  
+
+D_B<- ggplot(df_fake,aes(x=Date,y=Census_Dead,fill=Feed_Group))+
+  geom_col(position="dodge2")+ geom_line(aes(y=Census_Dead)+ scale_color_brewer(palette="Dark2") 
+  labs(title='Average Deaths over Time', 
+       subtitle = 'Per Event',
+       y = "Fish Deaths", x = "Date") +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    plot.title = element_text(size = 40, face = "bold"),
+    plot.subtitle = element_text(size = 25, face = "italic"),
+    legend.title = element_text(size =20),
+    legend.text = element_text(size =15),
+    legend.key.size = unit(2,"cm"),
+    strip.text.x = element_text(size=20)
+    )
+
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Deaths_Bar.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(D_B)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+```
+
+
+
 ```{r Survival Significance}
 #Summarize data by feedgroup and date, the sum each group date, then plot
 df_survival %>%
@@ -1979,7 +2269,7 @@ df_survival %>%
     summarise(Census=sum(Census)) %>%
   ggplot(.,aes(x=Date,y=Census,color=Feed_Group)) +geom_line()
 
-#Summarize the data like above using average
+#Summarize the data by feedgroup and date, using average
 df_survival %>%
   group_by(Feed_Group,Date) %>%
     summarise(Census=mean(Census)) %>%
