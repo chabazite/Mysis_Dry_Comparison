@@ -2399,11 +2399,34 @@ t.test(ANOVA_df$Census~ANOVA_df$Feed_Group)
 
 
 df_fecundity<-read.xlsx("../data/Mysis_Pilot.xlsx", sheet="Exp 2",detectDates=T)
+df_fecundity$Sample.ID <- factor(df_fecundity$Sample.ID)
+df_fecundity$Group <- factor(df_fecundity$Group)
+summary(df_fecundity)
 
-ggplot(df_fecundity, aes(Group,Embryo.Viable)) + 
-  geom_boxplot()  
+ggplot(df_fecundity, aes(x=Sample.ID,Embryo.Viable,fill=Group)) + geom_col() +
+    scale_color_brewer(palette="Dark2") +
+  labs(title='Average Feed Group Census over Time', 
+       subtitle = 'Standard Error for Comparison',
+       y = "Fish Census", x = "Date") +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    plot.title = element_text(size = 40, face = "bold"),
+    plot.subtitle = element_text(size = 25, face = "italic"),
+    legend.title = element_text(size =20),
+    legend.text = element_text(size =15),
+    legend.key.size = unit(2,"cm"),
+    strip.text.x = element_text(size=20)
+    )
+
   
   
+
+
+
+
+
   labs(title="Significance Testing") + 
   labs( x="Groups", y = "Total Viable Embryos per breeding day") + 
   theme(
