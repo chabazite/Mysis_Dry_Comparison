@@ -2051,33 +2051,6 @@ df_sex_sort
 #Summarize the two groups Gemma & Mysis into total female, male, and unknown
 #create a total column for each group
 # turn sum into percentage for easier comparison between groups
- SS <- df_sex_sort %>%
-   mutate(Total = rowSums(df_sex_sort[4:6])) %>%
-    pivot_longer(.,Female:Unknown, names_to = "sex",values_to = "Census") %>%
-  group_by(Group,sex) %>%
-  summarise(Census=sum(Census), Total=sum(Total),Percent_total=(Census/Total)*100) %>%
-  ggplot(.,aes(x=sex,y=Percent_total,fill=Group))+geom_col(position="dodge2")+
-  scale_color_brewer(palette="Dark2") +
-  labs(title='Fish Sex Sort by Groups', 
-       y = "Percent of Group", x = "Sex") +
-  theme_minimal() +
-  theme(
-    axis.title = element_text(size = 30),
-    axis.text = element_text(size = 20),
-    plot.title = element_text(size = 40, face = "bold"),
-    legend.title = element_text(size =20),
-    legend.text = element_text(size =15),
-    legend.key.size = unit(2,"cm"),
-    strip.text.x = element_text(size=20)
-    )
- 
-  #saving png files for medium post
-pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Sex_sort_percent.png")
-agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
-plot(SS)
-invisible(dev.off())
-knitr::include_graphics(pngfile)
-  
 
 #tidy data, summarize for mean and standard error
 df_sex_mean<-df_sex_sort %>%
@@ -2102,8 +2075,7 @@ for (i in 1:length(df_sex_mean$Group)){
   
  S_A <- ggplot(df_sex_mean,aes(x=sex,y=Mean,fill=Group)) + 
    geom_col(position="dodge2") +
-   geom_errorbar(df_sex_mean,
-                 aes(ymin=Mean-Standard_Error,
+   geom_errorbar(aes(ymin=Mean-Standard_Error,
                      ymax=Mean+Standard_Error),position="dodge2") +
   scale_color_brewer(palette="Dark2") +
   labs(title='Fish Sex Sort by Groups', 
@@ -2421,5 +2393,34 @@ t.test(ANOVA_df$Census~ANOVA_df$Feed_Group)
 
 
 
+```
+
+```{r fecundity}
+
+
+df_fecundity<-read.xlsx("../data/Mysis_Pilot.xlsx", sheet="Exp 2",detectDates=T)
+
+ggplot(df_fecundity, aes(Group,Embryo.Viable)) + 
+  geom_boxplot()  
+  
+  
+  labs(title="Significance Testing") + 
+  labs( x="Groups", y = "Total Viable Embryos per breeding day") + 
+  theme(
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(),
+    axis.text=element_text(size=16, face="bold",angle = 90, hjust = 1), 
+    axis.text.x=element_text(size=16,angle = 45, hjust = 1), 
+    axis.title=element_text(size=18,face="bold"), 
+    title=element_text(size=30,face="bold"), 
+    plot.title = element_text(hjust = 0.5), 
+    plot.margin = margin(t = 15, r = 15, b = 15, l = 15, unit = "pt")) +
+  annotate(geom="text",x=1.5,y=3000,label="p-value= 0.005893",color="black",fontface="bold") + 
+  annotate(geom="text",x=1,y=400,label="mean= 210.94",color="black",fontface="bold") + 
+  annotate(geom="text",x=2,y=900,label="mean= 705.42",color="black",fontface="bold")
+
+print(p1)
+
+t.test(Embryo.Viable ~ Group, data=df_fecundity)
 ```
 
