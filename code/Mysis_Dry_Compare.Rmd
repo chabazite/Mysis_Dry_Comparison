@@ -276,6 +276,16 @@ df_survival <- df_survival %>%
 df_survival <- df_survival %>%
   mutate(Tank = recode(Tank, !!!setNames(new_tank_list, old_tank_list_2nd)))
 
+#homoginize dates
+new_date <- c("2021-01-29","2021-03-13","2021-04-30")
+old_date <- c("2021-01-28","2021-03-12","2021-04-29")
+
+df_survival$Date <- as.character(df_survival$Date)
+
+df_survival <- df_survival %>%
+  mutate(Date = recode(Date, !!!setNames(new_date, old_date)))
+df_survival$Date <- as.Date(df_survival$Date)
+
 #Change Tank and Group into Factors
 df_survival$Tank <- factor(df_survival$Tank) 
 df_survival$Feed_Group <- factor(df_survival$Feed_Group)
@@ -1401,6 +1411,7 @@ for (AgeCategory in levels(growth_mysis_outlier_df$Age_Category)){
 }
 
 
+
 ```
 
 
@@ -2191,21 +2202,15 @@ knitr::include_graphics(pngfile)
 
 #plot the difference in means from one census event to the next
 df_survival %>%
-  group_by(Feed_Group,Date) %>%
-  summarise(Census = mean(Census)) %>%
-  summarise(Census_Dead = diff(Census))%>%
-  ggplot(.,aes(y = Census_Dead, color=Feed_Group))+geom_bar()
-
-
-df_fake <- data.frame(Date = as.Date(c("2020-10-15", "2020-12-05","2021-01-29",
-                      "2021-03-13","2021-04-30","2021-07-06", "2020-10-15", "2020-12-05","2021-01-29",
-                      "2021-03-13","2021-04-30","2021-07-06")),
-                      Feed_Group =c("Gemma","Gemma","Gemma","Gemma","Gemma","Gemma",
-                                "Mysis","Mysis","Mysis","Mysis","Mysis","Mysis"),
-                      Census_Dead = c(0,6,1.25,.5,.5,.5,0,3.5,0.167,.167,.3,.45))
-
-ggplot(df_fake,aes(x=Date,y=Census_Dead,fill=Feed_Group))+
-  geom_col(position="dodge2")+ geom_line()+ scale_color_brewer(palette="Dark2") 
+  group_by(Date, Feed_Group) %>%
+  summarize(Census = mean(Census)) %>%
+  ungroup() %>%
+  arrange(Date) %>%
+  group_by(Feed_Group) %>%
+  summarize(Census_Dead = -diff(Census),
+            Date = Date[-1]) %>%
+  ggplot(aes(y = Census_Dead, x= Date)) +
+  geom_bar(aes(fill = Feed_Group), position = "dodge2", stat = "identity", width=5)
   
 
 D_B<- ggplot(df_fake,aes(x=Date,y=Census_Dead,fill=Feed_Group))+
@@ -2403,11 +2408,12 @@ df_fecundity$Sample.ID <- factor(df_fecundity$Sample.ID)
 df_fecundity$Group <- factor(df_fecundity$Group)
 summary(df_fecundity)
 
-ggplot(df_fecundity, aes(x=Sample.ID,Embryo.Viable,fill=Group)) + geom_col() +
+V_P <- ggplot(df_fecundity, aes(x=Sample.ID,Embryo.Viable,fill=Group)) + 
+  geom_col() +
     scale_color_brewer(palette="Dark2") +
-  labs(title='Average Feed Group Census over Time', 
-       subtitle = 'Standard Error for Comparison',
-       y = "Fish Census", x = "Date") +
+  labs(title='Total Viable Embryo Production', 
+       subtitle = 'Over a Three Month Period',
+       y = "Total Viable Embryo Count", x = "Sample Number") +
   theme_minimal() +
   theme(
     axis.title = element_text(size = 30),
@@ -2420,29 +2426,44 @@ ggplot(df_fecundity, aes(x=Sample.ID,Embryo.Viable,fill=Group)) + geom_col() +
     strip.text.x = element_text(size=20)
     )
 
-  
-  
-
-
-
-
-
-  labs(title="Significance Testing") + 
-  labs( x="Groups", y = "Total Viable Embryos per breeding day") + 
+A_V<-df_fecundity %>%
+  filter(Sample.ID != "10C6")%>%
+  group_by(Group) %>%
+  summarize(Mean = mean(Embryo.Viable),
+            Standard_Error =
+              sd(Embryo.Viable)/sqrt(length(Embryo.Viable))) %>%
+ggplot(., aes(x=Group,Mean,fill=Group)) + 
+  geom_col() + geom_errorbar(aes(ymin=Mean-Standard_Error,
+                                 ymax=Mean+Standard_Error))+
+    scale_color_brewer(palette="Dark2") +
+  labs(title='Average Viable Embryo Production', 
+       subtitle = 'Over a Three Month Period',
+       y = "Average Viable Embryo Count", x = "Feed Group") +
+  theme_minimal() +
   theme(
-    panel.grid.major = element_blank(), 
-    panel.grid.minor = element_blank(),
-    axis.text=element_text(size=16, face="bold",angle = 90, hjust = 1), 
-    axis.text.x=element_text(size=16,angle = 45, hjust = 1), 
-    axis.title=element_text(size=18,face="bold"), 
-    title=element_text(size=30,face="bold"), 
-    plot.title = element_text(hjust = 0.5), 
-    plot.margin = margin(t = 15, r = 15, b = 15, l = 15, unit = "pt")) +
-  annotate(geom="text",x=1.5,y=3000,label="p-value= 0.005893",color="black",fontface="bold") + 
-  annotate(geom="text",x=1,y=400,label="mean= 210.94",color="black",fontface="bold") + 
-  annotate(geom="text",x=2,y=900,label="mean= 705.42",color="black",fontface="bold")
+    axis.title = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    plot.title = element_text(size = 40, face = "bold"),
+    plot.subtitle = element_text(size = 25, face = "italic"),
+    legend.title = element_text(size =20),
+    legend.text = element_text(size =15),
+    legend.key.size = unit(2,"cm"),
+    strip.text.x = element_text(size=20)
+    )
 
-print(p1)
+
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Total_Viable.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(V_P)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+
+
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Average_Viable.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(A_V)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
 
 t.test(Embryo.Viable ~ Group, data=df_fecundity)
 ```
