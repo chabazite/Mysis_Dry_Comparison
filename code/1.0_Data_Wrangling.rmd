@@ -81,7 +81,7 @@ levels(df_growth$Tank)
 
 
 ```{r Survival Wrangling, warning = FALSE}
-#import excel sheet for survival
+#import data using openxlsx
 df_survival <- read.xlsx("../data/Mysis_Pilot.xlsx", 
                        sheet="Survival Census (Progress)", detectDates=T)
 
@@ -126,6 +126,7 @@ head(df_survival)
 
 
 ```{r Sex Sort Wrangling, warning = FALSE}
+#import data using openxlsx
 df_sex_sort <- read.xlsx("../data/Mysis_Pilot.xlsx", 
                         sheet="Sexing", detectDates=T)
 
@@ -147,103 +148,112 @@ head(df_sex_sort)
 
 
 ```{r Fecundity Wrangling,  warning = FALSE}
+#import data using openxlsx
+df_fecundity<-read.xlsx("../data/Mysis_Pilot.xlsx", 
+                        sheet="Exp 2", detectDates=T)
+
+#rename columns for consistency
+colnames(df_fecundity) <- c("Sample_ID", "Date", "Feed_Group", 
+                            "Embryo_Output", "Viable_Embryos")
+
+#factor columns
+df_fecundity$Sample_ID <- factor(df_fecundity$Sample_ID)
+df_fecundity$Feed_Group <- factor(df_fecundity$Feed_Group)
+
+#check wrangling
+summary(df_fecundity)
+head(df_fecundity)
 
 ```
 
 ```{r Nutrition Wrangling, warning = FALSE}
 
-font_import(paths="../data/")
+#Create lists for dataframe based on manufacturers packaging
+product <- c("Mysis", "Gemma")
+protein <- c(.119,.57)
+lipid <- c(.023,.15)
+ash <- c(NA,.105)
+fiber <- c(.005,.002)
+fatty_acid <- c(.014,.03)
+moisture <- c(.845, NA)
 
-
-
-Product <- c("Mysis", "Gemma")
-Protein <-c(.119,.57)
-Lipid <- c(.023,.15)
-Ash <- c(NA,.105)
-Fiber <- c(.005,.002)
-Fatty_Acid <- c(.014,.03)
-Moisture <- c(.845, NA)
-
-nutrition <- data.frame(Product,Protein,Lipid,Ash,Fiber,Fatty_Acid,Moisture)
-
-nutrition_long<- nutrition %>%
-  pivot_longer(.,Protein:Moisture,names_to = "Nutrient", values_to = "Percentage")
-
-ggplot(nutrition_long, aes(x=Nutrient,y=Percentage, fill=Product))+geom_col(position="dodge")
+#Create dataframe from above lists
+product_nutrition <- data.frame(product, protein, lipid, ash, 
+                                fiber, fatty_acid, moisture)
 
 #Create table using grammar of tables package
-
-gt_table <-nutrition %>% gt()
+nutrition_table <- product_nutrition %>% gt()
   
 #Change column labels
-gt_table <- gt_table %>%
+nutrition_table <- nutrition_table %>%
   cols_label(
-    Product = md("Product"),
-    Protein = md("Protein"),
-    Lipid  = md("Lipid"),
-    Ash =  md("Ash"),
-    Fiber = md("Fiber"),
-    Fatty_Acid =  md("Fatty Acid"),
-    Moisture = md("Moisture")
+    product = md("Product"),
+    protein = md("Protein"),
+    lipid  = md("Lipid"),
+    ash =  md("Ash"),
+    fiber = md("Fiber"),
+    fatty_acid =  md("Fatty Acid"),
+    moisture = md("Moisture")
   )
 
-#create header table
-gt_table <- gt_table %>%
+#create header information for table
+nutrition_table <- nutrition_table %>%
   tab_header (
     title = "Nutrition of Mysis Shrimp vs. Skretting Gemma",
     subtitle = "Macronutrient Percentage from Respective Companies"
   )
 
-#format percentage
-gt_table <- gt_table %>%
+#format into percentage
+nutrition_table <- nutrition_table %>%
   fmt_percent(
-   c(Protein,Lipid,Ash,Fiber,Fatty_Acid,Moisture),
+   c(protein, lipid, ash, fiber, fatty_acid, moisture),
    rows = everything(),
    decimals = 1
   )
+
 #format alignment
-gt_table <- gt_table %>%
+nutrition_table <- nutrition_table %>%
   cols_align(
     align = "left",
-    columns = c("Product")
+    columns = c("product")
   ) %>%
   cols_align(
     align = "center",
-    columns =  c("Protein","Lipid","Ash","Fiber","Fatty_Acid","Moisture")
-  )%>%
+    columns =  c("protein", "lipid", "ash", 
+                 "fiber", "fatty_acid", "moisture")
+  ) %>%
   cols_width(
-    c("Product","Protein","Lipid","Ash","Fiber","Fatty_Acid","Moisture") ~ px(100)
+    c("product", "protein", "lipid", "ash", "fiber", 
+      "fatty_acid", "moisture") ~ px(100)
   ) %>%
   opt_row_striping()
 
-#Adding footnote
-gt_table <- gt_table %>%
+#Adding footnote to explain missing data
+nutrition_table <- nutrition_table %>%
   tab_footnote(
     footnote = "Data not provided by manufacturer",
     locations = cells_body(
-      columns = "Ash",
-      rows = is.na(Ash)
+      columns = "ash",
+      rows = is.na(ash)
     )
   ) %>%
   tab_footnote(
     footnote = "Data not provided by manufacturer",
     locations = cells_body(
-      columns = "Moisture",
-      rows = is.na(Moisture)
+      columns = "moisture",
+      rows = is.na(moisture)
     )
   )
 
 #Text font, coloring, sizing, some borders gt is fun!
-
-gt_table <- gt_table %>%
+nutrition_table <- nutrition_table %>%
 #title styling
   tab_style(
     style = list(
       cell_text(
-        size =px(30),
+        size = px(30),
         weight = "normal",
-        align = "left",
-        font = "Bloomsbury"
+        align = "left"
       )
     ),
     locations = list(
@@ -254,7 +264,7 @@ gt_table <- gt_table %>%
   tab_style(
     style = list(
       cell_text(
-        size =px(15),
+        size = px(15),
         align = "left"
       )
     ),
@@ -282,16 +292,16 @@ gt_table <- gt_table %>%
 tab_style(
   style = list(
    cell_text(
-    font = "Bloomsbury", size = px(20), 
+    size = px(20), 
     weight = "bold",
     color = "#2f5375")
   ),
   location = list(
-   cells_body(columns = c(Product))
+   cells_body(columns = c(product))
   )
  ) 
 
-gtsave(gt_table,"gt_table.png")
+gtsave(nutrition_table,"nutrition_table.png")
 
 ```
 
