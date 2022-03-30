@@ -2198,10 +2198,10 @@ plot(S_A)
 invisible(dev.off())
 knitr::include_graphics(pngfile)
 
-
+df_survival$Date <- factor(df_survival$Date)
 
 #plot the difference in means from one census event to the next
-df_survival %>%
+D_B<- df_survival %>%
   group_by(Date, Feed_Group) %>%
   summarize(Census = mean(Census)) %>%
   ungroup() %>%
@@ -2210,11 +2210,7 @@ df_survival %>%
   summarize(Census_Dead = -diff(Census),
             Date = Date[-1]) %>%
   ggplot(aes(y = Census_Dead, x= Date)) +
-  geom_bar(aes(fill = Feed_Group), position = "dodge2", stat = "identity", width=5)
-  
-
-D_B<- ggplot(df_fake,aes(x=Date,y=Census_Dead,fill=Feed_Group))+
-  geom_col(position="dodge2")+ geom_line(aes(y=Census_Dead)+ scale_color_brewer(palette="Dark2") 
+  geom_bar(aes(fill = Feed_Group), position = "dodge", stat = "identity")+ scale_color_brewer(palette="Dark2") + 
   labs(title='Average Deaths over Time', 
        subtitle = 'Per Event',
        y = "Fish Deaths", x = "Date") +
