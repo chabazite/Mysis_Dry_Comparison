@@ -40,6 +40,156 @@ distributions look different for length and mass?
 
 ```{r Growth Distribution}
 
+#histogram for all mass data, geom_vline produces a median line; ..density.. 
+#produces an overlay of density
+ggplot(df_growth, aes(x=Mass_mg)) + 
+  geom_histogram(aes(y=..density..)) +
+  geom_vline(aes(xintercept = median(Mass_mg)), color="blue", 
+             linetype="dashed", size=1) +
+  geom_density(alpha=0.2, fill="#FF6666")+
+  theme_minimal()
+
+#histogram for all length data, geom_vline produces a median line
+ggplot(df_growth, aes(x=Length_mm)) + 
+  geom_histogram(aes(y=..density..)) +
+  geom_vline(aes(xintercept = median(Length_mm)), color="blue", 
+             linetype="dashed", size=1) +
+  geom_density(alpha=0.2, fill="#FF6666") +
+  theme_minimal()
+
+
+#Density Graphs by Groups
+
+#MASS
+D_M <- ggplot(df_growth, aes(x=Mass_mg))+
+  geom_density(alpha=0.5,aes(colour =  Feed_Group, fill = Feed_Group))+
+  scale_color_brewer(palette="Dark2")+ 
+    scale_fill_brewer(palette="Dark2")+
+labs(title='Density Distributions', subtitle = "Mass of Surface Morph by Feed Type",
+       y = "Density", x = "Mass (mg)")+
+theme_minimal()+
+  theme(
+    axis.title = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    plot.title = element_text(size = 40, face = "bold"),
+    plot.subtitle = element_text(size = 25),
+    legend.title = element_text(size =20),
+    legend.text = element_text(size =15)
+  ) 
+
+#Length
+D_L <- ggplot(df_growth, aes(x=Length_mm))+
+  geom_density(alpha=0.5,aes(colour =  Feed_Group, fill = Feed_Group))+
+  scale_color_brewer(palette="Dark2")+
+    scale_fill_brewer(palette="Dark2")+
+labs(title='Density Distributions', subtitle = "Length of Surface Morph by Feed Type",
+       y = "Density", x = "Length (mm)")+
+theme_minimal()+
+  theme(
+    axis.title = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    plot.title = element_text(size = 40, face = "bold"),
+    plot.subtitle = element_text(size = 25),
+    legend.title = element_text(size =20),
+    legend.text = element_text(size =15)
+) 
+
+
+#Density Plot of Mass for Ages and Groups
+D_A_M <- ggplot(df_growth, aes(x=Mass_mg))+
+  geom_density(alpha=0.5, aes(fill=Feed_Group,color=Feed_Group)) + 
+  facet_wrap(~Age_Category)+
+    scale_color_brewer(palette="Dark2")+
+    scale_fill_brewer(palette="Dark2")+
+labs(title='Density Distributions', subtitle = "Mass of Surface Morph by Age & Feed Type",
+       y = "Density", x = "Mass (mg)")+
+theme_minimal()+
+  theme(
+    axis.title = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    plot.title = element_text(size = 40, face = "bold"),
+    plot.subtitle = element_text(size = 25),
+    legend.title = element_text(size =20),
+    legend.text = element_text(size =15),
+     strip.text.x = element_text(size=20)
+) 
+
+
+#Density Plot of Length for Ages and Groups
+D_A_L <- ggplot(df_growth, aes(x=Length_mm))+
+  geom_density(alpha=0.5, aes(fill=Feed_Group, color=Feed_Group))+ 
+  facet_wrap(~Age_Category)+
+    scale_color_brewer(palette="Dark2")+
+    scale_fill_brewer(palette="Dark2")+
+labs(title='Density Distributions', subtitle = "Length of Surface Morph by Age & Feed Type",
+       y = "Density", x = "Length (mm)")+
+theme_minimal()+
+  theme(
+    axis.title = element_text(size = 30),
+    axis.text = element_text(size = 20),
+    plot.title = element_text(size = 40, face = "bold"),
+    plot.subtitle = element_text(size = 25),
+    legend.title = element_text(size =20),
+    legend.text = element_text(size =15),
+    strip.text.x = element_text(size=20)
+) 
+
+
+
+#Ridgeline plots of length for ages and groups
+ggplot(df_growth, aes(x=Length_mm,y=Age_Category, fill=..x..))+
+  geom_density_ridges_gradient(scale=3, rel_min_height=0.01)+
+  scale_fill_viridis(name="Length_mm",option="C")+
+  labs(title='Mass of Surface Morph by Age')+
+  theme_ipsum()+
+  theme(
+    legend.position = 'none',
+    panel.spacing = unit(0.1,'lines'),
+    strip.text.x = element_text(size=12)
+  ) +
+  facet_wrap(~Feed_Group,ncol=1)
+
+
+#Ridgeline Graph Mass for ages and feed groups
+ggplot(df_growth, aes(x=Mass_mg,y=Age_Category, fill=Feed_Group))+
+  geom_density_ridges(scale=2, rel_min_height=0.01)+
+  labs(title='Density Distributions', subtitle = "Mass of Surface Morph by Age", y = "Age Category", x = "Mass (mg)")+
+theme_minimal()+
+  theme(
+        legend.position = 'none',
+    axis.title = element_text(size = 30),
+     axis.text = element_text(size = 20),
+    plot.title = element_text(size = 40, face = "bold"),
+    plot.subtitle = element_text(size = 25),
+    panel.spacing = unit(0.1,'lines'),
+    strip.text.x = element_text(size=30)
+  ) +
+  facet_wrap(~Feed_Group,ncol=1) + 
+  scale_color_brewer(palette="Dark2")
+
+#Ridgeline Graph with 95% and 5% tails highlighted
+ggplot(df_growth, aes(x=Mass_mg,y=Age_Category, fill=factor(stat(quantile))))+
+  geom_density_ridges_gradient(
+    scale=2, 
+    rel_min_height=0.01,
+    calc_ecdf = TRUE,
+    quantiles = c(0.025,0.975)
+    )+
+    scale_fill_manual(
+    name = "Probability", values = c("#FF0000A0", "#A0A0A0A0", "#0000FFA0"),
+    labels = c("(0, 0.025]", "(0.025, 0.975]", "(0.975, 1]")
+    )+
+  labs(title='Density Distribution Tails', subtitle = " Mass of Surface Morph by Age", y = "Age Category", x = "Mass (mg)")+
+  theme_dark()+
+  theme(
+    axis.title = element_text(size = 20),
+    plot.title = element_text(size = 30, face = "bold"),
+    plot.subtitle = element_text(size = 16),
+    panel.spacing = unit(0.1,'lines'),
+    strip.text.x = element_text(size=20)
+  ) +
+  facet_wrap(~Feed_Group,ncol=1) + 
+  scale_color_brewer(palette="Dark2")
 
 
 ```
