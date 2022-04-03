@@ -263,7 +263,7 @@ Mass_tanks_age_boxplots <- mass_age_plots +
 Length_tanks_age_boxplots <- length_age_plots + 
   geom_boxplot(lwd=1,
                fill = 'grey',
-               aes(color= Tank), 
+               aes(color= Tank_Location), 
                outlier.colour = NULL,
                outlier.size = 2) +
   scale_color_brewer(palette="Dark2") +
@@ -323,30 +323,33 @@ Length_Mass_Relationship_Age <- ggplot(df_growth,
 
 
 # Survival EDA
+The second of the three indicators for a successful feed, Surival is of particular
+importance for A. mexicanus. The surface morph (studied here) has a high rate
+of aggression related attacks and deaths. Studying the impact feeds have on the surivival
+during the high aggression periods (three to six months old) can help minimize death
+and maximize the welfare of the animals. 
 
+##Time Series Analysis
+Since census was taken at certain points over a period of nine months, time series
+line plots will be the best way for us to understand the trends in surival over time
 
-```{r}
-#individual tank survival grouped by feed type
-S_T <- ggplot(df_survival, aes(x=Date, y=Census, group = Tank, color = Feed_Group)) +
-  geom_line(size = 2) + geom_point(size=4) +
+```{r Survival Line plots}
+#individual tank location census over time grouped by feed type
+Time_series_location_feed <- ggplot(df_survival, 
+                                    aes(x=Date, y=Census, 
+                                        group = Tank_Location, 
+                                        color = Feed_Group)) +
+  geom_line(size=2) + 
+  geom_point(size=4) +
   scale_color_brewer(palette="Dark2") +
-  labs(title='Fish Census per Sample Tank over Time', 
+  labs(title='Fish Census per Tank Location over Time', 
        y = "Fish Census", x = "Date") +
-  theme_minimal() +
-  theme(
-    axis.title = element_text(size = 30),
-    axis.text = element_text(size = 20),
-    plot.title = element_text(size = 40, face = "bold"),
-    legend.title = element_text(size =20),
-    legend.text = element_text(size =15),
-    legend.key.size = unit(2,"cm"),
-    strip.text.x = element_text(size=20)
-    )
+  theme_specs
 
 #Summarize the data by feedgroup and date, using average
 #Summarize standard error of census per group per timepoint
 #plot census with standard error against time using feed groups
-S_A <- df_survival %>%
+Summary_time_series_feed <- df_survival %>%
   group_by(Feed_Group,Date) %>%
   summarise(Census_avg=mean(Census), 
             Standard_Error=sd(Census)/sqrt(length(Census))) %>%
@@ -357,193 +360,111 @@ S_A <- df_survival %>%
   labs(title='Average Feed Group Census over Time', 
        subtitle = 'Standard Error for Comparison',
        y = "Fish Census", x = "Date") +
-  theme_minimal() +
-  theme(
-    axis.title = element_text(size = 30),
-    axis.text = element_text(size = 20),
-    plot.title = element_text(size = 40, face = "bold"),
-    plot.subtitle = element_text(size = 25, face = "italic"),
-    legend.title = element_text(size =20),
-    legend.text = element_text(size =15),
-    legend.key.size = unit(2,"cm"),
-    strip.text.x = element_text(size=20)
-    )
+  theme_specs
 
+```
 
+## Barplots for Average Death
+While the line plots show us how the census changed over time, I am also interested 
+in understanding the number of deaths from event to event, and how that changes.
+It is possible that there is one large death event in the beginning that separates 
+the two groups, then each census following has the same slope. Showing the average deaths
+between events will tell us if the two groups consistently differ.
 
-
-#saving png files for medium post
-pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Survival_Tanks.png")
-agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
-plot(S_T)
-invisible(dev.off())
-knitr::include_graphics(pngfile)
-
-pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Survival_Avg.png")
-agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
-plot(S_A)
-invisible(dev.off())
-knitr::include_graphics(pngfile)
-
-df_survival$Date <- factor(df_survival$Date)
-
-#plot the difference in means from one census event to the next
-D_B<- df_survival %>%
+```{r Survival Bar Plot Deaths over Time}
+#plot the difference in means between groups from one census event to the next
+#e.g. first bars are 1st Census - 2nd Census (20-14)
+Barplot_avgdeaths_feed<- df_survival %>%
   group_by(Date, Feed_Group) %>%
   summarize(Census = mean(Census)) %>%
-  ungroup() %>%
-  arrange(Date) %>%
   group_by(Feed_Group) %>%
   summarize(Census_Dead = -diff(Census),
             Date = Date[-1]) %>%
-  ggplot(aes(y = Census_Dead, x= Date)) +
-  geom_bar(aes(fill = Feed_Group), position = "dodge", stat = "identity")+ scale_color_brewer(palette="Dark2") + 
-  labs(title='Average Deaths over Time', 
-       subtitle = 'Per Event',
+   ggplot(aes(y = Census_Dead, x= Date)) +
+  geom_col(aes(fill = Feed_Group), position = "dodge") +
+  scale_color_brewer(palette="Dark2") +
+  labs(title='Average Feed Group Deaths between Census Events', 
        y = "Fish Deaths", x = "Date") +
-  theme_minimal() +
-  theme(
-    axis.title = element_text(size = 30),
-    axis.text = element_text(size = 20),
-    plot.title = element_text(size = 40, face = "bold"),
-    plot.subtitle = element_text(size = 25, face = "italic"),
-    legend.title = element_text(size =20),
-    legend.text = element_text(size =15),
-    legend.key.size = unit(2,"cm"),
-    strip.text.x = element_text(size=20)
-    )
-
-pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Deaths_Bar.png")
-agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
-plot(D_B)
-invisible(dev.off())
-knitr::include_graphics(pngfile)
+  theme_specs
 ```
 
 # Sex Sort EDA
-```{r}
-df_sex_sort
-  
-#Summarize the two groups Gemma & Mysis into total female, male, and unknown
-#create a total column for each group
-# turn sum into percentage for easier comparison between groups
+While not a primary indicator for the success of a feed, Sex skews are very common
+in animal husbandry. They can be caused by environment, diets, health, or a number
+of other stressors. This has a large role in both the facility (how many fish do
+we need to rear in order to get X number of males and females) as well as indirectly
+impacting the fecundity (Will there be enough males and females for the proper ratio)
 
-#tidy data, summarize for mean and standard error
-df_sex_mean<-df_sex_sort %>%
+```{r Sex Sort EDA}
+#Create a column of total counts for each tank location
+df_sex_sort$Total <- rowSums(df_sex_sort[,c("Female","Male","Unknown")])
+#normalize each tank's sex data between 1 and 0 using total counts
+df_sex_norm <- df_sex_sort %>%
+  group_by(Feed_Group)%>%
+  summarise(Female=Female/Total,Male=Male/Total,Unknown=Unknown/Total)
+
+#tidy data (long), summarize for mean and standard error
+df_sex_mean<-df_sex_norm %>%
    pivot_longer(.,Female:Unknown, names_to = "sex",values_to = "Census") %>%
-  group_by(Group,sex) %>%
+  group_by(Feed_Group, sex) %>%
   summarise(Mean=mean(Census),Standard_Error=sd(Census)/sqrt(length(Census)))
-#create a dataframe using aggregate of the total count for each group
-Total<- aggregate(df_sex_mean$Mean, by=list(Group=df_sex_mean$Group), FUN=sum)
-#using the total count to normalize mean and standard error, iterate through rows
-#if the row is a mysis row, divide the mean and error by the mysis total
-#otherwise divide by the gemma total.
-for (i in 1:length(df_sex_mean$Group)){
-    if (df_sex_mean$Group[i] == "Mysis") {
-      df_sex_mean$Mean[i] <- df_sex_mean$Mean[i]/Total$x[2]
-      df_sex_mean$Standard_Error[i] <- df_sex_mean$Standard_Error[i]/Total$x[2]
-  } else {
-     df_sex_mean$Mean[i] <- df_sex_mean$Mean[i]/Total$x[1]
-     df_sex_mean$Standard_Error[i] <- df_sex_mean$Standard_Error[i]/Total$x[1]
-  }
-}
 
-  
- S_A <- ggplot(df_sex_mean,aes(x=sex,y=Mean,fill=Group)) + 
+#create bar plot of sex by group with standard error  
+ Sex_sort_Barplot <- ggplot(df_sex_mean,aes(x=sex,y=Mean,fill=Feed_Group)) + 
    geom_col(position="dodge2") +
    geom_errorbar(aes(ymin=Mean-Standard_Error,
                      ymax=Mean+Standard_Error),position="dodge2") +
   scale_color_brewer(palette="Dark2") +
   labs(title='Fish Sex Sort by Groups', 
        y = "Percent of Group", x = "Sex") +
-  theme_minimal() +
-  theme(
-    axis.title = element_text(size = 30),
-    axis.text = element_text(size = 20),
-    plot.title = element_text(size = 40, face = "bold"),
-    legend.title = element_text(size =20),
-    legend.text = element_text(size =15),
-    legend.key.size = unit(2,"cm"),
-    strip.text.x = element_text(size=20)
-    )
- 
-  #saving png files for medium post
-pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Sex_sort_mean.png")
-agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
-plot(S_A)
-invisible(dev.off())
-knitr::include_graphics(pngfile)
+  theme_specs
   
 ```
 
 
 # Fecundity EDA
-```{r}
+The final indicator of a successful feed
 
-V_P <- ggplot(df_fecundity, aes(x=Sample.ID,Embryo.Viable,fill=Group)) + 
+```{r Fecundity EDA}
+#Chart of each tank location and the total of all viable embryos produced
+Sum_Viable_Embryos_Tank <- ggplot(df_fecundity, 
+                                  aes(x=Sample_ID, 
+                                      Viable_Embryos, 
+                                      fill=Feed_Group)) + 
   geom_col() +
-    scale_color_brewer(palette="Dark2") +
+  scale_color_brewer(palette="Dark2") +
   labs(title='Total Viable Embryo Production', 
        subtitle = 'Over a Three Month Period',
        y = "Total Viable Embryo Count", x = "Sample Number") +
-  theme_minimal() +
-  theme(
-    axis.title = element_text(size = 30),
-    axis.text = element_text(size = 20),
-    plot.title = element_text(size = 40, face = "bold"),
-    plot.subtitle = element_text(size = 25, face = "italic"),
-    legend.title = element_text(size =20),
-    legend.text = element_text(size =15),
-    legend.key.size = unit(2,"cm"),
-    strip.text.x = element_text(size=20)
-    )
+  theme_specs
 
-A_V<-df_fecundity %>%
-  filter(Sample.ID != "10C6")%>%
-  group_by(Group) %>%
-  summarize(Mean = mean(Embryo.Viable),
+#After filtering out 10C6 (extra tank), the average viable production and standard 
+#error for each group
+Average_Viable_Plot<-df_fecundity %>%
+  filter(Sample_ID != "10C6")%>% #remove 10C6
+  group_by(Feed_Group) %>%
+  summarize(Mean = mean(Viable_Embryos),
             Standard_Error =
-              sd(Embryo.Viable)/sqrt(length(Embryo.Viable))) %>%
-ggplot(., aes(x=Group,Mean,fill=Group)) + 
-  geom_col() + geom_errorbar(aes(ymin=Mean-Standard_Error,
-                                 ymax=Mean+Standard_Error))+
-    scale_color_brewer(palette="Dark2") +
+              sd(Viable_Embryos)/sqrt(length(Viable_Embryos))) %>%
+  ggplot(., aes(x=Feed_Group, y=Mean, fill=Feed_Group)) + 
+  geom_col() + 
+  geom_errorbar(aes(ymin = Mean-Standard_Error,
+                    ymax = Mean+Standard_Error)) +
+  scale_color_brewer(palette="Dark2") +
   labs(title='Average Viable Embryo Production', 
        subtitle = 'Over a Three Month Period',
        y = "Average Viable Embryo Count", x = "Feed Group") +
-  theme_minimal() +
-  theme(
-    axis.title = element_text(size = 30),
-    axis.text = element_text(size = 20),
-    plot.title = element_text(size = 40, face = "bold"),
-    plot.subtitle = element_text(size = 25, face = "italic"),
-    legend.title = element_text(size =20),
-    legend.text = element_text(size =15),
-    legend.key.size = unit(2,"cm"),
-    strip.text.x = element_text(size=20)
-    )
+  theme_specs
 
-
-pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Total_Viable.png")
-agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
-plot(V_P)
-invisible(dev.off())
-knitr::include_graphics(pngfile)
-
-
-pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Average_Viable.png")
-agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
-plot(A_V)
-invisible(dev.off())
-knitr::include_graphics(pngfile)
 ```
 
 
 
 # Printing pngs for Medium posts
+
 ```{r Medium plot saves}
 
-#####Growth EDA Plots#####
+####Growth EDA Plots####
 pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/density_mass.png")
 agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
 plot(Plot_Mass_Density_Feed_Groups)
@@ -605,8 +526,45 @@ invisible(dev.off())
 knitr::include_graphics(pngfile)
 
 
-###Survival Plots###
+####Survival Plots####
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Survival_Tanks.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(Time_series_location_feed)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Survival_Avg.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(Summary_time_series_feed)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Deaths_Bar.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(Barplot_avgdeaths_feed)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
 
 
+####Sex Sort Plots####
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Sex_sort_mean.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(Sex_sort_Barplot)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+
+####Fecundity Plots####
+
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Total_Viable.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(Sum_Viable_Embryos_Tank)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Average_Viable.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(Average_Viable_Plot)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
 ```
 

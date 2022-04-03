@@ -110,6 +110,21 @@ shapiro.test(resid(gemma_linear_model))
 ```
 
 ```{r  Survival}
+
+Summary_time_series_feed <- df_survival %>%
+  group_by(Feed_Group,Date) %>%
+  summarise(Census_avg=mean(Census), 
+            Standard_Error=sd(Census)/sqrt(length(Census))) %>%
+  ggplot(.,aes(x=Date,y=Census_avg,color=Feed_Group)) +geom_line(size=2)+
+  geom_point(size = 4)+ geom_errorbar(aes(ymin=Census_avg-Standard_Error,
+                                  ymax=Census_avg+Standard_Error),width=5) +
+  scale_color_brewer(palette="Dark2") +
+  labs(title='Average Feed Group Census over Time', 
+       subtitle = 'Standard Error for Comparison',
+       y = "Fish Census", x = "Date") +
+  theme_specs
+
+
 #Summarize data by feedgroup and date, the sum each group date, then plot
 df_survival %>%
   group_by(Feed_Group,Date) %>%
