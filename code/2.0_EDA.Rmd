@@ -423,7 +423,13 @@ df_sex_mean<-df_sex_norm %>%
 
 
 # Fecundity EDA
-The final indicator of a successful feed
+The final indicator of a successful feed, fecundity is important to the long term
+success of our colony as well as embryo generation reliability for our research. 
+I will look at the total viable embryos for each tank. Viable embryos are those still
+alive at the time of collection (~14 hours post fertilization). This can be different
+than total embryos, as some are not fertilized or die off before they start to
+grow. I will also be looking at the average viable production for each group, using
+standard error as a visual for significance. 
 
 ```{r Fecundity EDA}
 #Chart of each tank location and the total of all viable embryos produced
