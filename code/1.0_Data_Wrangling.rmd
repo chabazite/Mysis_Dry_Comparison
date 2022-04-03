@@ -19,17 +19,13 @@ library(gt)
 #import excel sheet using openxlsx library
 df_growth <- read.xlsx("../data/Mysis_Pilot.xlsx", sheet="Exp_1", detectDates=T)
 
-#Summary Stats and first 10 rows to check for proper import
 summary(df_growth)
 head(df_growth)
 
-#Remove unneeded columns from df_growth such as Time, Age, Outliers, 
-#and Condition Factor
 df_growth <- subset(df_growth, select = -c(Time, Age, 
                                         Possible.Outliers, Condition.Factor))
 
-#rename columns for consistency & ease of use
-colnames(df_growth) <- c("Date", "Tank", "Age_Category","Feed_Group",
+colnames(df_growth) <- c("Date", "Tank_Location", "Age_Category","Feed_Group",
                          "Length_mm","Mass_mg")
 
 #add unique sample ID column for tracking and comparison
@@ -38,10 +34,11 @@ df_growth <- df_growth %>%
 
 #changes data types and create factors where needed
 #lapply allows iteration of function over a list (column names)
-cols <- c("Tank", "Age_Category","Feed_Group")
+cols <- c("Tank_Location", "Age_Category","Feed_Group")
 df_growth[cols] <- lapply(df_growth[cols], factor)
 
-#check: sapply allows iteration of function over df to show classes in matrix
+#sapply allows iteration of function over df to show classes in matrix
+#allows us to check if classes are correct
 sapply(df_growth,class)
 
 #reorder age category factor levels
@@ -53,7 +50,6 @@ df_growth$Age_Category <- factor(df_growth$Age_Category,
 #Check for NAs in dataset
 df_growth[!complete.cases(df_growth),]
 
-#create lists of 3 different periods of sample locations. 
 #To be used to batch change sample locations to their final location
 first_tank_locations <- c("7.C.4","7.C.5","7.C.6","7.C.7","7.C.8","7.C.9",
                     "7.C.10","7.C.11")
@@ -63,84 +59,65 @@ third_tank_locations <- c("7.E.3-4","7.E.1-2","7.D.7-8","7.E.11-12","7.D.1-2",
                     "7.D.3-4","7.E.9-10","7.D.5-6")
 
 #batch change the tank locations based on the lists above which was the first 
-#mass move of tanks (can be found in readme.md)
-#!!! splice operator that allows us to use recode over the two lists of sample 
+#!!! splice operator allows us to use recode over the two lists of sample 
 #locations, rather than just two individual sample locations
 df_growth <- df_growth %>%
-  mutate(Tank = recode(Tank, !!!setNames(third_tank_locations, first_tank_locations)))
+  mutate(Tank_Location = recode(Tank_Location, !!!setNames(third_tank_locations, first_tank_locations)))
 
-#batch change again for the second mass move of tanks(can be found in readme.md)
 df_growth <- df_growth %>%
-  mutate(Tank = recode(Tank, !!!setNames(third_tank_locations, second_tank_locations)))
+  mutate(Tank_Location = recode(Tank_Location, !!!setNames(third_tank_locations, second_tank_locations)))
 
-#Check all data wrangling performed.
 summary(df_growth)
-levels(df_growth$Tank)
+levels(df_growth$Tank_Location)
 
 ```
 
 
 ```{r Survival Wrangling, warning = FALSE}
-#import data using openxlsx
 df_survival <- read.xlsx("../data/Mysis_Pilot.xlsx", 
                        sheet="Survival Census (Progress)", detectDates=T)
 
-
-#Remove columns that were just interim calculations in excel. Not needed
 df_survival <- subset(df_survival, select=-c(Lost, Total, Male, Female, Unknown)) 
 
-#rename columns for consistency
-colnames(df_survival) <- c("Date", "Tank","Feed_Group", "Census")
+colnames(df_survival) <- c("Date", "Tank_Location","Feed_Group", "Census")
 
-#Same batch process explained in growth
 df_survival <- df_survival %>%
-  mutate(Tank = recode(Tank, !!!setNames(third_tank_locations, first_tank_locations)))
+  mutate(Tank_Location = recode(Tank_Location, !!!setNames(third_tank_locations, first_tank_locations)))
 
-#batch change again for the second mass move of tanks(readme.md)
 df_survival <- df_survival %>%
-  mutate(Tank = recode(Tank, !!!setNames(third_tank_locations, second_tank_locations)))
+  mutate(Tank_Location = recode(Tank_Location, !!!setNames(third_tank_locations, second_tank_locations)))
 
 #homogenize dates; survival was counted over two days for some census events
 #lists for the events
 first_collection_days <- c("2021-01-29", "2021-03-13", "2021-04-30")
 second_collection_days <- c("2021-01-28", "2021-03-12", "2021-04-29")
 
-#turn date into a character to allow for the replacement
 df_survival$Date <- as.character(df_survival$Date)
-
-#Same batch process as above to homogenize collection days for analysis
 df_survival <- df_survival %>%
   mutate(Date = recode(Date, !!!setNames(first_collection_days, 
                                          second_collection_days)))
-#back to date data type
 df_survival$Date <- as.Date(df_survival$Date)
 
-#Change Tank and Feed_Group features into Factors
-df_survival$Tank <- factor(df_survival$Tank) 
+df_survival$Tank_Location <- factor(df_survival$Tank_Location) 
 df_survival$Feed_Group <- factor(df_survival$Feed_Group)
 
-#check data wrangling
 summary(df_survival)
 head(df_survival)
 ```
 
 
 ```{r Sex Sort Wrangling, warning = FALSE}
-#import data using openxlsx
 df_sex_sort <- read.xlsx("../data/Mysis_Pilot.xlsx", 
                         sheet="Sexing", detectDates=T)
 
-#remove time column
 df_sex_sort <- subset(df_sex_sort, select = -Time)
 
-#rename columns for consistency
-colnames(df_sex_sort) <- c("Date", "Tank", "Feed_Group", "Female", "Male", "Unknown")
+colnames(df_sex_sort) <- c("Date", "Tank_Location", 
+                           "Feed_Group", "Female", "Male", "Unknown")
 
-#Factor Tank and Group
-df_sex_sort$Tank <- factor(df_sex_sort$Tank)
+df_sex_sort$Tank_Location <- factor(df_sex_sort$Tank_Location)
 df_sex_sort$Feed_Group <- factor(df_sex_sort$Feed_Group)
 
-#check stats and wrangling
 summary(df_sex_sort)
 head(df_sex_sort)
 
@@ -148,19 +125,15 @@ head(df_sex_sort)
 
 
 ```{r Fecundity Wrangling,  warning = FALSE}
-#import data using openxlsx
 df_fecundity<-read.xlsx("../data/Mysis_Pilot.xlsx", 
                         sheet="Exp 2", detectDates=T)
 
-#rename columns for consistency
 colnames(df_fecundity) <- c("Sample_ID", "Date", "Feed_Group", 
                             "Embryo_Output", "Viable_Embryos")
 
-#factor columns
 df_fecundity$Sample_ID <- factor(df_fecundity$Sample_ID)
 df_fecundity$Feed_Group <- factor(df_fecundity$Feed_Group)
 
-#check wrangling
 summary(df_fecundity)
 head(df_fecundity)
 
@@ -168,7 +141,7 @@ head(df_fecundity)
 
 ```{r Nutrition Wrangling, warning = FALSE}
 
-#Create lists for dataframe based on manufacturers packaging
+#Create lists of values for dataframe based on manufacturers packaging
 product <- c("Mysis", "Gemma")
 protein <- c(.119,.57)
 lipid <- c(.023,.15)
@@ -177,7 +150,6 @@ fiber <- c(.005,.002)
 fatty_acid <- c(.014,.03)
 moisture <- c(.845, NA)
 
-#Create dataframe from above lists
 product_nutrition <- data.frame(product, protein, lipid, ash, 
                                 fiber, fatty_acid, moisture)
 
@@ -203,7 +175,7 @@ nutrition_table <- nutrition_table %>%
     subtitle = "Macronutrient Percentage from Respective Companies"
   )
 
-#format into percentage
+#format values into percentage
 nutrition_table <- nutrition_table %>%
   fmt_percent(
    c(protein, lipid, ash, fiber, fatty_acid, moisture),
@@ -211,7 +183,7 @@ nutrition_table <- nutrition_table %>%
    decimals = 1
   )
 
-#format alignment
+#format column alignment
 nutrition_table <- nutrition_table %>%
   cols_align(
     align = "left",
@@ -228,7 +200,7 @@ nutrition_table <- nutrition_table %>%
   ) %>%
   opt_row_striping()
 
-#Adding footnote to explain missing data
+#Add footnote to explain missing data
 nutrition_table <- nutrition_table %>%
   tab_footnote(
     footnote = "Data not provided by manufacturer",
@@ -245,10 +217,9 @@ nutrition_table <- nutrition_table %>%
     )
   )
 
-#Text font, coloring, sizing, some borders gt is fun!
+#font, coloring, sizing, some borders
 nutrition_table <- nutrition_table %>%
-#title styling
-  tab_style(
+  tab_style( #title styling
     style = list(
       cell_text(
         size = px(30),
@@ -260,8 +231,7 @@ nutrition_table <- nutrition_table %>%
       cells_title(groups = "title")
     )
   ) %>%
-#subtitle styling
-  tab_style(
+  tab_style( #subtitle styling
     style = list(
       cell_text(
         size = px(15),
@@ -272,8 +242,7 @@ nutrition_table <- nutrition_table %>%
       cells_title(groups = "subtitle")
     ) 
   ) %>% 
-#cell borders
- tab_style(
+ tab_style( #cell borders
   style = list(
    cell_text(
     size = px(15)
@@ -288,8 +257,7 @@ nutrition_table <- nutrition_table %>%
    cells_body(gt::everything())
   )
  ) %>%
-#Product styling  
-tab_style(
+tab_style( #Product styling 
   style = list(
    cell_text(
     size = px(20), 

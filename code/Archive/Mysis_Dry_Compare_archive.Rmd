@@ -1949,7 +1949,7 @@ knitr::include_graphics(pngfile)
 
 ```
 
-## Linear Model
+# Linear Model
 Based on our outlier plots, we can be pretty certain a linear model is not appropriate
 for our models. However,we will use the Residual plot to help us understand. Using these
 plots its pretty clear a polynomial model is more appropriate. 
@@ -2050,7 +2050,7 @@ shapiro.test(resid(gemma_linear_model))
 
 ```
 
-## Exploritory Data Analysis for Sex Sort and Survival
+# Exploritory Data Analysis for Sex Sort and Survival
 
 The next two datasets are a bit more concise and we won't be doing as deep a dive 
 into the outliers unless necessary. We are looking if there is any significant difference in either
