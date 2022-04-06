@@ -7,23 +7,39 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(ggResidpanel) # panel of diagnostic plots including cooksd
+library(qqplotr)
+library(EnvStats) #RosnerTest
+library(ragg) #help with png creation
+
 ```
 
+# Create Outlier Dataset
+To preserve the dataframes we are working with, I will create a series of copy sets
+in order to look at outliers. Split the data into Gemma and Mysis.
 
+```{r Outlier Dataset}
 
-
-
-## Mass Boxplot Outliers
-Lets take a look at our outliers from the previous analysis
-
-```{r Mass Outliers Boxplots}
-#descriptive statistics
 growth_gemma_outlier_df <- df_growth %>% filter(Feed_Group == "Gemma")
 
 growth_mysis_outlier_df <- df_growth %>% filter(Feed_Group == "Mysis")
 
-summary(growth_mysis_outlier_df$Mass_mg)
+summary(growth_mysis_outlier_df)
+summary(growth_gemma_outlier_df)
 
+```
+
+
+
+# Mass Outliers for Mysis and Gemma
+
+
+## Boxplot Outliers
+Lets take a look at our outliers from the previous analysis
+
+```{r Mass Outliers Boxplots}
 
 #Find boxplot statistics. First we need to summarize a list from groups
 growth_gemma_outlier_df %>%
@@ -94,69 +110,7 @@ for (i in 1:nrow(gemma_outliers_mass)) {
 
 ```
 
-
-##Normal Probability Plot
-In order to understand our outliers, we need to assume that there is a normal
-distribution of data. We will check our normality assumption with a normal probabilty 
-plot.
-
-```{r Normal Probability Plot of Each Age Category for Mass and Length}
-#Mass
-#iterate through the age levels of the gemma database, create a normal plot for each
-#age group using qqplotr and ggplot
-for (AgeCategory in levels(growth_gemma_outlier_df$Age_Category)){
-  Group_df <- growth_gemma_outlier_df %>%
-  filter(Age_Category == AgeCategory)
-  #Mass Normal Distribution for each Age
-  v <- ggplot(mapping = aes(sample =Group_df$Mass_mg)) + stat_qq_point(size = 2) +
-    stat_qq_line(color = "green") + xlab("Normal N(0,1) Order Statistic Medians") +
-    ylab("Ordered Response") + labs(title = paste("Gemma Mass Normal Probabilty Plot: ", AgeCategory))
-  print(v)
-  }
-
-#same for Mysis
-for (AgeCategory in levels(growth_mysis_outlier_df$Age_Category)){
-  Group_df <- growth_mysis_outlier_df %>%
-  filter(Age_Category == AgeCategory)
-  #Mass Normal Distribution for each Age
-  v <- ggplot(mapping = aes(sample =Group_df$Mass_mg)) + stat_qq_point(size = 2) +
-    stat_qq_line(color = "green") + xlab("Normal N(0,1) Order Statistic Medians") +
-    ylab("Ordered Response") + labs(title = paste("Mysis Mass Normal Probabilty Plot: ", AgeCategory))
-  print(v)
-  }
-#Length Normal Distribution for each Age
-#iterate through the age levels of the gemma database, create a normal plot for each
-#age group using qqplotr and ggplot
-for (AgeCategory in levels(growth_gemma_outlier_df$Age_Category)){
-  Group_df <- growth_gemma_outlier_df %>%
-  filter(Age_Category == AgeCategory)
-  #Mass Normal Distribution for each Age
-  v <- ggplot(mapping = aes(sample =Group_df$Length_mm)) + stat_qq_point(size = 2) +
-    stat_qq_line(color = "green") + xlab("Normal N(0,1) Order Statistic Medians") +
-    ylab("Ordered Response") + labs(title = paste("Gemma Length Normal Probabilty Plot: ", AgeCategory))
-  print(v)
-  }
-
-#same for Mysis
-for (AgeCategory in levels(growth_mysis_outlier_df$Age_Category)){
-  Group_df <- growth_mysis_outlier_df %>%
-  filter(Age_Category == AgeCategory)
-  #Mass Normal Distribution for each Age
-  v <- ggplot(mapping = aes(sample =Group_df$Length_mm)) + stat_qq_point(size = 2) +
-    stat_qq_line(color = "green") + xlab("Normal N(0,1) Order Statistic Medians") +
-    ylab("Ordered Response") + labs(title = paste("Mysis Length Normal Probabilty Plot: ", AgeCategory))
-  print(v)
-  }
-
-
-```
-Although the outliers are causing our distribution to skew, because we have over 
-50 samples per age per group, we will use the CLT to assume normality. 
-
-
-
-
-# Mass Percentile Outliers
+## Percentile Outliers
 Percentile outliers will flag any sample outside 2.5 and 97.5 percentiles. 
 
 ```{r Mass Outliers Percentiles}
@@ -208,7 +162,7 @@ for (AgeCategory in levels(growth_mysis_outlier_df$Age_Category)){
 
 ```
 
-## Mass Generalized ESD Test for Outliers
+## Generalized ESD Test for Outliers
 Generalized ESD test is used to detect one or more outliers in a univariate dataset
 for approximate normal distribution (removing the influence of the outliers). We do not have to specify the number of outliers, just an upper bound. 
 
@@ -255,7 +209,7 @@ for (AgeCategory in levels(growth_mysis_outlier_df$Age_Category)){
 ```
 
 
-#Mass Cooks Distance Outliers
+## Cooks Distance Outliers
 This wonderful outlier detection method estimates the amount of influence each 
 observation has on the over all regression model. It does this by removing each 
 observation and calculating the change in the model. A general rule is outliers
@@ -338,9 +292,7 @@ for (AgeCategory in levels(growth_mysis_outlier_df$Age_Category)){
 
 ```
 
-
-
-# Mass Outlier Comparison
+## Mass Outlier Comparison
 Will all these potential outliers, this study actually becomes a great tool to 
 look at outliers and what they mean. this section will be comparing all the 
 different methods of outlier detection and the overlap in outliers detected
@@ -415,9 +367,9 @@ row.names(gemma_mass_summary_outlier_df) <-NULL
 
 
 mysis_mass_outlier_method_df <-  subset(mysis_mass_summary_outlier_df,
-                                        select=-c(Date, Tank, Feed_Group, Length_mm)) 
+                                        select=-c(Date, Tank_Location, Feed_Group, Length_mm)) 
 gemma_mass_outlier_method_df <-  subset(gemma_mass_summary_outlier_df,
-                                        select=-c(Date, Tank, Feed_Group, Length_mm)) 
+                                        select=-c(Date, Tank_Location, Feed_Group, Length_mm)) 
 
 #add columns for each method
 methods_list = list("Boxplot", "Percentile", "Rosner", "CooksD")
@@ -546,9 +498,9 @@ ggplot(growth_gemma_outlier_df, aes(y=Mass_mg, x=Age_Category)) + geom_boxplot()
 ```
 
 
+#Length Outliers for Mysis and Gemma
 
-
-## Length Boxplot Outliers
+## Boxplot Outliers
 
 
 ```{r Length Outlier Boxplot}
@@ -617,7 +569,7 @@ for (i in 1:nrow(gemma_outliers_length)) {
 
 ```
 
-# Length Percentile Outliers
+## Percentile Outliers
 Percentile outliers will flag any sample outside 2.5 and 97.5 percentiles. 
 
 ```{r Length Outliers Percentiles}
@@ -669,7 +621,7 @@ for (AgeCategory in levels(growth_mysis_outlier_df$Age_Category)){
 
 ```
 
-## length Generalized ESD Test for Outliers
+## Generalized ESD Test for Outliers
 Generalized ESD test is used to detect one or more outliers in a univariate dataset
 for approximate normal distribution. We do not have to specify the number of outliers, just an upper bound.
 
@@ -717,7 +669,7 @@ for (AgeCategory in levels(growth_mysis_outlier_df$Age_Category)){
 ```
 
 
-#length Cooks Distance Outliers
+## Cooks Distance Outliers
 This wonderful outlier detection method estimates the amount of influence each 
 observation has on the over all regression model. It does this by removing each 
 observation and calculating the change in the model. A general rule is outliers
@@ -802,7 +754,7 @@ for (AgeCategory in levels(growth_mysis_outlier_df$Age_Category)){
 
 
 
-# Length Outlier Comparison
+## Length Outlier Comparison
 Will all these potential outliers, this study actually becomes a great tool to 
 look at outliers and what they mean. this section will be comparing all the 
 different methods of outlier detection and the overlap in outliers detected
@@ -879,9 +831,9 @@ row.names(gemma_length_summary_outlier_df) <-NULL
 
 
 mysis_length_outlier_method_df <-  subset(mysis_length_summary_outlier_df,
-                                        select=-c(Date, Tank, Feed_Group, Mass_mg)) 
+                                        select=-c(Date, Tank_Location, Feed_Group, Mass_mg)) 
 gemma_length_outlier_method_df <-  subset(gemma_length_summary_outlier_df,
-                                        select=-c(Date, Tank, Feed_Group, Mass_mg)) 
+                                        select=-c(Date, Tank_Location, Feed_Group, Mass_mg)) 
 
 #add columns for each method
 methods_list = list("Boxplot", "Percentile", "Rosner", "CooksD")
@@ -1006,21 +958,21 @@ ggplot(growth_gemma_outlier_df, aes(y=Length_mm, x=Age_Category)) + geom_boxplot
   geom_point(aes(color = length_Outlier))+scale_color_brewer(palette="Set1") + theme_classic()
 
 
-ggplot(growth_mysis_outlier_df, aes(y=Length_mm, x=Tank,color=Age_Category)) + geom_boxplot(aes(color=Age_Category))+
+ggplot(growth_mysis_outlier_df, aes(y=Length_mm, x=Tank_Location,color=Age_Category)) + geom_boxplot(aes(color=Age_Category))+
  theme_classic()
 
-ggplot(growth_mysis_outlier_df, aes(y=Length_mm, x=Age_Category,color=Tank)) + geom_boxplot(aes(color=Tank))+
+ggplot(growth_mysis_outlier_df, aes(y=Length_mm, x=Age_Category,color=Tank_Location)) + geom_boxplot(aes(color=Tank_Location))+
   theme_classic()
 
-ggplot(growth_gemma_outlier_df, aes(y=Length_mm, x=Tank,color=Age_Category)) + geom_boxplot(aes(color=Age_Category))+
+ggplot(growth_gemma_outlier_df, aes(y=Length_mm, x=Tank_Location,color=Age_Category)) + geom_boxplot(aes(color=Age_Category))+
  theme_classic()
 
-ggplot(growth_gemma_outlier_df, aes(y=Length_mm, x=Age_Category,color=Tank)) + geom_boxplot(aes(color=Tank))+
+ggplot(growth_gemma_outlier_df, aes(y=Length_mm, x=Age_Category,color=Tank_Location)) + geom_boxplot(aes(color=Tank_Location))+
   theme_classic()
 
 ```
 
-## Summarize Outlier Testing
+# Summarize Outlier Testing
 Now that we have an understanding of different methods for outlier collection,
 I was curious how similar these methods would be. Which outliers would recieve marks 
 from the most methods for detection? Which would only mark one. Do the Mass outliers
@@ -1150,7 +1102,7 @@ ggplot(growth_mysis_nofactor_outlier_df, aes(y=Length_mm,x=Age_Category)) +
 
 ```
 
-```{r Medium Visuals}
+```{r}
 
 
 
@@ -1234,6 +1186,11 @@ G_O_S <- ggplot(growth_gemma_outlier_length_mass_df, aes(y=Mass_mg, x=Length_mm,
     legend.key.size = unit(2,"cm"),
     strip.text.x = element_text(size=20)
     )
+```
+
+
+```{r Medium Visuals}
+
 
 #saving png files for medium post
 pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Mysis_Outlier_summary.png")

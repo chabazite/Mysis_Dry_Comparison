@@ -7,6 +7,25 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(ggridges)
+library(viridis) #coloring for ridge plots
+library(ggResidpanel) # panel of diagnostic plots including cooksd
+library(qqplotr) #qq plots
+#library(EnvStats)
+#library(lsmeans)
+#library(plotly)
+#library(outliers)
+#library(hrbrthemes)
+library(rstatix) #t-test, wilcoxon, anova, kruskal-wallis, correlation
+#library(janitor)
+#library(broom) #output tibbles for statistical modeling 
+#library(datarium) #ANCOVA
+library(ggpubr) #publication ready plots
+library(ragg) #help with png creation
+library(gridExtra) #allows for grid.arrange functionality
+
 ```
 
 # Linear Model

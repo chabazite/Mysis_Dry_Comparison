@@ -11,20 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(ggridges)
 library(viridis) #coloring for ridge plots
-library(ggResidpanel) # panel of diagnostic plots including cooksd
-library(qqplotr) #qq plots
-#library(EnvStats)
-#library(lsmeans)
-#library(plotly)
-#library(outliers)
-#library(hrbrthemes)
-library(rstatix) #t-test, wilcoxon, anova, kruskal-wallis, correlation
-#library(janitor)
-#library(broom) #output tibbles for statistical modeling 
-#library(datarium) #ANCOVA
-library(ggpubr) #publication ready plots
 library(ragg) #help with png creation
-library(gridExtra) #allows for grid.arrange functionality
 
 ```
 
@@ -176,6 +163,70 @@ ggplot(df_growth, aes(x=Mass_mg, y=Age_Category,
   theme_minimal() +
   facet_wrap(~Feed_Group,ncol=1) + 
   scale_color_brewer(palette="Dark2")
+```
+
+#Normal Distribution QQ Plot
+Since some of of our analyses may require us to assume normality in the future, 
+let's take a look at some normal Q-Q plots to see if any of the data does line up 
+in a normal distribution. To do this we will iterate through the age levels of the database
+and create a normal Q-Q plot for each age group using qqplotr and ggplot
+
+```{r Normal Q-Q Plot for each Feed Group per Age Category for Mass and Length}
+
+####Mass####
+for (AgeCategory in levels(growth_gemma_outlier_df$Age_Category)){
+  AgeGroup_df <- growth_gemma_outlier_df %>%
+  filter(Age_Category == AgeCategory)
+ 
+  QQPlot_AgeGroup <- ggplot(mapping = aes(sample =AgeGroup_df$Mass_mg)) + 
+    stat_qq_point(size = 2) + 
+    stat_qq_line(color = "green") + 
+    xlab("Normal N(0,1) Order Statistic Medians") +
+    ylab("Ordered Response") + 
+    labs(title = paste("Gemma Mass Normal Probabilty Plot: ", AgeCategory))
+  print(QQPlot_AgeGroup) #Will print out a plot for each age group iteration
+  }
+
+for (AgeCategory in levels(growth_mysis_outlier_df$Age_Category)){
+  AgeGroup_df <- growth_mysis_outlier_df %>%
+  filter(Age_Category == AgeCategory)
+
+  QQPlot_AgeGroup <- ggplot(mapping = aes(sample =AgeGroup_df$Mass_mg)) + 
+    stat_qq_point(size = 2) +
+    stat_qq_line(color = "green") + 
+    xlab("Normal N(0,1) Order Statistic Medians") +
+    ylab("Ordered Response") + 
+    labs(title = paste("Mysis Mass Normal Probabilty Plot: ", AgeCategory))
+  print(QQPlot_AgeGroup)
+}
+
+####Length####
+for (AgeCategory in levels(growth_gemma_outlier_df$Age_Category)){
+  AgeGroup_df <- growth_gemma_outlier_df %>%
+  filter(Age_Category == AgeCategory)
+
+  QQPlot_AgeGroup <- ggplot(mapping = aes(sample =AgeGroup_df$Length_mm)) + 
+    stat_qq_point(size = 2) +
+    stat_qq_line(color = "green") + 
+    xlab("Normal N(0,1) Order Statistic Medians") +
+    ylab("Ordered Response") + 
+    labs(title = paste("Gemma Length Normal Probabilty Plot: ", AgeCategory))
+  print(QQPlot_AgeGroup)
+  }
+
+
+for (AgeCategory in levels(growth_mysis_outlier_df$Age_Category)){
+  AgeGroup_df <- growth_mysis_outlier_df %>%
+  filter(Age_Category == AgeCategory)
+  
+  QQPlot_AgeGroup <- ggplot(mapping = aes(sample =AgeGroup_df$Length_mm)) + 
+    stat_qq_point(size = 2) +
+    stat_qq_line(color = "green") + 
+    xlab("Normal N(0,1) Order Statistic Medians") +
+    ylab("Ordered Response") + 
+    labs(title = paste("Mysis Length Normal Probabilty Plot: ", AgeCategory))
+  print(QQPlot_AgeGroup)
+  }
 ```
 
 ## Growth Box plots
