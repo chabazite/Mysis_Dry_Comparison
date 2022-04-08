@@ -756,18 +756,13 @@ Gemma_Mass_Boxplot_Length_Outliers <- ggplot(growth_gemma_outlier_df,
 ```
 
 # Summarize Outlier Testing
-Now that we have an understanding of different methods for outlier collection,
-I was curious how similar these methods would be. Which outliers would recieve marks 
-from the most methods for detection? Which would only mark one. Do the Mass outliers
-correspond to the Length Outliers?
+Now that I have an understanding of different methods for outlier collection,
+I was curious how  these methods would compare between variables. 
+Which outliers would recieve marks from the most methods for detection? 
+Which would only recieve one mark? 
+Do the Mass outliers correspond to the Length Outliers?
 
-```{r Summary of Oultiers}
-
-# We have made Boxplots, percentile, Rosner, Cooks Distance, and Grubbs. 
-
-growth_mysis_outlier_df
-growth_gemma_outlier_df
-
+```{r Difference Between Outliers By Length or Mass}
 
 #Tidy the data
 growth_mysis_outlier_tidy_df<-growth_mysis_outlier_df %>%
@@ -793,6 +788,11 @@ total_mass_Outlier_Count <- growth_mysis_outlier_tidy_df %>%
   nrow()
 
 
+df_mysis_mass_one_method<-mysis_mass_outlier_method_df %>%
+  filter(Sample_ID %in% df_outliers_one_method$Sample_ID)
+df_mysis_length_one_method<-mysis_length_outlier_method_df %>%
+  filter(Sample_ID %in% df_outliers_one_method$Sample_ID)
+
 #Using count we will normalize the bar plot so it shows % of # of methods
 growth_mysis_outlier_tidy_df %>%
 ggplot(., aes(x=Outlier_Count,fill=Outliers_Metric ))+geom_bar()
@@ -806,53 +806,48 @@ growth_mysis_outlier_df %>%
 ggplot(., aes(y=Mass_mg, x=Length_mm)) + 
   geom_point(aes(color= length_Outlier))
 
+#plotting outliers that received one method of detection for mass
+ggplot(growth_mysis_nofactor_outlier_df, aes(y=Mass_mg,x=Age_Category)) + 
+         geom_boxplot()+scale_color_brewer(palette="Set1") + 
+  geom_jitter(data=. %>% filter(Sample_ID %in% df_mysis_mass_one_method$Sample_ID),color="red")                                                                 
+#plotting outliers that received one method of detection for length
+
+ggplot(growth_mysis_nofactor_outlier_df, aes(y=Length_mm,x=Age_Category)) + 
+         geom_boxplot()+scale_color_brewer(palette="Set1") + 
+  geom_point(data=. %>% filter(Sample_ID %in% df_mysis_length_one_method$Sample_ID),color="red")                                                                 
+
+```
+
+```{r Combined Length and Mass Outliers}
 
 growth_mysis_outlier_length_mass_df<- growth_mysis_outlier_df
-
-growth_mysis_outlier_length_mass_df <- growth_mysis_outlier_df
+growth_gemma_outlier_length_mass_df <- growth_gemma_outlier_df
 
 #factors have to be converted to strings first, or the factor level will transform as numeric
 growth_mysis_outlier_length_mass_df$Mass_Outlier <- as.numeric(as.character(growth_mysis_outlier_length_mass_df$Mass_Outlier))
 growth_mysis_outlier_length_mass_df$length_Outlier <- as.numeric(as.character(growth_mysis_outlier_length_mass_df$length_Outlier))
-
-
+#gemma
+growth_gemma_outlier_length_mass_df$Mass_Outlier <- as.numeric(as.character(growth_gemma_outlier_length_mass_df$Mass_Outlier))
+growth_gemma_outlier_length_mass_df$length_Outlier <- as.numeric(as.character(growth_gemma_outlier_length_mass_df$length_Outlier))
 
 #create a sum of both length and mass outliers to see which observations are most impacted
-growth_mysis_outlier_length_mass_df <-  growth_mysis_outlier_length_mass_df %>%
- mutate(Total_Outliers = select(., Mass_Outlier:length_Outlier) %>% rowSums(na.rm =TRUE))
+growth_mysis_outlier_length_mass_df <- growth_mysis_outlier_length_mass_df %>%
+ mutate(Total_Outlier = select(., Mass_Outlier:length_Outlier) %>% rowSums(na.rm =TRUE))
+
+growth_gemma_outlier_length_mass_df <- growth_gemma_outlier_length_mass_df %>%
+ mutate(Total_Outlier = select(., Mass_Outlier:length_Outlier) %>% rowSums(na.rm =TRUE))
 
 #refactor the total to get discrete values for ploting
 
-growth_mysis_outlier_length_mass_df$Total_Outlier <-factor(growth_mysis_outlier_length_mass_df$Total_Outlier, 
+growth_mysis_outlier_length_mass_df$Total_Outlier <- factor(growth_mysis_outlier_length_mass_df$Total_Outlier, 
                                  levels = c("8","7","6","5","4","3","2","1","0"))
 
-ggplot(growth_mysis_outlier_length_mass_df, aes(y=Mass_mg, x=Length_mm, color= Total_Outlier ))+geom_point()+scale_color_brewer(palette="Set1")
+growth_gemma_outlier_length_mass_df$Total_Outlier <- factor(growth_gemma_outlier_length_mass_df$Total_Outlier, 
+                                 levels = c("7","6","5","4","3","2","1","0"))
 
-
-#create a numeric version of the total outlier for other graphs
-growth_mysis_nofactor_outlier_df <- growth_mysis_outlier_length_mass_df
-
-growth_mysis_nofactor_outlier_df$Total_Outlier <- as.numeric(as.character(growth_mysis_nofactor_outlier_df$Total_Outlier))
-
-
-
-#What were the outliers with just one method, and which method more likely identified them
-
-df_outliers_one_method <- growth_mysis_nofactor_outlier_df %>%
+#which method gives us the 1's in total outliers for both length and mass combined
+df_mysis_outliers_one_method <- growth_mysis_outlier_length_mass_df %>%
   filter(Total_Outlier==1)
-
-
-#which method gives us the 1's in total outliers for both length and mass
-
-
-#percentile more sensitive for mass
-df_mysis_mass_one_method<-mysis_mass_outlier_method_df %>%
-  filter(Sample_ID %in% df_outliers_one_method$Sample_ID)
-
-#boxplot significantly provides more sensitivity to outliers than any other method
-#for length
-df_mysis_length_one_method<-mysis_length_outlier_method_df %>%
-  filter(Sample_ID %in% df_outliers_one_method$Sample_ID)
 
 #Plotting only te outlines that received 1 method for both length and mass combined
 ggplot(growth_mysis_nofactor_outlier_df, aes(x=Length_mm,y=Mass_mg, color=Total_Outlier==1)) +geom_point() + 
@@ -872,58 +867,6 @@ ggplot(growth_mysis_nofactor_outlier_df, aes(x=Length_mm,y=Mass_mg, color=Total_
     legend.key.size = unit(2,"cm"),
     strip.text.x = element_text(size=20)
     )
-
-#plotting outliers that received one method of detection for mass
-ggplot(growth_mysis_nofactor_outlier_df, aes(y=Mass_mg,x=Age_Category)) + 
-         geom_boxplot()+scale_color_brewer(palette="Set1") + 
-  geom_jitter(data=. %>% filter(Sample_ID %in% df_mysis_mass_one_method$Sample_ID),color="red")                                                                 
-#plotting outliers that received one method of detection for length
-
-ggplot(growth_mysis_nofactor_outlier_df, aes(y=Length_mm,x=Age_Category)) + 
-         geom_boxplot()+scale_color_brewer(palette="Set1") + 
-  geom_point(data=. %>% filter(Sample_ID %in% df_mysis_length_one_method$Sample_ID),color="red")                                                                 
-
-```
-
-```{r}
-
-
-
-# We have made Boxplots, percentile, Rosner, Cooks Distance, and Grubbs. 
-
-growth_mysis_outlier_df
-growth_gemma_outlier_df
-
-growth_mysis_outlier_length_mass_df<- growth_mysis_outlier_df
-growth_gemma_outlier_length_mass_df <- growth_gemma_outlier_df
-
-
-
-#factors have to be converted to strings first, or the factor level will transform as numeric
-growth_mysis_outlier_length_mass_df$Mass_Outlier <- as.numeric(as.character(growth_mysis_outlier_length_mass_df$Mass_Outlier))
-growth_mysis_outlier_length_mass_df$length_Outlier <- as.numeric(as.character(growth_mysis_outlier_length_mass_df$length_Outlier))
-#gemma
-growth_gemma_outlier_length_mass_df$Mass_Outlier <- as.numeric(as.character(growth_gemma_outlier_length_mass_df$Mass_Outlier))
-growth_gemma_outlier_length_mass_df$length_Outlier <- as.numeric(as.character(growth_gemma_outlier_length_mass_df$length_Outlier))
-
-
-#create a sum of both length and mass outliers to see which observations are most impacted
-growth_mysis_outlier_length_mass_df <-  growth_mysis_outlier_length_mass_df %>%
- mutate(Total_Outliers = select(., Mass_Outlier:length_Outlier) %>% rowSums(na.rm =TRUE))
-
-#create a sum of both length and mass outliers to see which observations are most impacted
-growth_gemma_outlier_length_mass_df <-  growth_gemma_outlier_length_mass_df %>%
- mutate(Total_Outliers = select(., Mass_Outlier:length_Outlier) %>% rowSums(na.rm =TRUE))
-
-
-#refactor the total to get discrete values for ploting
-
-growth_mysis_outlier_length_mass_df$Total_Outlier <-factor(growth_mysis_outlier_length_mass_df$Total_Outlier, 
-                                 levels = c("8","7","6","5","4","3","2","1","0"))
-
-growth_gemma_outlier_length_mass_df$Total_Outlier <-factor(growth_gemma_outlier_length_mass_df$Total_Outlier, 
-                                 levels = c("8","7","6","5","4","3","2","1","0"))
-
 
 #Using the summary of values that were flagged as outliers in both length and mass features, I 
 #create a scatter plot that indicates where these outliers are located and how many of the 
