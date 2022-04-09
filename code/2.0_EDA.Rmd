@@ -340,16 +340,7 @@ Length_Mass_Relationship_Age <- ggplot(df_growth,
        subtitle='Age Categories',
        y = "Mass (mg)", x = "Length (mm)") +
   theme_dark() +
-  theme(
-    axis.title = element_text(size = 30),
-    axis.text = element_text(size = 20),
-    plot.title = element_text(size = 40, face = "bold"),
-    plot.subtitle = element_text(size = 25),
-    legend.title = element_text(size =25),
-    legend.text = element_text(size =20),
-    legend.key.size = unit(2,"cm"),
-    strip.text.x = element_text(size=20)
-    )
+  theme_specs
 
 ```
 
