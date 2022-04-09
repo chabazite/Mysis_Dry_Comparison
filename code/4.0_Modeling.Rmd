@@ -18,7 +18,7 @@ library(qqplotr) #qq plots
 #library(plotly)
 #library(outliers)
 #library(hrbrthemes)
-library(rstatix) #t-test, wilcoxon, anova, kruskal-wallis, correlation
+library(rstatix) #t-test, wilcoxon, anova, kruskal-wallis, correlation, levenetest
 #library(janitor)
 #library(broom) #output tibbles for statistical modeling 
 #library(datarium) #ANCOVA
@@ -26,15 +26,106 @@ library(ggpubr) #publication ready plots
 library(ragg) #help with png creation
 library(gridExtra) #allows for grid.arrange functionality
 
+
 ```
 
-# Linear Model
-Based on our outlier plots, we can be pretty certain a linear model is not appropriate
-for our models. However,we will use the Residual plot to help us understand. Using these
-plots its pretty clear a polynomial model is more appropriate. 
+# Growth
+
+## Mass Significance Testing by Age for Feed Groups
+Because we don't have strictly normal distributions for our data, I won't be using
+any tests that assume normality. To confirm our intuitions about a lack of significant
+difference in growth between the Feed Groups, we will have to test the 
+null hypothesis (p-value < 0.05). Our null hypothesis is: There is no difference in Mass
+between the Feed Group for each Age group. 
+
+First we will take a look at the variances between the populations. This will
+help us further understand what type of significance test to perform.
+
+Since we aren't confident in normality of our test, we will use the Levene's test
+to test the variance. 
+
+For Significance, we are curious if either of the Feed Groups has a superior performance,
+so we will use a two-tailed test.
+
+```{r Boxplot Significance Testing}
+#Variance for Mass for Age Groups between Feed Groups are not Significantly Different
+df_growth %>%
+  group_by(Age_Category)%>%
+  levene_test(Mass_mg ~ Feed_Group)
+
+#Two Sample unpaired nonparametric test. iterate over all age categories
+Wilcox_Mass_Age <- data.frame(matrix(nrow=0 ncol = 2))
+colnames(Wilcox_Mass_Age) <-c('AgeCategory','P_Value')
+
+#No significant difference between the Feed Groups for any Age Category
+for (AgeCategory in levels(df_growth$Age_Category)){
+  
+  Mysis_Age_Mass <- df_growth$Mass_mg[df_growth$Age_Category == AgeCategory & 
+                         df_growth$Feed_Group == 'Mysis']
+
+  Gemma_Age_Mass <- df_growth$Mass_mg[df_growth$Age_Category == AgeCategory &
+                         df_growth$Feed_Group == 'Gemma']
+  
+  SigTest <- wilcox.test(Mysis_Age_Mass, Gemma_Age_Mass, alternative = "two.sided")
+  
+  Wilcox_Mass_Age[nrow(Wilcox_Mass_Age) + 1,] <- c(AgeCategory,SigTest$p.value)
+  
+}
 
 
-```{r Residuals}
+Mass_boxplots_AgeandFeed
+
+
+
+
+```
+
+
+
+
+## Length Significance Testing by Age for Feed Groups
+
+```{r}
+#Variance for Length for Age Groups between Feed Groups are only significantly different for three months
+df_growth %>%
+  group_by(Age_Category)%>%
+  levene_test(Length_mm ~ Feed_Group)
+
+#Two Sample unpaired nonparametric test. iterate over all age categories
+Wilcox_Length_Age <- data.frame(matrix(nrow=0 ncol = 2))
+colnames(Wilcox_Length_Age) <-c('AgeCategory','P_Value')
+
+#No significant difference between the Feed Groups for any Age Category
+for (AgeCategory in levels(df_growth$Age_Category)){
+  
+  Mysis_Age_Length <- df_growth$Length_mm[df_growth$Age_Category == AgeCategory & 
+                         df_growth$Feed_Group == 'Mysis']
+
+  Gemma_Age_Length <- df_growth$Length_mm[df_growth$Age_Category == AgeCategory &
+                         df_growth$Feed_Group == 'Gemma']
+  
+  SigTest <- wilcox.test(Mysis_Age_Length, Gemma_Age_Length, alternative = "two.sided")
+  
+  Wilcox_Length_Age[nrow(Wilcox_Length_Age) + 1,] <- c(AgeCategory,SigTest$p.value)
+  
+}
+
+
+Length_boxplots_AgeandFeed
+
+
+```
+
+
+
+## Length-Mass Relationship Modeling for Feed Groups 
+Based on our distribution plots, we can be pretty certain a linear model is not appropriate
+for our models. However, we will use the Residual plot to help us understand our model better.
+Using these plots its pretty clear a polynomial model is more appropriate. 
+
+
+
+```{r Relationship Modelling for Feed Groups}
 y <- df_growth$Mass_mg
 x <- df_growth$Length_mm
 
@@ -61,11 +152,6 @@ resid_compare(models=list(mod,
               qqbands = TRUE,
               title.opt = FALSE)
 
-#This log tranformed residuals indicates that this  is a power function. 
-
-#The plot shows us a linear model is not appropriate, so we will use a 2nd order
-#polynomial 
-#Growth Curves of Gemma and Mysis Mass vs Length
 
 #SE represents the confidence interval
 
@@ -127,6 +213,15 @@ shapiro.test(resid(gemma_linear_model))
 
 #Using ANOVA to compare 
 ```
+
+
+## Length-Mass Cluster Modeling by Age and by Feed Groups
+
+# Survival
+
+## Signficance Testing between Census Events for Census and Deaths
+
+
 
 ```{r  Survival}
 
@@ -300,6 +395,12 @@ get_anova_table(res2.aov)
 #Compare the final set of data between groups using Welsh's T Test
 t.test(ANOVA_df$Census~ANOVA_df$Feed_Group)
 ```
+## Modeling for Census over Time
+
+# Sex Sort
+
+##Significance Testing between Feed Groups
+
 
 ```{r Sex Sort}
 
@@ -325,6 +426,9 @@ t.test(df_sex_sort$Unknown~df_sex_sort$Group)
 #Not seeing any significant differences using ANOVA or Welech Two Sample t-test,
 #which confirms what we saw in the percentage comparison earlier
 ```
+# Fecundity
+
+## Significance Testing between Feed Groups
 
 ```{r Fecundity}
 t.test(Embryo.Viable ~ Group, data=df_fecundity)
