@@ -22,10 +22,10 @@ df_growth <- read.xlsx("../data/Mysis_Pilot.xlsx", sheet="Exp_1", detectDates=T)
 summary(df_growth)
 head(df_growth)
 
-df_growth <- subset(df_growth, select = -c(Time, Age, 
+df_growth <- subset(df_growth, select = -c(Time,  
                                         Possible.Outliers, Condition.Factor))
 
-colnames(df_growth) <- c("Date", "Tank_Location", "Age_Category","Feed_Group",
+colnames(df_growth) <- c("Date", "Tank_Location", "Age","Age_Category","Feed_Group",
                          "Length_mm","Mass_mg")
 
 #add unique sample ID column for tracking and comparison

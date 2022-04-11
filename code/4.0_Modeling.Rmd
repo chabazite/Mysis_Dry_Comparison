@@ -13,19 +13,13 @@ library(ggridges)
 library(viridis) #coloring for ridge plots
 library(ggResidpanel) # panel of diagnostic plots including cooksd
 library(qqplotr) #qq plots
-#library(EnvStats)
-#library(lsmeans)
-#library(plotly)
-#library(outliers)
-#library(hrbrthemes)
-library(rstatix) #t-test, wilcoxon, anova, kruskal-wallis, correlation, levenetest
-#library(janitor)
-#library(broom) #output tibbles for statistical modeling 
-#library(datarium) #ANCOVA
+library(rstatix) #t-test, wilcoxon, anova, kruskal-wallis, correlation, levenetest,
+library(broom) #output tibbles for statistical modeling 
 library(ggpubr) #publication ready plots
 library(ragg) #help with png creation
 library(gridExtra) #allows for grid.arrange functionality
-
+library(WRS2) #collection of robust statistical methods based on Wilcox;
+library(emmeans) #pairwise
 
 ```
 
@@ -54,7 +48,7 @@ df_growth %>%
   levene_test(Mass_mg ~ Feed_Group)
 
 #Two Sample unpaired nonparametric test. iterate over all age categories
-Wilcox_Mass_Age <- data.frame(matrix(nrow=0 ncol = 2))
+Wilcox_Mass_Age <- data.frame(matrix(nrow=0, ncol = 2))
 colnames(Wilcox_Mass_Age) <-c('AgeCategory','P_Value')
 
 #No significant difference between the Feed Groups for any Age Category
@@ -73,15 +67,7 @@ for (AgeCategory in levels(df_growth$Age_Category)){
 }
 
 
-Mass_boxplots_AgeandFeed
-
-
-
-
 ```
-
-
-
 
 ## Length Significance Testing by Age for Feed Groups
 
@@ -92,7 +78,7 @@ df_growth %>%
   levene_test(Length_mm ~ Feed_Group)
 
 #Two Sample unpaired nonparametric test. iterate over all age categories
-Wilcox_Length_Age <- data.frame(matrix(nrow=0 ncol = 2))
+Wilcox_Length_Age <- data.frame(matrix(nrow=0, ncol = 2))
 colnames(Wilcox_Length_Age) <-c('AgeCategory','P_Value')
 
 #No significant difference between the Feed Groups for any Age Category
@@ -116,33 +102,35 @@ Length_boxplots_AgeandFeed
 
 ```
 
-
-
 ## Length-Mass Relationship Modeling for Feed Groups 
 Based on our distribution plots, we can be pretty certain a linear model is not appropriate
 for our models. However, we will use the Residual plot to help us understand our model better.
 Using these plots its pretty clear a polynomial model is more appropriate. 
 
+This is important in the husbandry of fish as this relationship gives us the growth of the fish,
+its health, and a realative condition within its life.
 
-
-```{r Relationship Modelling for Feed Groups}
+```{r Residual Plots}
 y <- df_growth$Mass_mg
 x <- df_growth$Length_mm
 
 mod <- lm(y~x)
 
-#Plot the residuals for a linear model. 
 resid_panel(mod, plots='resid')
 
+```
 
-#Log transform both Mass and Length to compare a log transformed model against
-#the original model
+```{r Transform Data for Linear Regression}
 df_growth$Mass_log <- log(df_growth$Mass_mg)
 df_growth$Length_log <- log(df_growth$Length_mm)
 y2 <- df_growth$Mass_log
 x2 <- df_growth$Length_log
 
 mod_log <- lm(y2~x2)
+
+
+#still not normally distributed
+shapiro.test(resid(mod_log))
 
 #Compare the linear model to a log transformed model 
 resid_compare(models=list(mod,
@@ -151,81 +139,145 @@ resid_compare(models=list(mod,
               smoother = TRUE,
               qqbands = TRUE,
               title.opt = FALSE)
+#Log transform data looks like a great fit
 
 
-#SE represents the confidence interval
+by_feedgroups <- group_by( df_growth, Feed_Group)
 
-ggplot(df_growth, aes(x = Length_mm, y = Mass_mg, color = Feed_Group))+geom_point()+
-  geom_smooth(method='lm',formula = y~poly(x,2,raw=TRUE),se=FALSE)
+do(by_feedgroups,tidy(lm(Mass_log~Length_log,data=.)))
 
 
-ggplot(df_growth, aes(x = Length_log, y = Mass_log, color = Feed_Group))+geom_point()+
-  geom_smooth()
+model_FeedGroups <- lm(Mass_log~Length_log*Feed_Group, df_growth)
+
+summary(model_FeedGroups)
+
+glance(model_FeedGroups)
+
+
+plot(df_growth$Length_log, df_growth$Mass_log, col='red', main='Summary of Regression Model', xlab='x', ylab='y')
+
+
+#The model is statistically significant, however the groups are not. Very tight R2
+
+summary(aov(Mass_log ~ Length_log*Feed_Group, data=df_growth))
+
+```
+
+```{r Correlation and Plotting of Each Feed Group}
 
 #Spearman Correlation, which does not require normality
 df_growth_mysis <- df_growth %>%
   filter(.,Feed_Group=="Mysis")  
-  cor(df_growth_mysis$Length_mm,df_growth_mysis$Mass_mg, method="spearman")
+cor(df_growth_mysis$Length_mm,df_growth_mysis$Mass_mg, method="spearman")
 
 df_growth_gemma <- df_growth %>%
   filter(.,Feed_Group=="Gemma")  
-  cor(df_growth_gemma$Length_mm,df_growth_gemma$Mass_mg, method="spearman")
+cor(df_growth_gemma$Length_mm,df_growth_gemma$Mass_mg, method="spearman")
 
-#Visual representation of pearson correlation  
+#Visual representation of spearman correlation  
 ggscatter(df_growth_mysis, x='Length_log', y='Mass_log', add = "reg.line", conf.int=TRUE, 
           cor.coef = TRUE, cor.method = "spearman", xlab = "Length (mm)", ylab = "Mass (mg)",
           title = "Mysis: Length Mass Log Relationship")
-
 
 ggscatter(df_growth_gemma, x='Length_log', y='Mass_log', add = "reg.line", conf.int=TRUE, 
           cor.coef = TRUE, cor.method = "spearman", xlab = "Length (mm)", ylab = "Mass (mg)",
           title = "Gemma: Length Mass Log Relationship")
 
 
-#Create linear model.
-  
-  
+#Create linear model for each feed group using log transformations.
 mysis_linear_model <- lm(Mass_log~Length_log,data=df_growth_mysis)
 gemma_linear_model <- lm(Mass_log~Length_log,data=df_growth_gemma) 
 
-
+#Residuals % Q-Q plots
 plot(mysis_linear_model)
+plot(gemma_linear_model)
 
-
-
-
-
-#model using one dataset for summary comparison
-model <- lm(Mass_log~Length_log*Feed_Group, df_growth)
-
-summary(model)  
-
-
-ggplot(df_growth, aes(x=Length_log, y=Mass_log,group=Feed_Group))+geom_point(aes(color=Feed_Group))+
-  geom_abline(intercept=)
-
-#since we know based on qq plots and shapiro test, our set isn't normal, we will transform teh data via log transformation
-#Do the transformed values pass the shapiro test?
-qqnorm()
-shapiro.test(resid(gemma_linear_model))
-
-
-
-#Using ANOVA to compare 
 ```
 
+```{r Plot Feed Groups with poly and linear line for visualization}
 
-## Length-Mass Cluster Modeling by Age and by Feed Groups
+#both plots appear to not be significantly different from one another
+ggplot(df_growth, aes(x = Length_mm, y = Mass_mg, color = Feed_Group)) +
+  geom_point() +
+  geom_smooth(method='lm',formula = y~poly(x,2,raw=TRUE),se=FALSE)
+
+ggplot(df_growth, aes(x = Length_log, y = Mass_log, color = Feed_Group)) +
+  geom_point() +
+  geom_smooth()
+
+
+#CHECK Assumptions before ANCOVA
+
+#Linear Relationship Assumption
+ggscatter(
+  df_growth, x = 'Length_log' , y =  'Mass_log',
+  color = "Feed_Group", add = "reg.line"
+  )+
+  stat_regline_equation(
+    aes(label =  paste(..eq.label.., ..rr.label.., sep = "~~~~"), color = Feed_Group)
+    )
+
+#Homogeneity of regression slopes 
+#Feed_Group interaction was not statisticaly significant F(1,730) = 0.390 p = 0.533
+df_growth %>% anova_test(Mass_log ~ Feed_Group*Length_log)
+
+
+#Normality of Residuals
+feed_model <-  lm(Mass_log ~ Length_log + Feed_Group, data =df_growth)
+feed_model.metrics <- augment(feed_model) %>%
+  select(-.hat,-.sigma,-.fitted) #remove unneeded details
+
+head(feed_model.metrics,3)
+
+shapiro_test(feed_model.metrics$.resid)
+
+#failed shapiro test
+
+
+#Wilcox ancova to compare two linear regression lines
+#only significantly different on the extreme ends of the regression model
+
+ancova(Mass_log ~ Length_log + Feed_Group, df_growth)
+
+
+
+#even though we didn't pass all assumptions for regular anova, i still ran it to see
+res.aov <- df_growth %>% anova_test(Mass_log ~ Length_log + Feed_Group)
+
+get_anova_table(res.aov)
+
+#no signficance between groups
+
+#Pairwise #no significance between means of groups
+
+pwc <- df_growth %>%
+  emmeans_test(
+    Mass_log ~ Feed_Group, covariate = Length_log,
+    p.adjust.method = "bonferroni"
+  )
+
+get_emmeans(pwc)
+
+pwc <- pwc %>% add_xy_position(x = "Feed_Group", fun = "mean_se")
+ggline(get_emmeans(pwc), x = "Feed_Group", y = "emmean") +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.2) + 
+  stat_pvalue_manual(pwc, hide.ns = TRUE, tip.length = FALSE) +
+  labs(
+    subtitle = get_test_label(res.aov, detailed = TRUE),
+    caption = get_pwc_label(pwc)
+  )
+
+```
+
 
 # Survival
 
 ## Signficance Testing between Census Events for Census and Deaths
 
-
-
 ```{r  Survival}
 
-Summary_time_series_feed <- df_survival %>%
+#Summarize data by feedgroup and date, the sum each group date, then plot
+df_survival %>%
   group_by(Feed_Group,Date) %>%
   summarise(Census_avg=mean(Census), 
             Standard_Error=sd(Census)/sqrt(length(Census))) %>%
@@ -235,109 +287,77 @@ Summary_time_series_feed <- df_survival %>%
   scale_color_brewer(palette="Dark2") +
   labs(title='Average Feed Group Census over Time', 
        subtitle = 'Standard Error for Comparison',
-       y = "Fish Census", x = "Date") +
-  theme_specs
+       y = "Fish Census", x = "Date") 
 
+t_test_census <- data.frame(matrix(nrow=0, ncol = 2))
+colnames(t_test_census) <-c('Sample Date','P_Value')
 
-#Summarize data by feedgroup and date, the sum each group date, then plot
-df_survival %>%
-  group_by(Feed_Group,Date) %>%
-    summarise(Census=sum(Census)) %>%
-  ggplot(.,aes(x=Date,y=Census,color=Feed_Group)) +geom_line()
+for (Date in levels(factor(df_survival$Date))){
+   if (Date == "2020-10-15"){
+     next
+     }else{
+  Mysis_Census <- df_survival$Census[df_survival$Date == Date & 
+                         df_survival$Feed_Group == 'Mysis']
 
-#Summarize the data by feedgroup and date, using average
-df_survival %>%
-  group_by(Feed_Group,Date) %>%
-    summarise(Census=mean(Census)) %>%
-  ggplot(.,aes(x=Date,y=Census,color=Feed_Group)) +geom_line()
-
-#individual tank survival grouped by feed type
-ggplot(df_survival, aes(x=Date, y=Census, group = Tank, color = Feed_Group))+geom_line()+geom_point()
-
-#create a df with just the differences in tank over the time period
-df_survival_summary_wide<-df_survival %>%
-  group_by(Date) %>%
-  filter(Date == '2020-10-15'|Date=='2021-07-06') %>%
-  pivot_wider(names_from = Tank, values_from = Census,values_fill = 0)
-
-
-#individual tank survival grouped by feed type
-ggplot(df_survival, aes(x=Date, y=Census, group = Tank, color = Feed_Group))+geom_point()+geom_smooth()
-
-
-
-#We will look to see if the regression lines of each  group is statistically 
-#different using ANCOVA. Feed_Group is out group variable, census is dependent,
-# and Date is our independent variable
-
-mod1 <- aov(Census~Date*Feed_Group, data=df_survival)
-summary(mod1)
-
-#The summary of these results show a significant effect of Census and Date, but
-#no significant interaction. Now we test for significant differences in the slope
-
-mod2 <- aov(Census~Date+Feed_Group, data=df_survival)
-summary(mod2)
-
-#This result shows that Feed_group as a significant impact on the dependent 
-#variable, which we interpret as a significant difference in intercepts.
-
-#Now ANOVA
-
-anova(mod1,mod2)
-
-#This ANOVA comparison shows us  that there is no significant result of removing
-#the interaction between the two graphs. 
-
-
-
-
-#Convert POSIXct format to numeric for regression model
-df_survival$Date.numeric <-as.numeric(df_survival$Date)/(24*60*60)
+  Gemma_Census <- df_survival$Census[df_survival$Date == Date &
+                         df_survival$Feed_Group == 'Gemma']
   
-#subset survival groups
-
-mysis_survival <-  df_survival %>%
-    filter(Feed_Group == 'Mysis')
-gemma_survival<-  df_survival %>%
-  filter(Feed_Group == 'Gemma')
-#Build linear regression models for both survival rates
+  SigTest <- t.test(Mysis_Census, Gemma_Census)
+  
+  t_test_census[nrow(t_test_census) + 1,] <- c(Date, SigTest$p.value)
+     }
+}
 
 
-linear_Mod_Mysis <- mysis_survival %>%
-  lm(Census~Date.numeric, data=.)
+#difference in deaths
+df_survival %>%
+  group_by(Date, Feed_Group) %>%
+  summarize(Census = mean(Census)) %>%
+  group_by(Feed_Group) %>%
+  summarize(Census_Dead = -diff(Census),
+            Date = Date[-1]) %>%
+   ggplot(aes(y = Census_Dead, x= Date)) +
+  geom_col(aes(fill = Feed_Group), position = "dodge") +
+  scale_color_brewer(palette="Dark2") +
+  labs(title='Average Feed Group Deaths between Census Events', 
+       y = "Fish Deaths", x = "Date")
 
-linear_Mod_Gemma <- gemma_survival %>%
-  lm(Census~Date.numeric, data=.)
 
-#summary for linear modals. The shift from POSIXct fixed the issues I was having
-summary(linear_Mod_Mysis)
-summary(linear_Mod_Gemma)
+#Deaths
+
+df_deaths <- df_survival %>%
+  group_by(Tank_Location, Feed_Group) %>%
+  summarize(Census_Dead = -diff(Census),
+            Date = Date[-1])
+
+
+t_test_deaths <- data.frame(matrix(nrow=0, ncol = 2))
+colnames(t_test_deaths) <-c('Sample Date','P_Value')
+
+for (Date in levels(factor(df_deaths$Date))){
+
+  Mysis_death <- df_deaths$Census_Dead[df_deaths$Date == Date & 
+                         df_deaths$Feed_Group == 'Mysis']
+
+  Gemma_death <- df_deaths$Census_Dead[df_deaths$Date == Date &
+                         df_deaths$Feed_Group == 'Gemma']
+  
+  SigTest <- t.test(Mysis_death, Gemma_death)
+  
+  t_test_deaths[nrow(t_test_deaths) + 1,] <- c(Date, SigTest$p.value)
+     }
+
+
+
+
+
 
 #Summary indicates that Mysis and Gemma have similar intercepts 244.68,538.6,but gemma is higher which 
 #makes sense given their starting numbers were the same, but their slopes are different, eventually
-#Gemma will trace back at a higher y-intercept than Mysis. 
-
-
-plot(Census~Date.numeric, data = df_survival, type = 'n')+
-  points(mysis_survival$Date.numeric,mysis_survival$Census,pch=20)+
-  points(gemma_survival$Date.numeric,gemma_survival$Census,pch=1)+
-  abline(linear_Mod_Mysis,lty=1)+
-  abline(linear_Mod_Gemma,lty=2)+
-  legend("bottomleft", c("Mysis","Gemma"), lty=c(1,2), pch=c(20,1))
+#Gemma will trace back at a higher y-intercept than Mysis.  R  squared is low, because this doesn't seem linear
 
 ggscatter(df_survival, x="Date", y="Census", color= "Feed_Group", add="reg.line")+
   stat_regline_equation(aes(label = paste(..eq.label..,..rr.label..,sep="~~~~"), color=Feed_Group))
-
-
-#we can see that the models show a signficant difference between the two, with 
-#mysis having a smaller intercept, showing gemma has a higher  survival rate
-#
-
-#Looking at this a different way, we truely only care that there is a difference at 
-#the end of the high-aggression period. While it is interesting to see, where and
-#when there may be different trends or how one trend impacts the other, this is something
-#that requires a lot more study. 
 
 
 #We are going to test the normality of residuals. 
@@ -362,8 +382,6 @@ res.aov <- df_survival %>% anova_test(Census~Date+Feed_Group)
 
 get_anova_table(res.aov)
 
-library(emmeans)
-
 #pairwise comparisons
 pwc<-df_survival %>%
   emmeans_test(
@@ -372,17 +390,16 @@ pwc<-df_survival %>%
   get_emmeans(pwc)
   
 #Line_Plot
-  
-  lp <- ggline(
-  get_emmeans(pwc), x = "Date", y = "emmean", 
-  color = "Feed_Group", palette = "jco"
-  ) +
-  geom_errorbar(
-    aes(ymin = conf.low, ymax = conf.high, color = Feed_Group), 
-    width = 0.1
-    )
+pwc <- pwc %>% add_xy_position(x = "Feed_Group", fun = "mean_se")
 
-  print(lp)  
+ggline(get_emmeans(pwc), x = "Feed_Group", y = "emmean") +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.2) + 
+  stat_pvalue_manual(pwc, hide.ns = TRUE, tip.length = FALSE) +
+  labs(
+    subtitle = get_test_label(res.aov, detailed = TRUE),
+    caption = get_pwc_label(pwc)
+  )
+
 
 #ANOVA on final set
 ANOVA_df <- df_survival %>%
@@ -395,7 +412,6 @@ get_anova_table(res2.aov)
 #Compare the final set of data between groups using Welsh's T Test
 t.test(ANOVA_df$Census~ANOVA_df$Feed_Group)
 ```
-## Modeling for Census over Time
 
 # Sex Sort
 
