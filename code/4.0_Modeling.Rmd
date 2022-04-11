@@ -48,23 +48,37 @@ df_growth %>%
   levene_test(Mass_mg ~ Feed_Group)
 
 #Two Sample unpaired nonparametric test. iterate over all age categories
-Wilcox_Mass_Age <- data.frame(matrix(nrow=0, ncol = 2))
-colnames(Wilcox_Mass_Age) <-c('AgeCategory','P_Value')
+Wilcox_Mass_Age_P_Table <- data.frame(matrix(nrow=0, ncol = 2))
+colnames(Wilcox_Mass_Age_P_Table) <-c('Age Category','P-Value')
 
-#No significant difference between the Feed Groups for any Age Category
 for (AgeCategory in levels(df_growth$Age_Category)){
+  Mysis_Age_df_filter <- df_growth%>% 
+                            filter(., Age_Category == AgeCategory & 
+                                      df_growth$Feed_Group == 'Mysis')
+  Gemma_Age_df_filter <- df_growth %>% 
+                            filter(., Age_Category == AgeCategory &
+                                      df_growth$Feed_Group == 'Gemma')
   
-  Mysis_Age_Mass <- df_growth$Mass_mg[df_growth$Age_Category == AgeCategory & 
-                         df_growth$Feed_Group == 'Mysis']
-
-  Gemma_Age_Mass <- df_growth$Mass_mg[df_growth$Age_Category == AgeCategory &
-                         df_growth$Feed_Group == 'Gemma']
+  SigTest <- wilcox.test(Mysis_Age_df_filter$Mass_mg, Gemma_Age_df_filter$Mass_mg, 
+                         alternative = "two.sided", paired =FALSE)
   
-  SigTest <- wilcox.test(Mysis_Age_Mass, Gemma_Age_Mass, alternative = "two.sided")
-  
-  Wilcox_Mass_Age[nrow(Wilcox_Mass_Age) + 1,] <- c(AgeCategory,SigTest$p.value)
-  
+  #add new significance data one row below previous
+  Wilcox_Mass_Age_P_Table[nrow(Wilcox_Mass_Age_P_Table) + 1,] <- c(AgeCategory, 
+                                                                   SigTest$p.value)
 }
+#No significant difference between the Feed Groups for any Age Category
+
+Mass_boxplot <- ggboxplot(df_growth, x="Age_Category", y="Mass_mg",
+              color = "Feed_Group", 
+              add = "jitter")
+
+Mass_P_Graph <- Mass_boxplot + 
+    stat_compare_means(aes(group = Feed_Group), label = "p.format", size = 7) + 
+  scale_color_brewer(palette="Dark2") +
+  labs(title='Mass of A. mexicanus by Age & Feed Type', 
+       subtitle = "Wilcoxon Rank Sum Test",
+       y = "Mass (mg)", x = "Age Category") +
+  theme_specs
 
 
 ```
@@ -78,27 +92,46 @@ df_growth %>%
   levene_test(Length_mm ~ Feed_Group)
 
 #Two Sample unpaired nonparametric test. iterate over all age categories
-Wilcox_Length_Age <- data.frame(matrix(nrow=0, ncol = 2))
-colnames(Wilcox_Length_Age) <-c('AgeCategory','P_Value')
+Wilcox_Length_Age_P_Table <- data.frame(matrix(nrow=0, ncol = 2))
+colnames(Wilcox_Length_Age_P_Table) <-c('Age Category','P-Value')
 
 #No significant difference between the Feed Groups for any Age Category
 for (AgeCategory in levels(df_growth$Age_Category)){
+  Mysis_Age_df_filter <- df_growth%>% 
+                            filter(., Age_Category == AgeCategory & 
+                                      df_growth$Feed_Group == 'Mysis')
+  Gemma_Age_df_filter <- df_growth %>% 
+                            filter(., Age_Category == AgeCategory &
+                                      df_growth$Feed_Group == 'Gemma')
   
-  Mysis_Age_Length <- df_growth$Length_mm[df_growth$Age_Category == AgeCategory & 
-                         df_growth$Feed_Group == 'Mysis']
-
-  Gemma_Age_Length <- df_growth$Length_mm[df_growth$Age_Category == AgeCategory &
-                         df_growth$Feed_Group == 'Gemma']
+  SigTest <- wilcox.test(Mysis_Age_df_filter$Length_mm, Gemma_Age_df_filter$Length_mm, 
+                         alternative = "two.sided", 
+                         paired= FALSE)
   
-  SigTest <- wilcox.test(Mysis_Age_Length, Gemma_Age_Length, alternative = "two.sided")
-  
-  Wilcox_Length_Age[nrow(Wilcox_Length_Age) + 1,] <- c(AgeCategory,SigTest$p.value)
+  Wilcox_Length_Age_P_Table[nrow(Wilcox_Length_Age_P_Table) + 1,] <- c(AgeCategory, 
+                                                                       SigTest$p.value)
   
 }
 
+Length_box_plot <- ggboxplot(df_growth, x="Age_Category", y="Length_mm",
+              color = "Feed_Group", 
+              add = "jitter",lwd=2, 
+                             fill='grey', 
+                             outlier.colour = NULL, 
+                             outlier.size = 3) 
 
-Length_boxplots_AgeandFeed
+Length_P_Graph <- Length_box_plot + 
+  stat_compare_means(aes(group = Feed_Group), label = "p.format", size = 7) + 
+  scale_color_brewer(palette="Dark2") +
+  labs(title='Length of A. mexicanus by Age & Feed Type', 
+       subtitle = "Wilcoxon Rank Sum Test",
+       y = "Length (mm)", x = "Age Category") +
+  theme_specs
+    
 
+
+
+Wilcox_Length_Age_P_Table
 
 ```
 
@@ -420,24 +453,10 @@ t.test(ANOVA_df$Census~ANOVA_df$Feed_Group)
 
 ```{r Sex Sort}
 
-#From a first glance there is hardly any difference beteween the two groups in terms
-#of sex, but we will run some Significance testing to make sure. An ANOVA is appropriate
-#in these situations
-
-#ANOVA
-df_sex_sort %>%
-  anova_test(Female ~ Group)
-
-df_sex_sort %>%
-  anova_test(Male ~ Group)
-
-df_sex_sort %>%
-  anova_test(Unknown ~ Group)
-
-
-t.test(df_sex_sort$Female~df_sex_sort$Group)
-t.test(df_sex_sort$Male~df_sex_sort$Group)
-t.test(df_sex_sort$Unknown~df_sex_sort$Group)
+#Welch's T-test
+t.test(df_sex_sort$Female~df_sex_sort$Feed_Group)
+t.test(df_sex_sort$Male~df_sex_sort$Feed_Group)
+t.test(df_sex_sort$Unknown~df_sex_sort$Feed_Group)
 
 #Not seeing any significant differences using ANOVA or Welech Two Sample t-test,
 #which confirms what we saw in the percentage comparison earlier
@@ -447,6 +466,28 @@ t.test(df_sex_sort$Unknown~df_sex_sort$Group)
 ## Significance Testing between Feed Groups
 
 ```{r Fecundity}
-t.test(Embryo.Viable ~ Group, data=df_fecundity)
+t.test(Viable_Embryos ~ Feed_Group, data=df_fecundity)
+```
+
+#Medium Plots
+```{r Medium Plots}
+
+#Growth
+
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Sig_Mass.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(Mass_P_Graph)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+
+
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Sig_Length.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(Length_P_Graph)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+
+
+
 ```
 
