@@ -48,8 +48,8 @@ df_growth %>%
   levene_test(Mass_mg ~ Feed_Group)
 
 #Two Sample unpaired nonparametric test. iterate over all age categories
-Wilcox_Mass_Age_P_Table <- data.frame(matrix(nrow=0, ncol = 2))
-colnames(Wilcox_Mass_Age_P_Table) <-c('Age Category','P-Value')
+Wilcox_Mass_Age_P_Table <- data.frame(matrix(nrow = 0, ncol = 2))
+colnames(Wilcox_Mass_Age_P_Table) <- c('Age Category','P-Value')
 
 for (AgeCategory in levels(df_growth$Age_Category)){
   Mysis_Age_df_filter <- df_growth%>% 
@@ -60,42 +60,42 @@ for (AgeCategory in levels(df_growth$Age_Category)){
                                       df_growth$Feed_Group == 'Gemma')
   
   SigTest <- wilcox.test(Mysis_Age_df_filter$Mass_mg, Gemma_Age_df_filter$Mass_mg, 
-                         alternative = "two.sided", paired =FALSE)
+                         alternative = "two.sided", paired = FALSE)
   
   #add new significance data one row below previous
-  Wilcox_Mass_Age_P_Table[nrow(Wilcox_Mass_Age_P_Table) + 1,] <- c(AgeCategory, 
+  Wilcox_Mass_Age_P_Table[nrow(Wilcox_Mass_Age_P_Table) + 1, ] <- c(AgeCategory, 
                                                                    SigTest$p.value)
 }
 #No significant difference between the Feed Groups for any Age Category
-
 Mass_boxplot <- ggboxplot(df_growth, x="Age_Category", y="Mass_mg",
-              color = "Feed_Group", 
-              add = "jitter")
+                          color = "Feed_Group", add = "jitter", 
+                          lwd = 2, fill = 'grey', outlier.colour = NULL, 
+                          outlier.size = 3) 
 
 Mass_P_Graph <- Mass_boxplot + 
-    stat_compare_means(aes(group = Feed_Group), label = "p.format", size = 7) + 
-  scale_color_brewer(palette="Dark2") +
-  labs(title='Mass of A. mexicanus by Age & Feed Type', 
+  stat_compare_means(aes(group = Feed_Group), label = "p.format", size = 7) + 
+  scale_color_brewer(palette = "Dark2") +
+  labs(title = 'Mass of A. mexicanus by Age & Feed Type', 
        subtitle = "Wilcoxon Rank Sum Test",
        y = "Mass (mg)", x = "Age Category") +
   theme_specs
-
 
 ```
 
 ## Length Significance Testing by Age for Feed Groups
 
 ```{r}
-#Variance for Length for Age Groups between Feed Groups are only significantly different for three months
+#Variance for Length for Age Groups between Feed Groups 
+#are significantly different @ three months
 df_growth %>%
   group_by(Age_Category)%>%
   levene_test(Length_mm ~ Feed_Group)
 
 #Two Sample unpaired nonparametric test. iterate over all age categories
-Wilcox_Length_Age_P_Table <- data.frame(matrix(nrow=0, ncol = 2))
-colnames(Wilcox_Length_Age_P_Table) <-c('Age Category','P-Value')
+Wilcox_Length_Age_P_Table <- data.frame(matrix(nrow = 0, ncol = 2))
+colnames(Wilcox_Length_Age_P_Table) <- c('Age Category', 'P-Value')
 
-#No significant difference between the Feed Groups for any Age Category
+
 for (AgeCategory in levels(df_growth$Age_Category)){
   Mysis_Age_df_filter <- df_growth%>% 
                             filter(., Age_Category == AgeCategory & 
@@ -108,31 +108,22 @@ for (AgeCategory in levels(df_growth$Age_Category)){
                          alternative = "two.sided", 
                          paired= FALSE)
   
-  Wilcox_Length_Age_P_Table[nrow(Wilcox_Length_Age_P_Table) + 1,] <- c(AgeCategory, 
+  Wilcox_Length_Age_P_Table[nrow(Wilcox_Length_Age_P_Table) + 1, ] <- c(AgeCategory, 
                                                                        SigTest$p.value)
-  
-}
+}#No significant difference between the Feed Groups for any Age Category
 
 Length_box_plot <- ggboxplot(df_growth, x="Age_Category", y="Length_mm",
-              color = "Feed_Group", 
-              add = "jitter",lwd=2, 
-                             fill='grey', 
-                             outlier.colour = NULL, 
+                             color = "Feed_Group", add = "jitter",
+                             lwd = 2, fill = 'grey', outlier.colour = NULL, 
                              outlier.size = 3) 
 
 Length_P_Graph <- Length_box_plot + 
   stat_compare_means(aes(group = Feed_Group), label = "p.format", size = 7) + 
-  scale_color_brewer(palette="Dark2") +
-  labs(title='Length of A. mexicanus by Age & Feed Type', 
+  scale_color_brewer(palette = "Dark2") +
+  labs(title = 'Length of A. mexicanus by Age & Feed Type', 
        subtitle = "Wilcoxon Rank Sum Test",
        y = "Length (mm)", x = "Age Category") +
   theme_specs
-    
-
-
-
-Wilcox_Length_Age_P_Table
-
 ```
 
 ## Length-Mass Relationship Modeling for Feed Groups 
@@ -149,11 +140,12 @@ x <- df_growth$Length_mm
 
 mod <- lm(y~x)
 
-resid_panel(mod, plots='resid')
+Growth_resid <- resid_panel(mod, plots='resid') +theme_specs
 
 ```
 
 ```{r Transform Data for Linear Regression}
+
 df_growth$Mass_log <- log(df_growth$Mass_mg)
 df_growth$Length_log <- log(df_growth$Length_mm)
 y2 <- df_growth$Mass_log
@@ -162,11 +154,12 @@ x2 <- df_growth$Length_log
 mod_log <- lm(y2~x2)
 
 
-#still not normally distributed
+resid_panel(mod_log,plot='resid')
+
 shapiro.test(resid(mod_log))
 
 #Compare the linear model to a log transformed model 
-resid_compare(models=list(mod,
+Compare_log_resid <- resid_compare(models=list(mod,
                           mod_log),
               plots= c("resid", "qq"),
               smoother = TRUE,
@@ -208,13 +201,13 @@ df_growth_gemma <- df_growth %>%
 cor(df_growth_gemma$Length_mm,df_growth_gemma$Mass_mg, method="spearman")
 
 #Visual representation of spearman correlation  
-ggscatter(df_growth_mysis, x='Length_log', y='Mass_log', add = "reg.line", conf.int=TRUE, 
+Mysis_Spearman <- ggscatter(df_growth_mysis, x='Length_log', y='Mass_log', add = "reg.line", conf.int=TRUE, 
           cor.coef = TRUE, cor.method = "spearman", xlab = "Length (mm)", ylab = "Mass (mg)",
-          title = "Mysis: Length Mass Log Relationship")
+          title = "Mysis: Length Mass Log Relationship", subtitle = "Spearman Correlation")
 
-ggscatter(df_growth_gemma, x='Length_log', y='Mass_log', add = "reg.line", conf.int=TRUE, 
+Gemma_Spearman <- ggscatter(df_growth_gemma, x='Length_log', y='Mass_log', add = "reg.line", conf.int=TRUE, 
           cor.coef = TRUE, cor.method = "spearman", xlab = "Length (mm)", ylab = "Mass (mg)",
-          title = "Gemma: Length Mass Log Relationship")
+          title = "Gemma: Length Mass Log Relationship", subtitle = "Spearman Correlation")
 
 
 #Create linear model for each feed group using log transformations.
@@ -229,20 +222,8 @@ plot(gemma_linear_model)
 
 ```{r Plot Feed Groups with poly and linear line for visualization}
 
-#both plots appear to not be significantly different from one another
-ggplot(df_growth, aes(x = Length_mm, y = Mass_mg, color = Feed_Group)) +
-  geom_point() +
-  geom_smooth(method='lm',formula = y~poly(x,2,raw=TRUE),se=FALSE)
-
-ggplot(df_growth, aes(x = Length_log, y = Mass_log, color = Feed_Group)) +
-  geom_point() +
-  geom_smooth()
-
-
-#CHECK Assumptions before ANCOVA
-
 #Linear Relationship Assumption
-ggscatter(
+Linear_relation <- ggscatter(
   df_growth, x = 'Length_log' , y =  'Mass_log',
   color = "Feed_Group", add = "reg.line"
   )+
@@ -308,22 +289,8 @@ ggline(get_emmeans(pwc), x = "Feed_Group", y = "emmean") +
 ## Signficance Testing between Census Events for Census and Deaths
 
 ```{r  Survival}
-
-#Summarize data by feedgroup and date, the sum each group date, then plot
-df_survival %>%
-  group_by(Feed_Group,Date) %>%
-  summarise(Census_avg=mean(Census), 
-            Standard_Error=sd(Census)/sqrt(length(Census))) %>%
-  ggplot(.,aes(x=Date,y=Census_avg,color=Feed_Group)) +geom_line(size=2)+
-  geom_point(size = 4)+ geom_errorbar(aes(ymin=Census_avg-Standard_Error,
-                                  ymax=Census_avg+Standard_Error),width=5) +
-  scale_color_brewer(palette="Dark2") +
-  labs(title='Average Feed Group Census over Time', 
-       subtitle = 'Standard Error for Comparison',
-       y = "Fish Census", x = "Date") 
-
-t_test_census <- data.frame(matrix(nrow=0, ncol = 2))
-colnames(t_test_census) <-c('Sample Date','P_Value')
+Wilcox_census <- data.frame(matrix(nrow=0, ncol = 2))
+colnames(Wilcox_census) <-c('Sample Date','P_Value')
 
 for (Date in levels(factor(df_survival$Date))){
    if (Date == "2020-10-15"){
@@ -335,25 +302,15 @@ for (Date in levels(factor(df_survival$Date))){
   Gemma_Census <- df_survival$Census[df_survival$Date == Date &
                          df_survival$Feed_Group == 'Gemma']
   
-  SigTest <- t.test(Mysis_Census, Gemma_Census)
+  SigTest <- wilcox.test(Mysis_Census, Gemma_Census)
   
-  t_test_census[nrow(t_test_census) + 1,] <- c(Date, SigTest$p.value)
+  Wilcox_census[nrow(Wilcox_census) + 1,] <- c(Date, SigTest$p.value)
      }
 }
 
-
-#difference in deaths
-df_survival %>%
-  group_by(Date, Feed_Group) %>%
-  summarize(Census = mean(Census)) %>%
-  group_by(Feed_Group) %>%
-  summarize(Census_Dead = -diff(Census),
-            Date = Date[-1]) %>%
-   ggplot(aes(y = Census_Dead, x= Date)) +
-  geom_col(aes(fill = Feed_Group), position = "dodge") +
-  scale_color_brewer(palette="Dark2") +
-  labs(title='Average Feed Group Deaths between Census Events', 
-       y = "Fish Deaths", x = "Date")
+ggline(df_survival, x = "Date", y = "Census", add = "mean_se",
+          color = "Feed_Group", palette = "jco") +
+  stat_compare_means(aes(group = Feed_Group), label = "p.format")
 
 
 #Deaths
@@ -363,9 +320,8 @@ df_deaths <- df_survival %>%
   summarize(Census_Dead = -diff(Census),
             Date = Date[-1])
 
-
-t_test_deaths <- data.frame(matrix(nrow=0, ncol = 2))
-colnames(t_test_deaths) <-c('Sample Date','P_Value')
+Wilcox_deaths <- data.frame(matrix(nrow=0, ncol = 2))
+colnames(Wilcox_deaths) <-c('Sample Date','P_Value')
 
 for (Date in levels(factor(df_deaths$Date))){
 
@@ -377,73 +333,37 @@ for (Date in levels(factor(df_deaths$Date))){
   
   SigTest <- t.test(Mysis_death, Gemma_death)
   
-  t_test_deaths[nrow(t_test_deaths) + 1,] <- c(Date, SigTest$p.value)
+  Wilcox_deaths[nrow(Wilcox_deaths) + 1,] <- c(Date, SigTest$p.value)
      }
 
+df_deaths$Date= factor(df_deaths$Date)
+
+ggbarplot(df_deaths, x = "Date", y = "Census_Dead", add = "mean_se",
+          color = "Feed_Group", position = position_dodge(0.8))+
+  stat_compare_means(aes(group = Feed_Group), label = "p.format")
+
+Wilcox_census
+Wilcox_deaths
+```
 
 
+```{r  Survival Model}
+#linear model had very low R-squared value (<0.45 & <0.2), switched to polynomial
+df_survival$Date= as.Date(df_survival$Date)
 
+formula <- y~poly(x, 2, raw = TRUE)
 
+p<- ggplot(df_survival, aes(Date, Census, color = Feed_Group)) + 
+  geom_point() +
+  stat_smooth(aes(fill = Feed_Group, color=Feed_Group), method='lm', formula = formula)+
+  stat_regline_equation(
+    aes(label =  paste(..eq.label.., ..adj.rr.label.., sep = "~~~~")),
+    formula = formula ) +  
+  theme_bw()
+ggpar(p)
 
-#Summary indicates that Mysis and Gemma have similar intercepts 244.68,538.6,but gemma is higher which 
-#makes sense given their starting numbers were the same, but their slopes are different, eventually
-#Gemma will trace back at a higher y-intercept than Mysis.  R  squared is low, because this doesn't seem linear
+#poor fit
 
-ggscatter(df_survival, x="Date", y="Census", color= "Feed_Group", add="reg.line")+
-  stat_regline_equation(aes(label = paste(..eq.label..,..rr.label..,sep="~~~~"), color=Feed_Group))
-
-
-#We are going to test the normality of residuals. 
-model.metrics <- augment(mod2) %>%
-subset(.,select=c(-.hat,-.sigma,-.fitted))
-
-#shapiro wilk test if not significant (our case) tells us we can assume normality
-shapiro_test(model.metrics$.resid)
-
-#now we figure equality of variance of the residuals using Leven's test for ANCOVA
-model.metrics %>% levene_test(.resid ~ Feed_Group) #this is also not significant
-
-#look at outliers for the dataset
-
-#Looking for standardized residuals greater than 3 in absolute value. Because we don't 
-#see any we can assume no outliers. 
-model.metrics %>%
-  filter(abs(.std.resid) > 3) %>%
-  as.data.frame()
-
-res.aov <- df_survival %>% anova_test(Census~Date+Feed_Group) 
-
-get_anova_table(res.aov)
-
-#pairwise comparisons
-pwc<-df_survival %>%
-  emmeans_test(
-    Census~Feed_Group, covariate=Date,
-    p.adjust.method = "bonferroni")
-  get_emmeans(pwc)
-  
-#Line_Plot
-pwc <- pwc %>% add_xy_position(x = "Feed_Group", fun = "mean_se")
-
-ggline(get_emmeans(pwc), x = "Feed_Group", y = "emmean") +
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.2) + 
-  stat_pvalue_manual(pwc, hide.ns = TRUE, tip.length = FALSE) +
-  labs(
-    subtitle = get_test_label(res.aov, detailed = TRUE),
-    caption = get_pwc_label(pwc)
-  )
-
-
-#ANOVA on final set
-ANOVA_df <- df_survival %>%
-  filter(.,Date=='2021-07-06')
-
-res2.aov <- ANOVA_df %>% anova_test(Census~Feed_Group) 
-
-get_anova_table(res2.aov)  
-
-#Compare the final set of data between groups using Welsh's T Test
-t.test(ANOVA_df$Census~ANOVA_df$Feed_Group)
 ```
 
 # Sex Sort
@@ -453,13 +373,20 @@ t.test(ANOVA_df$Census~ANOVA_df$Feed_Group)
 
 ```{r Sex Sort}
 
-#Welch's T-test
-t.test(df_sex_sort$Female~df_sex_sort$Feed_Group)
-t.test(df_sex_sort$Male~df_sex_sort$Feed_Group)
-t.test(df_sex_sort$Unknown~df_sex_sort$Feed_Group)
+#Create a column of total counts for each tank location
+df_sex_sort$Total <- rowSums(df_sex_sort[,c("Female","Male","Unknown")])
 
-#Not seeing any significant differences using ANOVA or Welech Two Sample t-test,
-#which confirms what we saw in the percentage comparison earlier
+df_sex_norm <- df_sex_sort %>%
+  group_by(Feed_Group)%>%
+  summarise(Female=Female/Total,Male=Male/Total,Unknown=Unknown/Total)
+
+df_sex_tidy <- df_sex_norm %>% pivot_longer(Female:Unknown, names_to = "Sex", values_to = "Percentage")
+
+#Still using Wilcoxon Rank Sum, no significant difference in Sex between groups
+ggboxplot(df_sex_tidy, x= "Sex", y="Percentage", color = "Feed_Group") +
+  stat_compare_means(aes(group = Feed_Group),label = "p.format")
+
+
 ```
 # Fecundity
 
@@ -467,6 +394,12 @@ t.test(df_sex_sort$Unknown~df_sex_sort$Feed_Group)
 
 ```{r Fecundity}
 t.test(Viable_Embryos ~ Feed_Group, data=df_fecundity)
+
+ggboxplot(df_fecundity, x= "Feed_Group", y="Viable_Embryos", color = "Feed_Group") +
+  stat_compare_means()
+
+
+
 ```
 
 #Medium Plots
@@ -487,7 +420,35 @@ plot(Length_P_Graph)
 invisible(dev.off())
 knitr::include_graphics(pngfile)
 
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Resid_growth.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(Growth_resid)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
 
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Resid_compare.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(Compare_log_resid)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Mysis_spearman.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(Mysis_Spearman)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Gemma_Spearman.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(Gemma_Spearman)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Growth_Linear.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(Linear_relation)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
 
 ```
 
