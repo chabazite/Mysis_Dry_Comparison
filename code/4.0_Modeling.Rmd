@@ -228,13 +228,18 @@ Linear_relation <- ggscatter(
   color = "Feed_Group", add = "reg.line"
   )+
   stat_regline_equation(
-    aes(label =  paste(..eq.label.., ..rr.label.., sep = "~~~~"), color = Feed_Group)
-    )
+    aes(label =  paste(..eq.label.., ..rr.label.., sep = "~~~~"), color = Feed_Group), size = 10
+    )  +
+  scale_color_brewer(palette="Dark2") +
+  scale_fill_brewer(palette="Dark2") +
+  labs(title='Length-Mass Relationship of A. mexicanus by Feed Type', 
+       subtitle = "Log-Log Linear Regression Model", 
+       y = "log(Mass (mg))", x = "log(Length (mm))") +
+  theme_specs
 
 #Homogeneity of regression slopes 
 #Feed_Group interaction was not statisticaly significant F(1,730) = 0.390 p = 0.533
 df_growth %>% anova_test(Mass_log ~ Feed_Group*Length_log)
-
 
 #Normality of Residuals
 feed_model <-  lm(Mass_log ~ Length_log + Feed_Group, data =df_growth)
@@ -245,41 +250,14 @@ head(feed_model.metrics,3)
 
 shapiro_test(feed_model.metrics$.resid)
 
-#failed shapiro test
+#shapiro test indicated the model is not from a normal distribution
 
 
 #Wilcox ancova to compare two linear regression lines
 #only significantly different on the extreme ends of the regression model
 
-ancova(Mass_log ~ Length_log + Feed_Group, df_growth)
+ancova(Mass_mg ~ Length_mm + Feed_Group, df_growth)
 
-
-
-#even though we didn't pass all assumptions for regular anova, i still ran it to see
-res.aov <- df_growth %>% anova_test(Mass_log ~ Length_log + Feed_Group)
-
-get_anova_table(res.aov)
-
-#no signficance between groups
-
-#Pairwise #no significance between means of groups
-
-pwc <- df_growth %>%
-  emmeans_test(
-    Mass_log ~ Feed_Group, covariate = Length_log,
-    p.adjust.method = "bonferroni"
-  )
-
-get_emmeans(pwc)
-
-pwc <- pwc %>% add_xy_position(x = "Feed_Group", fun = "mean_se")
-ggline(get_emmeans(pwc), x = "Feed_Group", y = "emmean") +
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.2) + 
-  stat_pvalue_manual(pwc, hide.ns = TRUE, tip.length = FALSE) +
-  labs(
-    subtitle = get_test_label(res.aov, detailed = TRUE),
-    caption = get_pwc_label(pwc)
-  )
 
 ```
 
@@ -308,9 +286,16 @@ for (Date in levels(factor(df_survival$Date))){
      }
 }
 
-ggline(df_survival, x = "Date", y = "Census", add = "mean_se",
-          color = "Feed_Group", palette = "jco") +
-  stat_compare_means(aes(group = Feed_Group), label = "p.format")
+Census_Wilcox <- ggline(df_survival, x = "Date", y = "Census", add = "mean_se",
+          color = "Feed_Group") +
+  stat_compare_means(aes(group = Feed_Group), label = "p.format", size = 7) +
+  scale_color_brewer(palette="Dark2") +
+  scale_fill_brewer(palette="Dark2") +
+  labs(title='Census over time of A. mexicanus by Feed Type', 
+       subtitle = "Wilcoxon Rank Sum Test", 
+       y = "Census", x = "Sampling Date") +
+  theme_specs
+
 
 
 #Deaths
@@ -338,9 +323,16 @@ for (Date in levels(factor(df_deaths$Date))){
 
 df_deaths$Date= factor(df_deaths$Date)
 
-ggbarplot(df_deaths, x = "Date", y = "Census_Dead", add = "mean_se",
-          color = "Feed_Group", position = position_dodge(0.8))+
-  stat_compare_means(aes(group = Feed_Group), label = "p.format")
+wilcox_deaths <- ggbarplot(df_deaths, x = "Date", y = "Census_Dead", add = "mean_se",
+          color = "Feed_Group", fill = "Feed_Group", position = position_dodge(0.8))+
+  stat_compare_means(aes(group = Feed_Group), label = "p.format", size = 7)+
+  scale_color_brewer(palette="Dark2") +
+  scale_fill_brewer(palette="Dark2") +
+  labs(title='Deaths between Events of A. mexicanus by Feed Type', 
+       subtitle = "Wilcoxon Rank Sum Test", 
+       y = "Deaths", x = "Sampling Date") +
+  theme_specs
+
 
 Wilcox_census
 Wilcox_deaths
@@ -383,20 +375,34 @@ df_sex_norm <- df_sex_sort %>%
 df_sex_tidy <- df_sex_norm %>% pivot_longer(Female:Unknown, names_to = "Sex", values_to = "Percentage")
 
 #Still using Wilcoxon Rank Sum, no significant difference in Sex between groups
-ggboxplot(df_sex_tidy, x= "Sex", y="Percentage", color = "Feed_Group") +
-  stat_compare_means(aes(group = Feed_Group),label = "p.format")
+Sex_wilcox <- ggboxplot(df_sex_tidy, x= "Sex", y="Percentage", color = "Feed_Group", fill = 'grey') +
+  stat_compare_means(aes(group = Feed_Group),label = "p.format", size = 7) +
+  scale_color_brewer(palette="Dark2") +
+  scale_fill_brewer(palette="Dark2") +
+  labs(title='Sex Sorting of A. mexicanus by Feed Type', 
+       subtitle = "Wilcoxon Rank Sum Test", 
+       y = "Sex Count", x = "Sex Type") +
+  theme_specs
+
 
 
 ```
+
 # Fecundity
 
 ## Significance Testing between Feed Groups
 
 ```{r Fecundity}
-t.test(Viable_Embryos ~ Feed_Group, data=df_fecundity)
+wilcox.test(Viable_Embryos ~ Feed_Group, data=df_fecundity)
 
-ggboxplot(df_fecundity, x= "Feed_Group", y="Viable_Embryos", color = "Feed_Group") +
-  stat_compare_means()
+Fecundity_Wilcox <- ggboxplot(df_fecundity, x= "Feed_Group", y="Viable_Embryos", color = "Feed_Group", fill = "grey") +
+  stat_compare_means(size = 7)+
+  scale_color_brewer(palette="Dark2") +
+  scale_fill_brewer(palette="Dark2") +
+  labs(title='Sex Sorting of A. mexicanus by Feed Type', 
+       subtitle = "Wilcoxon Rank Sum Test", 
+       y = "Sex Count", x = "Sex Type") +
+  theme_specs
 
 
 
@@ -447,6 +453,34 @@ knitr::include_graphics(pngfile)
 pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Growth_Linear.png")
 agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
 plot(Linear_relation)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+
+##Survival##
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Census_Wilcox.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(Census_Wilcox)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Deaths_Wilcox.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(wilcox_deaths)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+
+
+##Sex##
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Sex_Wilcox.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(Sex_wilcox)
+invisible(dev.off())
+knitr::include_graphics(pngfile)
+
+##Fecundity##
+pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/fECUNDITY_Wilcox.png")
+agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
+plot(Fecundity_Wilcox)
 invisible(dev.off())
 knitr::include_graphics(pngfile)
 
