@@ -7,6 +7,7 @@
 <details open>
   <summary>Show/Hide</summary>
   <br>
+  
 1. [ File Descriptions ](#File_Description)
 2. [ Technologies Used ](#Technologies_Used)    
 3. [ Structure ](#Structure)
