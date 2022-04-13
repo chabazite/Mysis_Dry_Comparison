@@ -45,7 +45,8 @@ The objectives are to [1] raise *A. mexicanus* on an alternative feed and compar
 <a name="Structure"></a>
 <summary>Show/Hide</summary>
 <br>
-  
+ </details>
+ 
 <a name="Executive_Summary"></a>
 ## Executive Summary
 
