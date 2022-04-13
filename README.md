@@ -83,6 +83,8 @@ The objectives are to [1] raise *A. mexicanus* on an alternative feed and compar
   
 A [workflowr][] project.
 
+Outline provided by [awesomeahi95][]
+
 [workflowr]: https://github.com/workflowr/workflowr
 
-Outline provided by [awesomeahi95]: https://github.com/awesomeahi95
+[awesomeahi95]: https://github.com/awesomeahi95
