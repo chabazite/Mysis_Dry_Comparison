@@ -6,6 +6,21 @@
 ## Table of Contents
 <details open>
   <summary>Show/Hide</summary>
+  <br>
+1. [ File Descriptions ](#File_Description)
+2. [ Technologies Used ](#Technologies_Used)    
+3. [ Structure ](#Structure)
+4. [ Executive Summary ](#Executive_Summary)
+   * [ 1. Webscraping, Early EDA, and Cleaning ](#Webscraping_Early_EDA_and_Cleaning)
+       * [ Webscraping ](#Webscraping)
+       * [ Early EDA and Cleaning](#Early_EDA_and_Cleaning)
+   * [ 2. Further EDA and Preprocessing ](#Further_EDA_and_Preprocessing) 
+   * [ 3. Modelling and Hyperparameter Tuning ](#Modelling)
+   * [ 4. Evaluation ](#Evaluation)
+       * [ Future Improvements ](#Future_Improvements)
+   * [ 5. Neural Network Modelling ](#Neural_Network_Modelling)
+   * [ 6. Revaluation and Deployment ](#Revaluation)
+</details>
 
 “The ‘optimal’ diet for laboratory fish is one that efficiently promotes definition and stability in nutritional profile, biosecurity, and maximal performance (growth, survival, and reproduction)” (Lawrence et al. 2015). Mysis have been the standard breeding and adult growth supplement for the cavefish community, despite a lack of nutritional content and increased biosecurity risk.
 
