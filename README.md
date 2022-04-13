@@ -29,7 +29,23 @@ The objectives are to [1] raise *A. mexicanus* on an alternative feed and compar
 <a name="File_Description"></a>
 <summary>Show/Hide</summary>
  <br>
+ 
+## Tecnologies Used:
+<details>
+<a name="Technologies_Used"></a>
+<summary>Show/Hide</summary>
+<br>
+ 
+* <strong>RStudio</strong>
+</details>
   
+## Structure of Notebooks:
+<details>
+<a name="Structure"></a>
+<summary>Show/Hide</summary>
+<br>
+  
+ 
 
 A [workflowr][] project.
 
