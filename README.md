@@ -31,6 +31,13 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
 <a name="File_Description"></a>
 <summary>Show/Hide</summary>
  <br>
+
+  * <strong>[ analysis ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/analysis) </stong>: 
+  * <strong>[ code ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/code) </stong>: 
+  * <strong>[ data ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/data) </stong>:
+  * <strong>[ docs ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/docs) </stong>:
+  * <strong>[ output ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/output) </stong>:
+  
  </details>
 
 ## Tecnologies Used:
