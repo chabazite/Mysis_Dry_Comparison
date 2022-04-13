@@ -18,7 +18,7 @@ The objectives are to [1] raise *A. mexicanus* on an alternative feed and compar
 3. [ Structure ](#Structure)
 4. [ Executive Summary ](#Executive_Summary)
    * [ 1. Data Collection and Wrangling ](#Data_Collection_and_Wrangling)
-   * [ 2. Exploratory Data Analysis ](#Exploratory Data Analysis) 
+   * [ 2. Exploratory Data Analysis ](#Exploratory_Data_Analysis) 
    * [ 3. Regression and Significance Testing ](#Regression_and_Significance_Test)
    * [ 4. Evaluation ](#Evaluation)
        * [ Future Improvements ](#Future_Improvements)
