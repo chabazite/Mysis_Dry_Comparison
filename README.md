@@ -77,9 +77,12 @@ The objectives are to [1] raise *A. mexicanus* on an alternative feed and compar
 <summary>Show/Hide</summary>
 <br>
  <a name="Future_Improvements"></a>
+  
 #### Future Improvements
   </details>
   
 A [workflowr][] project.
 
 [workflowr]: https://github.com/workflowr/workflowr
+
+Outline provided by [awesomeahi95]: https://github.com/awesomeahi95
