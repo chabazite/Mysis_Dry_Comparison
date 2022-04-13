@@ -6,7 +6,9 @@
 
 If these factors are what determines an optimal diet for laboratory fish, then an alternative to frozen Mysis should be studied. As a natural resource, Mysis is costly, variable, and can be contaminated. The following pilot proposal will focus on and attempt to identify the maximal performance of a new feeding regime for *A. mexicanus* compared with frozen Mysis. 
 
-The objectives are to [1] raise *A. mexicanus* on an alternative feed and compare the growth rate and survivability to fish raised on the traditional Mysis feed; and [2] compare the embryo fecundity of adult broodstock raised using this alternative feed. 
+The objectives are to [1] raise *A. mexicanus* on an alternative feed and compare the growth rate and survivability to fish raised on the traditional Mysis feed; and [2] compare the embryo fecundity of adult broodstock raised using this alternative feed.
+
+Medium: https://medium.com/@Andrew-Ingalls/a-change-in-diet-fish-food-analysis-fce185e251bc
 
 ## Table of Contents
 <details open>
