@@ -29,7 +29,8 @@ The objectives are to [1] raise *A. mexicanus* on an alternative feed and compar
 <a name="File_Description"></a>
 <summary>Show/Hide</summary>
  <br>
- 
+ </details>
+
 ## Tecnologies Used:
 <details>
 <a name="Technologies_Used"></a>
@@ -45,8 +46,39 @@ The objectives are to [1] raise *A. mexicanus* on an alternative feed and compar
 <summary>Show/Hide</summary>
 <br>
   
- 
+<a name="Executive_Summary"></a>
+## Executive Summary
 
+<a name="Data_Collection_and_Wrangling"></a>
+### Data Collection and Wrangling:
+<details open>
+<summary>Show/Hide</summary>
+<br>
+  </details>
+  
+<a name="Exploratory_Data_Analysis"></a>
+### Exploratory Data Analysis
+<details open>
+<summary>Show/Hide</summary>
+<br>
+  </details>
+  
+<a name="Regression_and_Significance_Test"></a>
+### Regression and Significance Testing:
+<details open>
+<summary>Show/Hide</summary>
+<br> 
+  </details>
+ 
+<a name="Evaluation"></a>
+### Evaluation
+<details open>
+<summary>Show/Hide</summary>
+<br>
+ <a name="Future_Improvements"></a>
+#### Future Improvements
+  </details>
+  
 A [workflowr][] project.
 
 [workflowr]: https://github.com/workflowr/workflowr
