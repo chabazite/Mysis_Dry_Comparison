@@ -40,7 +40,7 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
   
  </details>
 
-## Tecnologies Used:
+## Technologies Used:
 <details>
 <a name="Technologies_Used"></a>
 <summary>Show/Hide</summary>
