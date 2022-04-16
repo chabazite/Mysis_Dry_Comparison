@@ -54,9 +54,15 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
       * <strong>Mysis Pilot Cavefish.docx</strong>: initial and detailed project proposal 
   * <strong>[ docs ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/docs) </strong>: Folder containing website HTML files (Do not edit)
   * <strong>[ output ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/output) </strong>: Folder containing visualizations used for Medium and README
-      * <strong>[ EDA_Figures ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/output/EDA_Figures): Folder containing all EDA visualizations
-      * <strong>[ Significance Testing ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/output/Significance%20Testing): Folder containing all Significance and Regression visualizations
-  
+      * <strong>[ EDA_Figures ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/output/EDA_Figures)</strong>: Folder containing all EDA visualizations
+      * <strong>[ Significance Testing ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/output/Significance%20Testing)</strong>: Folder containing all Significance and Regression visualizations
+  * .Rprofile
+  * .gitattributes
+  * .gitignore
+  * .1.nb.html
+  * Mysis.Rproject
+  * README.md
+  * _workflowr.yml
  </details>
 
 ## Technologies Used:
