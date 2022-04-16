@@ -1,4 +1,4 @@
-<h1 align='center'> Feed Comparison for <span class="emphasized">A. mexicanus</span> </h1>
+<h1 align='center'> Feed Comparison for <em>A. mexicanus</em> </h1>
 
 ## Business Case
 
