@@ -66,7 +66,7 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
 <br>
  
 * <strong>RStudio</strong>
-* <strong>Tidyverse</strong>
+     * <strong>Tidyverse</strong>
 * <strong>Openxlsx</strong>
 * <strong>gt</strong>
 * <strong>ggridges</strong>
