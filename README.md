@@ -94,10 +94,22 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
  1. Data Wrangling
       * 1.1 Library Imports
       * 1.2 Growth
+           * Change column names and remove unnecessary columns
+           * Change data types using lapply()
+           * Recode tank locations based on movement throughout study
       * 1.3 Survival
+           * Change column names
+           * Recode tank locations based on movement throughout study
+           * Recode dates due to multi-day sampling for analysis
+           * Change data types
       * 1.4 Sex Sort
+           * Change column names and data types
       * 1.5 Fecundity
+           * Change column names and data types
       * 1.6 Nutrition
+           * Create a dataframe for nutrition facts vased on manufacturers info
+           * Use the gt library to construct a nutrition table
+           * Format the nutrition table using gt
  2. Exploratory Data Analysis
       * 2.1 Library Imports
            * Set theme constants
@@ -127,9 +139,20 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
  4. Regression and Significance Testing
       * Library Imports
       * Growth
+           * Significance test for Mass between groups
+           * Significance test for Length  between groups
+           * Length-Mass Relationship Regression Modelling
+                * Log-log transformation to work with linear model
+                * Spearman correlation for each feed group
+                * Wilcoxon ANOCOVA to compare both feed group regression models
       * Survival
+           * Significance test for census events between groups
+           * Signficance test for death records between groups
+           * Linear & poly regression models with low R-squared values
       * Sex Sorts
+           * Significance test for sex categories between feed groups
       * Fecundity
+           * Significance tests ffor average viable embryo production per event between feed groups
       * Medium Exports
 
  </details>
