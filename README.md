@@ -42,7 +42,7 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
 <summary>Show/Hide</summary>
  <br>
 
-  * <strong>[ analysis ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/analysis) </stong>: Folder for storing all analyses as R Markdown Files
+  * <strong>[ analysis ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/analysis)</stong>: Folder for storing all analyses as R Markdown Files
       * <strong>[ 1.0_Data_Wrangling.Rmd ](https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/analysis/1.0_Data_Wrangling.rmd) </strong>: Markdown with all data cleaning
       * <strong>[ 2.0_EDA.Rmd ](https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/analysis/2.0_EDA.Rmd) </strong>: Markdown with all exploratory data analysis
       * <strong>[ 3.0_Outliers.Rmd ](https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/analysis/3.0_Outliers.Rmd) </strong>: Markdown that further explores the Outliers
