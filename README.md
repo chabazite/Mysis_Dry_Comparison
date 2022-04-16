@@ -60,9 +60,9 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
   * .gitattributes
   * .gitignore
   * .1.nb.html
-  * Mysis.Rproject
+  * Mysis.Rproject: Project file containing all R Analyses
   * README.md
-  * _workflowr.yml
+  * _workflowr.yml: Provides folder structure and helps with reproducability
  </details>
 
 ## Technologies Used:
