@@ -42,11 +42,11 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
 <summary>Show/Hide</summary>
  <br>
 
-  * <strong>[ analysis ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/analysis) </stong>: 
-  * <strong>[ code ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/code) </stong>: 
-  * <strong>[ data ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/data) </stong>:
-  * <strong>[ docs ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/docs) </stong>:
-  * <strong>[ output ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/output) </stong>:
+  * <strong>[ analysis ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/analysis) </stong>: Folder for storing all analyses as R Markdown Files
+  * <strong>[ code ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/code) </stong>: Folder that may contain long-running or supplemental code (Empty)
+  * <strong>[ data ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/data) </stong>: Folder containing all data and project work files
+  * <strong>[ docs ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/docs) </stong>: Folder containing website HTML files (Do not edit)
+  * <strong>[ output ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/output) </stong>: Folder containing visualizations used for Medium and README
   
  </details>
 
