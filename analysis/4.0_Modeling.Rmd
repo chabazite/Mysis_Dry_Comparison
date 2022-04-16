@@ -29,30 +29,22 @@ library(emmeans) #pairwise
 Because we don't have strictly normal distributions for our data, I won't be using
 any tests that assume normality. To confirm our intuitions about a lack of significant
 difference in growth between the Feed Groups, we will have to test the 
-null hypothesis (p-value < 0.05). Our null hypothesis is: There is no difference in Mass
-between the Feed Group for each Age group. 
+null hypothesis (p-value < 0.05). 
 
-First we will take a look at the variances between the populations. This will
-help us further understand what type of significance test to perform.
-
-Since we aren't confident in normality of our test, we will use the Levene's test
-to test the variance. 
-
-For Significance, we are curious if either of the Feed Groups has a superior performance,
-so we will use a two-tailed test.
+Null hypothesis: There is no difference in Mass between the Feed Group for each Age group. 
 
 ```{r Boxplot Significance Testing}
 #Variance for Mass for Age Groups between Feed Groups are not Significantly Different
 df_growth %>%
-  group_by(Age_Category)%>%
+  group_by(Age_Category) %>%
   levene_test(Mass_mg ~ Feed_Group)
 
-#Two Sample unpaired nonparametric test. iterate over all age categories
+#Two Sample unpaired nonparametric test. Iterate over all age categories
 Wilcox_Mass_Age_P_Table <- data.frame(matrix(nrow = 0, ncol = 2))
 colnames(Wilcox_Mass_Age_P_Table) <- c('Age Category','P-Value')
 
 for (AgeCategory in levels(df_growth$Age_Category)){
-  Mysis_Age_df_filter <- df_growth%>% 
+  Mysis_Age_df_filter <- df_growth %>% 
                             filter(., Age_Category == AgeCategory & 
                                       df_growth$Feed_Group == 'Mysis')
   Gemma_Age_df_filter <- df_growth %>% 
@@ -65,8 +57,9 @@ for (AgeCategory in levels(df_growth$Age_Category)){
   #add new significance data one row below previous
   Wilcox_Mass_Age_P_Table[nrow(Wilcox_Mass_Age_P_Table) + 1, ] <- c(AgeCategory, 
                                                                    SigTest$p.value)
-}
-#No significant difference between the Feed Groups for any Age Category
+}#No significant difference between the Feed Groups for any Age Category
+
+
 Mass_boxplot <- ggboxplot(df_growth, x="Age_Category", y="Mass_mg",
                           color = "Feed_Group", add = "jitter", 
                           lwd = 2, fill = 'grey', outlier.colour = NULL, 
@@ -84,20 +77,18 @@ Mass_P_Graph <- Mass_boxplot +
 
 ## Length Significance Testing by Age for Feed Groups
 
-```{r}
+```{r Length Significance Testing}
 #Variance for Length for Age Groups between Feed Groups 
 #are significantly different @ three months
 df_growth %>%
-  group_by(Age_Category)%>%
+  group_by(Age_Category) %>%
   levene_test(Length_mm ~ Feed_Group)
 
-#Two Sample unpaired nonparametric test. iterate over all age categories
 Wilcox_Length_Age_P_Table <- data.frame(matrix(nrow = 0, ncol = 2))
 colnames(Wilcox_Length_Age_P_Table) <- c('Age Category', 'P-Value')
 
-
 for (AgeCategory in levels(df_growth$Age_Category)){
-  Mysis_Age_df_filter <- df_growth%>% 
+  Mysis_Age_df_filter <- df_growth %>% 
                             filter(., Age_Category == AgeCategory & 
                                       df_growth$Feed_Group == 'Mysis')
   Gemma_Age_df_filter <- df_growth %>% 
@@ -105,8 +96,7 @@ for (AgeCategory in levels(df_growth$Age_Category)){
                                       df_growth$Feed_Group == 'Gemma')
   
   SigTest <- wilcox.test(Mysis_Age_df_filter$Length_mm, Gemma_Age_df_filter$Length_mm, 
-                         alternative = "two.sided", 
-                         paired= FALSE)
+                         alternative = "two.sided", paired= FALSE)
   
   Wilcox_Length_Age_P_Table[nrow(Wilcox_Length_Age_P_Table) + 1, ] <- c(AgeCategory, 
                                                                        SigTest$p.value)
@@ -131,8 +121,8 @@ Based on our distribution plots, we can be pretty certain a linear model is not 
 for our models. However, we will use the Residual plot to help us understand our model better.
 Using these plots its pretty clear a polynomial model is more appropriate. 
 
-This is important in the husbandry of fish as this relationship gives us the growth of the fish,
-its health, and a realative condition within its life.
+This relationship is important in the husbandry of fish as this relationship gives 
+us the growth of the fish, its health, and a relative condition within its life.
 
 ```{r Residual Plots}
 y <- df_growth$Mass_mg
@@ -154,65 +144,57 @@ x2 <- df_growth$Length_log
 mod_log <- lm(y2~x2)
 
 
-resid_panel(mod_log,plot='resid')
-
-shapiro.test(resid(mod_log))
+resid_panel(mod_log, plot='resid')
 
 #Compare the linear model to a log transformed model 
-Compare_log_resid <- resid_compare(models=list(mod,
-                          mod_log),
-              plots= c("resid", "qq"),
-              smoother = TRUE,
-              qqbands = TRUE,
-              title.opt = FALSE)
+Compare_log_resid <- resid_compare(models = list(mod, mod_log),
+                                   plots= c("resid", "qq"),
+                                   smoother = TRUE,
+                                   qqbands = TRUE,
+                                   title.opt = FALSE)
 #Log transform data looks like a great fit
 
-
-by_feedgroups <- group_by( df_growth, Feed_Group)
-
-do(by_feedgroups,tidy(lm(Mass_log~Length_log,data=.)))
-
-
 model_FeedGroups <- lm(Mass_log~Length_log*Feed_Group, df_growth)
-
-summary(model_FeedGroups)
-
-glance(model_FeedGroups)
-
 
 plot(df_growth$Length_log, df_growth$Mass_log, col='red', main='Summary of Regression Model', xlab='x', ylab='y')
 
 
 #The model is statistically significant, however the groups are not. Very tight R2
-
+summary(model_FeedGroups)
 summary(aov(Mass_log ~ Length_log*Feed_Group, data=df_growth))
 
 ```
 
 ```{r Correlation and Plotting of Each Feed Group}
 
-#Spearman Correlation, which does not require normality
+#Spearman Correlation
 df_growth_mysis <- df_growth %>%
-  filter(.,Feed_Group=="Mysis")  
-cor(df_growth_mysis$Length_mm,df_growth_mysis$Mass_mg, method="spearman")
+  filter(.,Feed_Group == "Mysis")  
+cor(df_growth_mysis$Length_mm, df_growth_mysis$Mass_mg, method="spearman")
 
 df_growth_gemma <- df_growth %>%
-  filter(.,Feed_Group=="Gemma")  
-cor(df_growth_gemma$Length_mm,df_growth_gemma$Mass_mg, method="spearman")
+  filter(.,Feed_Group == "Gemma")  
+cor(df_growth_gemma$Length_mm, df_growth_gemma$Mass_mg, method="spearman")
 
 #Visual representation of spearman correlation  
-Mysis_Spearman <- ggscatter(df_growth_mysis, x='Length_log', y='Mass_log', add = "reg.line", conf.int=TRUE, 
-          cor.coef = TRUE, cor.method = "spearman", xlab = "Length (mm)", ylab = "Mass (mg)",
-          title = "Mysis: Length Mass Log Relationship", subtitle = "Spearman Correlation")
+Mysis_Spearman <- ggscatter(df_growth_mysis, x='Length_log', y='Mass_log', 
+                            add = "reg.line", conf.int = TRUE, cor.coef = TRUE, 
+                            cor.method = "spearman", 
+                            xlab = "Length (mm)", ylab = "Mass (mg)", 
+                            title = "Mysis: Length Mass Log Relationship", 
+                            subtitle = "Spearman Correlation")
 
-Gemma_Spearman <- ggscatter(df_growth_gemma, x='Length_log', y='Mass_log', add = "reg.line", conf.int=TRUE, 
-          cor.coef = TRUE, cor.method = "spearman", xlab = "Length (mm)", ylab = "Mass (mg)",
-          title = "Gemma: Length Mass Log Relationship", subtitle = "Spearman Correlation")
+Gemma_Spearman <- ggscatter(df_growth_gemma, x='Length_log', y='Mass_log', 
+                            add = "reg.line", conf.int = TRUE, cor.coef = TRUE, 
+                            cor.method = "spearman", 
+                            xlab = "Length (mm)", ylab = "Mass (mg)",
+                            title = "Gemma: Length Mass Log Relationship", 
+                            subtitle = "Spearman Correlation")
 
 
 #Create linear model for each feed group using log transformations.
-mysis_linear_model <- lm(Mass_log~Length_log,data=df_growth_mysis)
-gemma_linear_model <- lm(Mass_log~Length_log,data=df_growth_gemma) 
+mysis_linear_model <- lm(Mass_log~Length_log, data = df_growth_mysis)
+gemma_linear_model <- lm(Mass_log~Length_log, data = df_growth_gemma) 
 
 #Residuals % Q-Q plots
 plot(mysis_linear_model)
@@ -220,47 +202,40 @@ plot(gemma_linear_model)
 
 ```
 
-```{r Plot Feed Groups with poly and linear line for visualization}
+```{r Plot Feed Groups with linear log-log for visualization}
 
 #Linear Relationship Assumption
-Linear_relation <- ggscatter(
-  df_growth, x = 'Length_log' , y =  'Mass_log',
-  color = "Feed_Group", add = "reg.line"
-  )+
-  stat_regline_equation(
-    aes(label =  paste(..eq.label.., ..rr.label.., sep = "~~~~"), color = Feed_Group), size = 10
-    )  +
-  scale_color_brewer(palette="Dark2") +
-  scale_fill_brewer(palette="Dark2") +
-  labs(title='Length-Mass Relationship of A. mexicanus by Feed Type', 
+Linear_relation <- ggscatter(df_growth, x='Length_log' , y='Mass_log',
+                             color = "Feed_Group", add = "reg.line") +
+  stat_regline_equation(aes(label =  paste(..eq.label..,
+                                           ..rr.label.., 
+                                           sep = "~~~~"), 
+                            color = Feed_Group), size = 10) +
+  scale_color_brewer(palette = "Dark2") +
+  scale_fill_brewer(palette = "Dark2") +
+  labs(title = 'Length-Mass Relationship of A. mexicanus by Feed Type', 
        subtitle = "Log-Log Linear Regression Model", 
        y = "log(Mass (mg))", x = "log(Length (mm))") +
   theme_specs
 
 #Homogeneity of regression slopes 
-#Feed_Group interaction was not statisticaly significant F(1,730) = 0.390 p = 0.533
-df_growth %>% anova_test(Mass_log ~ Feed_Group*Length_log)
+#Feed_Group interaction was not statistically significant F(1,730) = 0.390 p = 0.533
+df_growth %>% anova_test(Mass_log~Feed_Group * Length_log)
 
 #Normality of Residuals
-feed_model <-  lm(Mass_log ~ Length_log + Feed_Group, data =df_growth)
+feed_model <- lm(Mass_log~Length_log + Feed_Group, data = df_growth)
 feed_model.metrics <- augment(feed_model) %>%
   select(-.hat,-.sigma,-.fitted) #remove unneeded details
 
-head(feed_model.metrics,3)
-
 shapiro_test(feed_model.metrics$.resid)
-
-#shapiro test indicated the model is not from a normal distribution
+#not from a normal distribution
 
 
 #Wilcox ancova to compare two linear regression lines
 #only significantly different on the extreme ends of the regression model
-
-ancova(Mass_mg ~ Length_mm + Feed_Group, df_growth)
-
+ancova(Mass_log~Length_log + Feed_Group, df_growth)
 
 ```
-
 
 # Survival
 
@@ -286,12 +261,12 @@ for (Date in levels(factor(df_survival$Date))){
      }
 }
 
-Census_Wilcox <- ggline(df_survival, x = "Date", y = "Census", add = "mean_se",
-          color = "Feed_Group") +
+Plot_Wilcox_Census <- ggline(df_survival, x="Date", y="Census", 
+                        add = "mean_se", color = "Feed_Group") +
   stat_compare_means(aes(group = Feed_Group), label = "p.format", size = 7) +
-  scale_color_brewer(palette="Dark2") +
-  scale_fill_brewer(palette="Dark2") +
-  labs(title='Census over time of A. mexicanus by Feed Type', 
+  scale_color_brewer(palette = "Dark2") +
+  scale_fill_brewer(palette = "Dark2") +
+  labs(title = 'Census over time of A. mexicanus by Feed Type', 
        subtitle = "Wilcoxon Rank Sum Test", 
        y = "Census", x = "Sampling Date") +
   theme_specs
@@ -299,14 +274,13 @@ Census_Wilcox <- ggline(df_survival, x = "Date", y = "Census", add = "mean_se",
 
 
 #Deaths
-
 df_deaths <- df_survival %>%
   group_by(Tank_Location, Feed_Group) %>%
   summarize(Census_Dead = -diff(Census),
             Date = Date[-1])
 
 Wilcox_deaths <- data.frame(matrix(nrow=0, ncol = 2))
-colnames(Wilcox_deaths) <-c('Sample Date','P_Value')
+colnames(Wilcox_deaths) <- c('Sample Date','P_Value')
 
 for (Date in levels(factor(df_deaths$Date))){
 
@@ -321,37 +295,37 @@ for (Date in levels(factor(df_deaths$Date))){
   Wilcox_deaths[nrow(Wilcox_deaths) + 1,] <- c(Date, SigTest$p.value)
      }
 
-df_deaths$Date= factor(df_deaths$Date)
+df_deaths$Date = factor(df_deaths$Date)
 
-wilcox_deaths <- ggbarplot(df_deaths, x = "Date", y = "Census_Dead", add = "mean_se",
-          color = "Feed_Group", fill = "Feed_Group", position = position_dodge(0.8))+
-  stat_compare_means(aes(group = Feed_Group), label = "p.format", size = 7)+
-  scale_color_brewer(palette="Dark2") +
-  scale_fill_brewer(palette="Dark2") +
-  labs(title='Deaths between Events of A. mexicanus by Feed Type', 
+Plot_Wilcox_Death <- ggbarplot(df_deaths, x="Date", y="Census_Dead", 
+                           add = "mean_se", color = "Feed_Group", 
+                           fill = "Feed_Group", position = position_dodge(0.8)) +
+  stat_compare_means(aes(group = Feed_Group), label = "p.format", size = 7) +
+  scale_color_brewer(palette = "Accent") +
+  scale_fill_brewer(palette = "Dark2") +
+  labs(title = 'Deaths between Events of A. mexicanus by Feed Type', 
        subtitle = "Wilcoxon Rank Sum Test", 
        y = "Deaths", x = "Sampling Date") +
   theme_specs
-
-
-Wilcox_census
-Wilcox_deaths
 ```
 
 
 ```{r  Survival Model}
 #linear model had very low R-squared value (<0.45 & <0.2), switched to polynomial
-df_survival$Date= as.Date(df_survival$Date)
+#also low R-squared - not enough data to fit a model
+df_survival$Date = as.Date(df_survival$Date)
 
 formula <- y~poly(x, 2, raw = TRUE)
 
-p<- ggplot(df_survival, aes(Date, Census, color = Feed_Group)) + 
+p <- ggplot(df_survival, aes(Date, Census, color = Feed_Group)) + 
   geom_point() +
-  stat_smooth(aes(fill = Feed_Group, color=Feed_Group), method='lm', formula = formula)+
+  stat_smooth(aes(fill = Feed_Group, color = Feed_Group), 
+              method='lm', formula = formula) +
   stat_regline_equation(
-    aes(label =  paste(..eq.label.., ..adj.rr.label.., sep = "~~~~")),
+    aes(label = paste(..eq.label.., ..adj.rr.label.., sep = "~~~~")),
     formula = formula ) +  
   theme_bw()
+
 ggpar(p)
 
 #poor fit
@@ -362,24 +336,23 @@ ggpar(p)
 
 ##Significance Testing between Feed Groups
 
+```{r Sex Sort Significance}
+df_sex_sort$Total <- rowSums(df_sex_sort[,c ("Female", "Male", "Unknown")])
 
-```{r Sex Sort}
+df_sex_normalize <- df_sex_sort %>%
+  group_by(Feed_Group) %>%
+  summarise(Female = Female/Total, Male = Male/Total, Unknown = Unknown/Total)
 
-#Create a column of total counts for each tank location
-df_sex_sort$Total <- rowSums(df_sex_sort[,c("Female","Male","Unknown")])
+df_sex_tidy <- df_sex_normalize %>% 
+  pivot_longer(Female:Unknown, names_to = "Sex", values_to = "Percentage")
 
-df_sex_norm <- df_sex_sort %>%
-  group_by(Feed_Group)%>%
-  summarise(Female=Female/Total,Male=Male/Total,Unknown=Unknown/Total)
-
-df_sex_tidy <- df_sex_norm %>% pivot_longer(Female:Unknown, names_to = "Sex", values_to = "Percentage")
-
-#Still using Wilcoxon Rank Sum, no significant difference in Sex between groups
-Sex_wilcox <- ggboxplot(df_sex_tidy, x= "Sex", y="Percentage", color = "Feed_Group", fill = 'grey') +
+#Wilcoxon Rank Sum, no significant difference in Sex between groups
+Sex_wilcox <- ggboxplot(df_sex_tidy, x="Sex", y="Percentage", 
+                        color = "Feed_Group", fill = 'grey') +
   stat_compare_means(aes(group = Feed_Group),label = "p.format", size = 7) +
-  scale_color_brewer(palette="Dark2") +
-  scale_fill_brewer(palette="Dark2") +
-  labs(title='Sex Sorting of A. mexicanus by Feed Type', 
+  scale_color_brewer(palette = "Dark2") +
+  scale_fill_brewer(palette = "Dark2") +
+  labs(title = 'Sex Sorting of A. mexicanus by Feed Type', 
        subtitle = "Wilcoxon Rank Sum Test", 
        y = "Sex Count", x = "Sex Type") +
   theme_specs
@@ -393,15 +366,16 @@ Sex_wilcox <- ggboxplot(df_sex_tidy, x= "Sex", y="Percentage", color = "Feed_Gro
 ## Significance Testing between Feed Groups
 
 ```{r Fecundity}
-wilcox.test(Viable_Embryos ~ Feed_Group, data=df_fecundity)
+wilcox.test(Viable_Embryos~Feed_Group, data = df_fecundity)
 
-Fecundity_Wilcox <- ggboxplot(df_fecundity, x= "Feed_Group", y="Viable_Embryos", color = "Feed_Group", fill = "grey") +
-  stat_compare_means(size = 7)+
-  scale_color_brewer(palette="Dark2") +
-  scale_fill_brewer(palette="Dark2") +
-  labs(title='Sex Sorting of A. mexicanus by Feed Type', 
-       subtitle = "Wilcoxon Rank Sum Test", 
-       y = "Sex Count", x = "Sex Type") +
+Fecundity_Wilcox <- ggboxplot(df_fecundity, x="Feed_Group", y="Viable_Embryos", 
+                              color = "Feed_Group", fill = "grey") +
+  stat_compare_means(size = 7) +
+  scale_color_brewer(palette = "Dark2") +
+  scale_fill_brewer(palette = "Dark2") +
+  labs(title = 'Average Viable Embryo Production of A. mexicanus by Feed Type', 
+       subtitle = "per Breeding Event", 
+       y = "Average Viable Embryos", x = "Feed Type") +
   theme_specs
 
 
@@ -410,15 +384,12 @@ Fecundity_Wilcox <- ggboxplot(df_fecundity, x= "Feed_Group", y="Viable_Embryos",
 
 #Medium Plots
 ```{r Medium Plots}
-
-#Growth
-
+##Growth##
 pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Sig_Mass.png")
 agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
 plot(Mass_P_Graph)
 invisible(dev.off())
 knitr::include_graphics(pngfile)
-
 
 pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Sig_Length.png")
 agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
@@ -459,13 +430,13 @@ knitr::include_graphics(pngfile)
 ##Survival##
 pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Census_Wilcox.png")
 agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
-plot(Census_Wilcox)
+plot(Plot_Wilcox_Census)
 invisible(dev.off())
 knitr::include_graphics(pngfile)
 
 pngfile <- fs::path(knitr::fig_path(),  "analysis/EDA_Figures/Deaths_Wilcox.png")
 agg_png(pngfile, width = 60, height = 36, units = "cm", res = 300)
-plot(wilcox_deaths)
+plot(Plot_Wilcox_Death)
 invisible(dev.off())
 knitr::include_graphics(pngfile)
 
