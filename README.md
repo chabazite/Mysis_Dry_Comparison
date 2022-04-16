@@ -100,7 +100,11 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
       * 1.6 Nutrition
  2. Exploratory Data Analysis
       * 2.1 Library Imports
+           * Set theme constants
       * 2.2 Growth
+           * Check distributions of data based on ages and groups
+           * Compare feed groups using boxplots for length and mass
+           * Plot the length-mass relationship as scatterplots to visually inspect correlation
       * 2.3 Survival
       * 2.4 Sex Sorts
       * 2.5 Fecundity
@@ -108,9 +112,9 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
  3. Outlier Exploration
       * 3.1 Use four oultier detection methods for mass in each feed group
            * Boxplot
-            * Percentile
-            * Rosner
-            * Cook's Distance
+           * Percentile
+           * Rosner
+           * Cook's Distance
       * 3.2 Use four oultier detection methods for length in each feed group
       * 3.3 Summarize both outlier datasets
       * 3.4 Count and compare the feed group outliers for both mass and length
