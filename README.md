@@ -67,20 +67,20 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
  
 * <strong>RStudio</strong>
      * <strong>Tidyverse</strong>
- * <strong>Openxlsx</strong>
-* <strong>gt</strong>
-* <strong>ggridges</strong>
-* <strong>Viridis</strong>
-* <strong>Raag</strong>
-* <strong>ggResidpanel</strong>
-* <strong>qqplotr</strong>
-* <strong>EnvStats</strong>
-* <strong>Rstatix</strong>
-* <strong>Broom</strong>
-* <strong>ggpubr</strong>
-* <strong>gridExtra</strong>
-* <strong>wrs2</strong>
-* <strong>Workflowr</strong>
+     * <strong>Openxlsx</strong>
+     * <strong>gt</strong>
+     * <strong>ggridges</strong>
+     * <strong>Viridis</strong>
+     * <strong>Raag</strong>
+     * <strong>ggResidpanel</strong>
+     * <strong>qqplotr</strong>
+     * <strong>EnvStats</strong>
+     * <strong>Rstatix</strong>
+     * <strong>Broom</strong> 
+     * <strong>ggpubr</strong>
+     * <strong>gridExtra</strong>
+     * <strong>wrs2</strong>
+     * <strong>Workflowr</strong>
  
  
 </details>
