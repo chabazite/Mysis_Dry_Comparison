@@ -7,9 +7,9 @@ As a natural resource, Mysis is costly, variable, and can be contaminated. Addit
 We will use the standard dry feed in our study. It poses a lower risk to biosecurity, provides optimal nutrition, and requires minimal time for preparation. To convince the stakeholders of its viability, I will use performance metrics such as growth, survival, and reproduction.  I will measure this against the performance of Mysis. 
  The project objectives are to:
  <br>
-      1. raise A. mexicanus on a dry feed and compare the growth rate and survivability to fish raised on the traditional Mysis feed
-      2. compare the embryo fecundity of adult broodstock raised using this alternative feed.
-</br>
+     * 1. raise A. mexicanus on a dry feed and compare the growth rate and survivability to fish raised on the traditional Mysis feed
+     * 2. compare the embryo fecundity of adult broodstock raised using this alternative feed.
+
 
 Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet-fish-food-analysis-fce185e251bc)
 
