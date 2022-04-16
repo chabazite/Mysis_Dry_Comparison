@@ -50,8 +50,8 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
       * README.md
   * <strong>[ code ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/code) </stong>: Folder that may contain long-running or supplemental code (Empty)
   * <strong>[ data ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/data) </stong>: Folder containing all data and project work files
-      *<strong>Mysis_Pilot.xlsx</strong>: all data from the project 
-      *<strong>Mysis Pilot Cavefish.docx</strong>: initial and detailed project proposal 
+      *<strong>[ Mysis_Pilot.xlsx ]</strong>: all data from the project 
+      *<strong>[ Mysis Pilot Cavefish.docx ]</strong>: initial and detailed project proposal 
   * <strong>[ docs ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/docs) </stong>: Folder containing website HTML files (Do not edit)
   * <strong>[ output ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/output) </stong>: Folder containing visualizations used for Medium and README
   
