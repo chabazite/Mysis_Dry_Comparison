@@ -106,8 +106,13 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
            * Compare feed groups using boxplots for length and mass
            * Plot the length-mass relationship as scatterplots to visually inspect correlation
       * 2.3 Survival
+           * Compare average and individual census reports of feed groups over time
+           * Compare the average deaths of feed groups between census events
       * 2.4 Sex Sorts
+           * Compare the ratio of Female:Male:Unknown between feed groups
       * 2.5 Fecundity
+           * Compare the total viable embryos for each tank
+           * Compare the average viable embryo production per breeding event
       * 2.6 Medium Exports
  3. Outlier Exploration
       * 3.1 Use four oultier detection methods for mass in each feed group
