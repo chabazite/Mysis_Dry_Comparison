@@ -92,17 +92,36 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
 <br>
  
  1. Data Wrangling
- * 1.1 Library Imports
- * 1.2 Growth
- * 1.3 Survival
- * 1.4 Sex Sort
- * 1.5 Fecundity
- * 1.6 Nutrition
+      * 1.1 Library Imports
+      * 1.2 Growth
+      * 1.3 Survival
+      * 1.4 Sex Sort
+      * 1.5 Fecundity
+      * 1.6 Nutrition
  2. Exploratory Data Analysis
- 
+      * 2.1 Library Imports
+      * 2.2 Growth
+      * 2.3 Survival
+      * 2.4 Sex Sorts
+      * 2.5 Fecundity
+      * 2.6 Medium Exports
  3. Outlier Exploration
- 
+      * 3.1 Use four oultier detection methods for mass in each feed group
+           * Boxplot
+            * Percentile
+            * Rosner
+            * Cook's Distance
+      * 3.2 Use four oultier detection methods for length in each feed group
+      * 3.3 Summarize both outlier datasets
+      * 3.4 Count and compare the feed group outliers for both mass and length
+      * 3.5 Compare the total number of methods detected for each sample
  4. Regression and Significance Testing
+      * Library Imports
+      * Growth
+      * Survival
+      * Sex Sorts
+      * Fecundity
+      * Medium Exports
 
  </details>
  
