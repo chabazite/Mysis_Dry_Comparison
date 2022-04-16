@@ -92,7 +92,12 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
 <br>
  
  1. Data Wrangling
- 
+ * 1.1 Library Imports
+ * 1.2 Growth
+ * 1.3 Survival
+ * 1.4 Sex Sort
+ * 1.5 Fecundity
+ * 1.6 Nutrition
  2. Exploratory Data Analysis
  
  3. Outlier Exploration
