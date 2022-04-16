@@ -47,7 +47,6 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
       * <strong>[ 2.0_EDA.Rmd ](https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/analysis/2.0_EDA.Rmd) </strong>: Markdown with all exploratory data analysis
       * <strong>[ 3.0_Outliers.Rmd ](https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/analysis/3.0_Outliers.Rmd) </strong>: Markdown that further explores the Outliers
       * <strong>[ 4.0_Modeling.Rmd ](https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/analysis/4.0_Modeling.Rmd) </strong>: Markdown the creates regressions and significant testing
-      * README.md
   * <strong>[ code ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/code) </strong>: Folder that may contain long-running or supplemental code (Empty)
   * <strong>[ data ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/data) </strong>: Folder containing all data and project work files
       * <strong>Mysis_Pilot.xlsx</strong>: all data from the project 
