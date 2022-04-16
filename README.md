@@ -5,6 +5,8 @@
 “The ‘optimal’ diet for laboratory fish is one that efficiently promotes definition and stability in nutritional profile, biosecurity, and maximal performance (growth, survival, and reproduction)” (Lawrence et al. 2015). This quote provides a strong foundation for any feed studies in a laboratory environment. Mysis shrimp are a standard breeding and growth supplement in the cavefish community.  Unfortunately, their lack of nutritional content and increased biosecurity risk do not support its use. 
 As a natural resource, Mysis is costly, variable, and can be contaminated. Additionally, the time devoted to feeding could be reduced by approximately 3-4 hours per week if removed. This, in addition to Lawrence's definition, is reason enough to identify alternative feeds for A. mexicanus.
 We will use the standard dry feed in our study. It poses a lower risk to biosecurity, provides optimal nutrition, and requires minimal time for preparation. To convince the stakeholders of its viability, I will use performance metrics such as growth, survival, and reproduction.  I will measure this against the performance of Mysis. 
+<br>
+
  The project objectives are to:
  <br>
  
