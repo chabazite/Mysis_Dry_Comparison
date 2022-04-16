@@ -90,6 +90,15 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
 <a name="Structure"></a>
 <summary>Show/Hide</summary>
 <br>
+ 
+ 1. Data Wrangling
+ 
+ 2. Exploratory Data Analysis
+ 
+ 3. Outlier Exploration
+ 
+ 4. Regression and Significance Testing
+
  </details>
  
 <a name="Executive_Summary"></a>
