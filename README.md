@@ -56,13 +56,8 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
   * <strong>[ output ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/output) </strong>: Folder containing visualizations used for Medium and README
       * <strong>[ EDA_Figures ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/output/EDA_Figures)</strong>: Folder containing all EDA visualizations
       * <strong>[ Significance Testing ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/output/Significance%20Testing)</strong>: Folder containing all Significance and Regression visualizations
-  * .Rprofile
-  * .gitattributes
-  * .gitignore
-  * .1.nb.html
  * <strong>Mysis.Rproject</strong>: Project file containing all R Analyses
-  * README.md
-  * <strong>_workflowr.yml</strong>: Provides folder structure and helps with reproducability
+ * <strong>_workflowr.yml</strong>: Provides folder structure and helps with reproducability
  </details>
 
 ## Technologies Used:
