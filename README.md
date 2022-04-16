@@ -2,11 +2,13 @@
 
 ## Business Case
 
-“The ‘optimal’ diet for laboratory fish is one that efficiently promotes definition and stability in nutritional profile, biosecurity, and maximal performance (growth, survival, and reproduction)” (Lawrence et al. 2015). Mysis have been the standard breeding and adult growth supplement for the cavefish community, despite a lack of nutritional content and increased biosecurity risk.
+“The ‘optimal’ diet for laboratory fish is one that efficiently promotes definition and stability in nutritional profile, biosecurity, and maximal performance (growth, survival, and reproduction)” (Lawrence et al. 2015). This quote provides a strong foundation for any feed studies in a laboratory environment. Mysis shrimp are a standard breeding and growth supplement in the cavefish community.  Unfortunately, their lack of nutritional content and increased biosecurity risk do not support its use. 
+As a natural resource, Mysis is costly, variable, and can be contaminated. Additionally, the time devoted to feeding could be reduced by approximately 3-4 hours per week if removed. This, in addition to Lawrence's definition, is reason enough to identify alternative feeds for A. mexicanus.
+We will use the standard dry feed in our study. It poses a lower risk to biosecurity, provides optimal nutrition, and requires minimal time for preparation. To convince the stakeholders of its viability, I will use performance metrics such as growth, survival, and reproduction.  I will measure this against the performance of Mysis. 
+ The project objectives are to:
+      1. raise A. mexicanus on a dry feed and compare the growth rate and survivability to fish raised on the traditional Mysis feed
+      2. compare the embryo fecundity of adult broodstock raised using this alternative feed.
 
-If these factors are what determines an optimal diet for laboratory fish, then an alternative to frozen Mysis should be studied. As a natural resource, Mysis is costly, variable, and can be contaminated. Additionaly, the time devoted to feeding frozen Mysis could be reduced by approximately 3-4 hours per week if replaced with dry feed. The following pilot proposal will focus on and attempt to identify the maximal performance of a new feeding regime for *A. mexicanus* compared with frozen Mysis. 
-
-The objectives are to [1] raise *A. mexicanus* on an alternative feed and compare the growth rate and survivability to fish raised on the traditional Mysis feed; and [2] compare the embryo fecundity of adult broodstock raised using this alternative feed.
 
 Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet-fish-food-analysis-fce185e251bc)
 
