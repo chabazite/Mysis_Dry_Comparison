@@ -215,7 +215,21 @@ Cleaning the data included refactoring data types, simplifying feature names, an
 ### Regression and Significance Testing:
 <details open>
 <summary>Show/Hide</summary>
-<br> 
+<br>
+  
+ #### Growth 
+ <table><tr><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Sig_Mass.png' width=500></td><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Sig_Length.png' width=500></td></tr></table>
+ <br>
+ 
+ #### Survival 
+ <br>
+ 
+ #### Sex Sort 
+ <br>
+ 
+ #### Fecundity 
+ <br>
+ 
   </details>
  
 <a name="Evaluation"></a>
@@ -223,10 +237,12 @@ Cleaning the data included refactoring data types, simplifying feature names, an
 <details open>
 <summary>Show/Hide</summary>
 <br>
+ 
  <a name="Future_Improvements"></a>
   
 #### Future Improvements
-  </details>
+ 
+ </details>
   
 A [workflowr][] project.
 
