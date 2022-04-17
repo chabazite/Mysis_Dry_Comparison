@@ -195,17 +195,17 @@ Cleaning the data included refactoring data types, simplifying feature names, an
 <details open>
 <summary>Show/Hide</summary>
 <br>
- <h2> Growth </h2>
+ #### Growth 
  <table><tr><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/BoxPlot_Mass.png' width=500></td><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/BoxPlot_Length.png' width=500></td></tr></table>
  <br>
  
- <h2> Survival </h2>
+ #### Survival 
  <br>
  
- <h2> Sex Sort </h2>
+ #### Sex Sort 
  <br>
  
- <h2> Fecundity </h2>
+ #### Fecundity 
  <br>
  
   </details>
