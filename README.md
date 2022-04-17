@@ -216,14 +216,23 @@ The second takeaway is the non-normal distribution. While not shown here, this w
 Boxplots for both length and mass provide further insights into the two feeding regimes. First, there is a clear jump in size between five and six months for both length and mass. This shows a growth spurt, which interestingly enough overlaps with aggression studies for A. mexicanus.
  
 <table><tr><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/BoxPlot_Mass.png' width=500></td><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/BoxPlot_Length.png' width=500></td></tr></table>
+
 Next, there is a difference in outlier severity and quantity between the two groups. This supports the secondary bumps seen in the density distribution. It also supports the idea of dominant, larger females produced through feed territoriality. 
 <br>
  
 Finally, there doesn’t appear to be a significant difference, based on the interquartile range and medians, between the groups. This will later be confirmed with significance testing.
 <br>
+<br>
+ 
+To understand the differences in growth, a length-mass relationship plot was created. These plots are integral in understanding the growth of fish.
  
  <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/LMR_SP.png' width = 750>
+ 
+There doesn’t appear to be any difference between the two groups when plotting out the relationship. There is an interesting polynomial or exponential relationship with length to Mass though. This is common in fish and the expression is used to judge isometric growth.
  <br>
+ 
+Finally, there are 3 points way at the top of the graph, from the Mysis group. These fish are most likely the dominant females within the Mysis groups.
+<br>
  
  #### Survival 
  <br>
