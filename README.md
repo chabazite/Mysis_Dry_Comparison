@@ -197,16 +197,39 @@ Cleaning the data included refactoring data types, simplifying feature names, an
 <br>
  
  #### Growth 
+ <br>
+
+ <table><tr><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Density_Age_Mass.png' width=500></td><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Density_Age_Length.png' width=500></td></tr></table>
+ <br>
+ 
  <table><tr><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/BoxPlot_Mass.png' width=500></td><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/BoxPlot_Length.png' width=500></td></tr></table>
+ <br>
+ 
+ <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/LMR_SP.png'>
  <br>
  
  #### Survival 
  <br>
  
+ <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Survival_Tanks.png'>
+ <br>
+ 
+ <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Survival_Avg.png'>
+ <br>
+ 
  #### Sex Sort 
  <br>
  
+ <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Sex_sort_mean.png'>
+ <br>
+ 
  #### Fecundity 
+ <br>
+ 
+ <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Total_Viable.png'>
+ <br>
+ 
+ <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Average_Viable.png'>
  <br>
  
   </details>
@@ -220,6 +243,8 @@ Cleaning the data included refactoring data types, simplifying feature names, an
  #### Growth 
  <table><tr><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Sig_Mass.png' width=500></td><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Sig_Length.png' width=500></td></tr></table>
  <br>
+ 
+ 
  
  #### Survival 
  <br>
