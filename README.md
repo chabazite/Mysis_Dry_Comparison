@@ -196,10 +196,11 @@ Cleaning the data included refactoring data types, simplifying feature names, an
 <summary>Show/Hide</summary>
 <br>
  
- #### Growth 
- 
-Most of the work is performed in the Analysis phase. This was broken up into 4 sections: Growth, Survival, Sex Sort, and Fecundity.
+ Most of the work is performed in the Analysis phase. This was broken up into 4 sections: Growth, Survival, Sex Sort, and Fecundity.
 <br>
+ 
+ #### Growth 
+ <br>
  
  <table><tr><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Density_Age_Mass.png' width=500></td><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Density_Age_Length.png' width=500></td></tr></table>
 
