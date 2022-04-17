@@ -197,7 +197,6 @@ Cleaning the data included refactoring data types, simplifying feature names, an
 <br>
  
  #### Growth 
- <br>
  
 Most of the work is performed in the Analysis phase. This was broken up into 4 sections: Growth, Survival, Sex Sort, and Fecundity.
 <br>
