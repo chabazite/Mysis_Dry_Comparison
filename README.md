@@ -229,17 +229,21 @@ To understand the differences in growth, a length-mass relationship plot was cre
  
  <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/LMR_SP.png' width = 750>
  
-There doesn’t appear to be any difference between the two groups when plotting out the relationship. There is an interesting polynomial or exponential relationship with length to Mass though. This is common in fish and the expression is used to judge isometric growth.
+There doesn’t appear to be any difference between the two groups when plotting out the relationship. There is an interesting polynomial or exponential relationship with length to mass. This is common in fish and is used to judge isometric growth.
  <br>
  
-Finally, there are 3 points way at the top of the graph, from the Mysis group. These fish are most likely the dominant females within the Mysis groups.
+Finally, notice the 3 points at the top of the graph from the Mysis group. These fish are most likely the dominant females within the Mysis groups.
+<br>
 <br>
  
  #### Survival 
  <br>
- 
+ Each tank was counted every 40 days, coinciding with mass and length measurements. The plot below shows the census of each tank over the course of the study. There is a distinct difference between the Mysis group ( higher survival rate) and the Gemma (lower survival rate). These fish were observed to have died through wounds sustained during fighting. This suggests Mysis provides an outlet for the prey drive. 
+
  <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Survival_Tanks.png' width = 750>
  <br>
+ 
+ When plotted as an average, the difference in census becomes even more clear. The standard errors of each group have a large separation after the second event, indicating a significant difference.
  
  <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Survival_Avg.png' width = 750>
  <br>
