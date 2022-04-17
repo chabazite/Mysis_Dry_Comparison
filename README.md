@@ -198,9 +198,19 @@ Cleaning the data included refactoring data types, simplifying feature names, an
  
  #### Growth 
  <br>
-
+Most of the work is performed in the Analysis phase. This was broken up into 4 sections: Growth, Survival, Sex Sort, and Fecundity.
+<br>
+ 
  <table><tr><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Density_Age_Mass.png' width=500></td><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Density_Age_Length.png' width=500></td></tr></table>
  <br>
+Density distributions, separated by age, provide two clear insights. 
+<br>
+ 
+First, the Gemma group has a gradual slope for mass and length after the peak. This starts at six months and continues throughout the experiment. For Mysis, there is a sharp negative slope, followed by a small secondary bump. This gap in data could further support the idea of one/two dominant females within each tank.
+<br>
+ 
+The second takeaway is the non-normal distribution. While not shown here, this was confirmed through Q-Q plots. This indicates a future need for non-parametric significance testing.
+<br>
  
  <table><tr><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/BoxPlot_Mass.png' width=500></td><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/BoxPlot_Length.png' width=500></td></tr></table>
  <br>
