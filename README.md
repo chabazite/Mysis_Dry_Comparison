@@ -2,8 +2,9 @@
 
 ## Business Case
 
-“The ‘optimal’ diet for laboratory fish is one that efficiently promotes definition and stability in nutritional profile, biosecurity, and maximal performance (growth, survival, and reproduction)” (Lawrence et al. 2015). This quote provides a strong foundation for any feed studies in a laboratory environment. Mysis shrimp are a standard breeding and growth supplement in the cavefish community.  Unfortunately, their lack of nutritional content and increased biosecurity risk do not support its use. 
+As a fixture in the cavefish community, Mysis shrimp is used as both a breeding and growth supplement. Unfortunately, when comparing the nutrition to a dry diet, there is a large difference in protein, lipid, and moisture content.  Protein and lipid levels are recommended to be at least 45% Sealey et al. (2009) and 10-15% Sabina et al. (2016) for growth and breeding, respectively.
 <br>
+<img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/nutrition_table.png' width=500>
 
 As a natural resource, Mysis is costly, variable, and can be contaminated. Additionally, the time devoted to feeding could be reduced by approximately 3-4 hours per week if removed. This, in addition to Lawrence's definition, is reason enough to identify alternative feeds for A. mexicanus.
 <br>
