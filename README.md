@@ -256,12 +256,26 @@ Cleaning the data included refactoring data types, simplifying feature names, an
  #### Survival 
  <br>
  
+    <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Deaths_Wilcox.png' width = 750>
+ <br>
+ 
+    <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Census_Wilcox.png' width = 750>
+ <br>
+ 
+ 
+ 
  #### Sex Sort 
  <br>
+ 
+   <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Sex_Wilcox.png' width = 750>
+ <br>
+ 
  
  #### Fecundity 
  <br>
  
+  <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/fECUNDITY_Wilcox.png' width = 750>
+ <br>
   </details>
  
 <a name="Evaluation"></a>
