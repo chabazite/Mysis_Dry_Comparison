@@ -220,7 +220,7 @@ Next, there is a difference in outlier severity and quantity between the two gro
 <br>
  
 Finally, there doesn’t appear to be a significant difference, based on the interquartile range and medians, between the groups. This will later be confirmed with significance testing.
-
+<br>
  
  <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/LMR_SP.png' width = 750>
  <br>
