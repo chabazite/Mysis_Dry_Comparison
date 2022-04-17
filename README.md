@@ -174,6 +174,7 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
 <details open>
 <summary>Show/Hide</summary>
 <br>
+ 
 This phase involved a considerable amount of planning as the data was collected firsthand. This reduced the need for data cleanup after collection. The features to collect would be length, mass, census, viable embryos, and total embryos. As the reduction of stress is important for biological experiment, data was collected under anesthesia. 
 <br>
  
@@ -181,7 +182,8 @@ The largest roadblock was counting embryos within the timeframe, budget, and pre
 <br>
  
 Cleaning the data included refactoring data types, simplifying feature names, and removing features no longer necessary. Recoding was performed on dates and tank locations due to multi-day testing and bulk moves throughout the experiment. This allowed for interesting mutate coding: 
- <br>
+<br>
+
  ```
  df_growth <- df_growth %>%
   mutate(Tank_Location = recode(Tank_Location, !!!setNames(third_tank_locations, first_tank_locations)))
