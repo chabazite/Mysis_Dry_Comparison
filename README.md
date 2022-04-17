@@ -174,13 +174,21 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
 <details open>
 <summary>Show/Hide</summary>
 <br>
-  </details>
+This phase involved a considerable amount of planning as the data was collected firsthand. This reduced the need for data cleanup after collection. The features to collect would be length, mass, census, viable embryos, and total embryos. As the reduction of stress is important for biological experiment, data was collected under anesthesia. 
+<br>
+ 
+The largest roadblock was counting embryos within the timeframe, budget, and precision. This project used subgroup estimation, providing consistent numbers with reasonable accuracy. If this pilot project warranted a publication, a more robust counting method would be performed. This decision was made based on the needs of the experiment.
+<br>
+ 
+Cleaning the data included refactoring data types, simplifying feature names, and removing features no longer necessary. Recoding was performed on dates and tank locations due to multi-day testing and bulk moves throughout the experiment. This allowed for interesting mutate coding: 
+</details>
   
 <a name="Exploratory_Data_Analysis"></a>
 ### Exploratory Data Analysis
 <details open>
 <summary>Show/Hide</summary>
 <br>
+ 
   </details>
   
 <a name="Regression_and_Significance_Test"></a>
