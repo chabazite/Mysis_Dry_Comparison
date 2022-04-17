@@ -4,12 +4,20 @@
 
 As a fixture in the cavefish community, Mysis shrimp is used as both a breeding and growth supplement. Unfortunately, when comparing the nutrition to a dry diet, there is a large difference in protein, lipid, and moisture content.  Protein and lipid levels are recommended to be at least 45% Sealey et al. (2009) and 10-15% Sabina et al. (2016) for growth and breeding, respectively.
 <br>
-<img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/nutrition_table.png'>
 
-As a natural resource, Mysis is costly, variable, and can be contaminated. Additionally, the time devoted to feeding could be reduced by approximately 3-4 hours per week if removed. This, in addition to Lawrence's definition, is reason enough to identify alternative feeds for A. mexicanus.
+<img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/nutrition_table.png'>
 <br>
 
-We will use a standard dry feed as the alternative in our study. It poses a lower risk to biosecurity, provides optimal nutrition, and requires minimal time for preparation. To convince the stakeholders of its viability, I will use performance metrics such as growth, survival, and reproduction.  I will measure this against the performance of Mysis. 
+Our facility team has also found fish carcasses, plastics, and other unidentifiable items within the frozen packages. This places a question on the biosecurity practices, critical in a laboratory environment.
+<br>
+
+When considering an optimal diet for laboratory fish, Lawrence et al. (2015) quotes “[an optimal diet] is one that efficiently promotes definition and stability in nutritional profile, biosecurity, and maximal performance (growth, survival, and reproduction). While both biosecurity and nutrition are discussed above, the maximal performance of Mysis versus a dry diet is still unknown.
+<br>
+ 
+The stakeholders should also consider the indirect & direct costs of Mysis. As a natural resource, it is costly, the quality is variable, and it is time-consuming. The technicians devote an extra 3-4 hours per week preparing and feeding out this feed. 
+ <br>
+ 
+We will use a standard dry feed in our study. It poses a lower risk to biosecurity, provides optimal nutrition, and requires minimal time for preparation. To convince the stakeholders of its viability, this study will focus on the above performance metrics using Mysis and dry feed.
 <br>
 
  The project objectives are to:
