@@ -202,7 +202,6 @@ Most of the work is performed in the Analysis phase. This was broken up into 4 s
 <br>
  
  <table><tr><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Density_Age_Mass.png' width=500></td><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Density_Age_Length.png' width=500></td></tr></table>
-<br>
 
 Density distributions, separated by age, provide two clear insights. 
 <br>
@@ -212,9 +211,16 @@ First, the Gemma group has a gradual slope for mass and length after the peak. T
  
 The second takeaway is the non-normal distribution. While not shown here, this was confirmed through Q-Q plots. This indicates a future need for non-parametric significance testing.
 <br>
+<br>
+
+Boxplots for both length and mass provide further insights into the two feeding regimes. First, there is a clear jump in size between five and six months for both length and mass. This shows a growth spurt, which interestingly enough overlaps with aggression studies for A. mexicanus.
  
- <table><tr><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/BoxPlot_Mass.png' width=500></td><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/BoxPlot_Length.png' width=500></td></tr></table>
- <br>
+<table><tr><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/BoxPlot_Mass.png' width=500></td><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/BoxPlot_Length.png' width=500></td></tr></table>
+Next, there is a difference in outlier severity and quantity between the two groups. This supports the secondary bumps seen in the density distribution. It also supports the idea of dominant, larger females produced through feed territoriality. 
+<br>
+ 
+Finally, there doesn’t appear to be a significant difference, based on the interquartile range and medians, between the groups. This will later be confirmed with significance testing.
+
  
  <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/LMR_SP.png' width = 750>
  <br>
