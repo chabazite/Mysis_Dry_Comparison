@@ -1,12 +1,31 @@
-<h1 align='center'> Feed Comparison for A. mexicanus </h1>
+<h1 align='center'> Feed Comparison for <em>A. mexicanus</em> </h1>
 
 ## Business Case
 
-“The ‘optimal’ diet for laboratory fish is one that efficiently promotes definition and stability in nutritional profile, biosecurity, and maximal performance (growth, survival, and reproduction)” (Lawrence et al. 2015). Mysis have been the standard breeding and adult growth supplement for the cavefish community, despite a lack of nutritional content and increased biosecurity risk.
+As a fixture in the cavefish community, Mysis shrimp is used as both a breeding and growth supplement. Unfortunately, when comparing the nutrition to a dry diet, there is a large difference in protein, lipid, and moisture content.  Protein and lipid levels are recommended to be at least 45% Sealey et al. (2009) and 10-15% Sabina et al. (2016) for growth and breeding, respectively.
+<br>
 
-If these factors are what determines an optimal diet for laboratory fish, then an alternative to frozen Mysis should be studied. As a natural resource, Mysis is costly, variable, and can be contaminated. Additionaly, the time devoted to feeding frozen Mysis could be reduced by approximately 3-4 hours per week if replaced with dry feed. The following pilot proposal will focus on and attempt to identify the maximal performance of a new feeding regime for *A. mexicanus* compared with frozen Mysis. 
+<img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/nutrition_table.png' width =750 align = "middle">
+<br>
 
-The objectives are to [1] raise *A. mexicanus* on an alternative feed and compare the growth rate and survivability to fish raised on the traditional Mysis feed; and [2] compare the embryo fecundity of adult broodstock raised using this alternative feed.
+Our facility team has also found fish carcasses, plastics, and other unidentifiable items within the frozen packages. This places a question on the biosecurity practices, critical in a laboratory environment.
+<br>
+
+When considering an optimal diet for laboratory fish, Lawrence et al. (2015) quotes “[an optimal diet] is one that efficiently promotes definition and stability in nutritional profile, biosecurity, and maximal performance (growth, survival, and reproduction). While both biosecurity and nutrition are discussed above, the maximal performance of Mysis versus a dry diet is still unknown.
+<br>
+ 
+The stakeholders should also consider the indirect & direct costs of Mysis. As a natural resource, it is costly, the quality is variable, and it is time-consuming. The technicians devote an extra 3-4 hours per week preparing and feeding out this feed. 
+ <br>
+ 
+We will use a standard dry feed in our study. It poses a lower risk to biosecurity, provides optimal nutrition, and requires minimal time for preparation. To convince the stakeholders of its viability, this study will focus on the above performance metrics using Mysis and dry feed.
+<br>
+
+ The project objectives are to:
+ <br>
+ 
+  1. Raise A. mexicanus on a dry feed and compare the growth rate and survivability to fish raised on the traditional Mysis feed
+  2. Compare the embryo fecundity of adult broodstock raised using this alternative feed.
+
 
 Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet-fish-food-analysis-fce185e251bc)
 
@@ -32,12 +51,21 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
 <summary>Show/Hide</summary>
  <br>
 
-  * <strong>[ analysis ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/analysis) </stong>: 
-  * <strong>[ code ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/code) </stong>: 
-  * <strong>[ data ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/data) </stong>:
-  * <strong>[ docs ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/docs) </stong>:
-  * <strong>[ output ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/output) </stong>:
-  
+  * <strong>[ analysis ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/analysis)</strong>: Folder for storing all analyses as R Markdown Files
+      * <strong>[ 1.0_Data_Wrangling.Rmd ](https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/analysis/1.0_Data_Wrangling.rmd) </strong>: Markdown with all data cleaning
+      * <strong>[ 2.0_EDA.Rmd ](https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/analysis/2.0_EDA.Rmd) </strong>: Markdown with all exploratory data analysis
+      * <strong>[ 3.0_Outliers.Rmd ](https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/analysis/3.0_Outliers.Rmd) </strong>: Markdown that further explores the Outliers
+      * <strong>[ 4.0_Modeling.Rmd ](https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/analysis/4.0_Modeling.Rmd) </strong>: Markdown the creates regressions and significant testing
+  * <strong>[ code ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/code) </strong>: Folder that may contain long-running or supplemental code (Empty)
+  * <strong>[ data ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/data) </strong>: Folder containing all data and project work files
+      * <strong>Mysis_Pilot.xlsx</strong>: all data from the project 
+      * <strong>Mysis Pilot Cavefish.docx</strong>: initial and detailed project proposal 
+  * <strong>[ docs ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/docs) </strong>: Folder containing website HTML files (Do not edit)
+  * <strong>[ output ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/output) </strong>: Folder containing visualizations used for Medium and README
+      * <strong>[ EDA_Figures ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/output/EDA_Figures)</strong>: Folder containing all EDA visualizations
+      * <strong>[ Significance Testing ](https://github.com/chabazite/Mysis_Dry_Comparison/tree/main/output/Significance%20Testing)</strong>: Folder containing all Significance and Regression visualizations
+ * <strong>Mysis.Rproject</strong>: Project file containing all R Analyses
+ * <strong>_workflowr.yml</strong>: Provides folder structure and helps with reproducability
  </details>
 
 ## Technologies Used:
@@ -47,6 +75,23 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
 <br>
  
 * <strong>RStudio</strong>
+     * <strong>Tidyverse</strong>
+     * <strong>Openxlsx</strong>
+     * <strong>gt</strong>
+     * <strong>ggridges</strong>
+     * <strong>Viridis</strong>
+     * <strong>Raag</strong>
+     * <strong>ggResidpanel</strong>
+     * <strong>qqplotr</strong>
+     * <strong>EnvStats</strong>
+     * <strong>Rstatix</strong>
+     * <strong>Broom</strong> 
+     * <strong>ggpubr</strong>
+     * <strong>gridExtra</strong>
+     * <strong>wrs2</strong>
+     * <strong>Workflowr</strong>
+ 
+ 
 </details>
   
 ## Structure of Notebooks:
@@ -54,6 +99,71 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
 <a name="Structure"></a>
 <summary>Show/Hide</summary>
 <br>
+ 
+ 1. Data Wrangling
+      * 1.1 Library Imports
+      * 1.2 Growth
+           * Change column names and remove unnecessary columns
+           * Change data types using lapply()
+           * Recode tank locations based on movement throughout study
+      * 1.3 Survival
+           * Change column names
+           * Recode tank locations based on movement throughout study
+           * Recode dates due to multi-day sampling for analysis
+           * Change data types
+      * 1.4 Sex Sort
+           * Change column names and data types
+      * 1.5 Fecundity
+           * Change column names and data types
+      * 1.6 Nutrition
+           * Create a dataframe for nutrition facts vased on manufacturers info
+           * Use the gt library to construct a nutrition table
+           * Format the nutrition table using gt
+ 2. Exploratory Data Analysis
+      * 2.1 Library Imports
+           * Set theme constants
+      * 2.2 Growth
+           * Check distributions of data based on ages and groups
+           * Compare feed groups using boxplots for length and mass
+           * Plot the length-mass relationship as scatterplots to visually inspect correlation
+      * 2.3 Survival
+           * Compare average and individual census reports of feed groups over time
+           * Compare the average deaths of feed groups between census events
+      * 2.4 Sex Sorts
+           * Compare the ratio of Female:Male:Unknown between feed groups
+      * 2.5 Fecundity
+           * Compare the total viable embryos for each tank
+           * Compare the average viable embryo production per breeding event
+      * 2.6 Medium Exports
+ 3. Outlier Exploration
+      * 3.1 Use four oultier detection methods for mass in each feed group
+           * Boxplot
+           * Percentile
+           * Rosner
+           * Cook's Distance
+      * 3.2 Use four oultier detection methods for length in each feed group
+      * 3.3 Summarize both outlier datasets
+      * 3.4 Count and compare the feed group outliers for both mass and length
+      * 3.5 Compare the total number of methods detected for each sample
+ 4. Regression and Significance Testing
+      * Library Imports
+      * Growth
+           * Significance test for Mass between groups
+           * Significance test for Length  between groups
+           * Length-Mass Relationship Regression Modelling
+                * Log-log transformation to work with linear model
+                * Spearman correlation for each feed group
+                * Wilcoxon ANOCOVA to compare both feed group regression models
+      * Survival
+           * Significance test for census events between groups
+           * Signficance test for death records between groups
+           * Linear & poly regression models with low R-squared values
+      * Sex Sorts
+           * Significance test for sex categories between feed groups
+      * Fecundity
+           * Significance tests ffor average viable embryo production per event between feed groups
+      * Medium Exports
+
  </details>
  
 <a name="Executive_Summary"></a>
@@ -64,31 +174,148 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
 <details open>
 <summary>Show/Hide</summary>
 <br>
-  </details>
+ 
+This phase involved a considerable amount of planning as the data was collected firsthand. This reduced the need for data cleanup after collection. The features to collect would be length, mass, census, viable embryos, and total embryos. As the reduction of stress is important for biological experiment, data was collected under anesthesia. 
+<br>
+ 
+The largest roadblock was counting embryos within the timeframe, budget, and precision. This project used subgroup estimation, providing consistent numbers with reasonable accuracy. If this pilot project warranted a publication, a more robust counting method would be performed. This decision was made based on the needs of the experiment.
+<br>
+ 
+Cleaning the data included refactoring data types, simplifying feature names, and removing features no longer necessary. Recoding was performed on dates and tank locations due to multi-day testing and bulk moves throughout the experiment. This allowed for interesting mutate coding: 
+<br>
+
+ ```
+ df_growth <- df_growth %>%
+  mutate(Tank_Location = recode(Tank_Location, !!!setNames(third_tank_locations, first_tank_locations)))
+ ```
+</details>
   
 <a name="Exploratory_Data_Analysis"></a>
-### Exploratory Data Analysis
+### Exploratory Data Analysis:
 <details open>
 <summary>Show/Hide</summary>
 <br>
+ 
+ Most of the work is performed in the Analysis phase. This was broken up into 4 sections: Growth, Survival, Sex Sort, and Fecundity.
+<br>
+ 
+ #### Growth 
+ <br>
+ 
+ <table><tr><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Density_Age_Mass.png' width=500></td><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Density_Age_Length.png' width=500></td></tr></table>
+
+Density distributions, separated by age, provide two clear insights. 
+<br>
+ 
+First, the Gemma group has a gradual slope for mass and length after the peak. This starts at six months and continues throughout the experiment. For Mysis, there is a sharp negative slope, followed by a small secondary bump. This gap in data could further support the idea of one/two dominant females within each tank.
+<br>
+ 
+The second takeaway is the non-normal distribution. While not shown here, this was confirmed through Q-Q plots. This indicates a future need for non-parametric significance testing.
+<br>
+<br>
+
+Boxplots for both length and mass provide further insights into the two feeding regimes. First, there is a clear jump in size between five and six months for both length and mass. This shows a growth spurt, which interestingly enough overlaps with aggression studies for A. mexicanus.
+ 
+<table><tr><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/BoxPlot_Mass.png' width=500></td><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/BoxPlot_Length.png' width=500></td></tr></table>
+
+Next, there is a difference in outlier severity and quantity between the two groups. This supports the secondary bumps seen in the density distribution. It also supports the idea of dominant, larger females produced through feed territoriality. 
+<br>
+ 
+Finally, there doesn’t appear to be a significant difference, based on the interquartile range and medians, between the groups. This will later be confirmed with significance testing.
+<br>
+<br>
+ 
+To understand the differences in growth, a length-mass relationship plot was created. These plots are integral in understanding the growth of fish.
+ 
+ <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/LMR_SP.png' width = 750>
+ 
+There doesn’t appear to be any difference between the two groups when plotting out the relationship. There is an interesting polynomial or exponential relationship with length to Mass though. This is common in fish and the expression is used to judge isometric growth.
+ <br>
+ 
+Finally, there are 3 points way at the top of the graph, from the Mysis group. These fish are most likely the dominant females within the Mysis groups.
+<br>
+ 
+ #### Survival 
+ <br>
+ 
+ <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Survival_Tanks.png' width = 750>
+ <br>
+ 
+ <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Survival_Avg.png' width = 750>
+ <br>
+ 
+ #### Sex Sort 
+ <br>
+ 
+ <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Sex_sort_mean.png' width = 750>
+ <br>
+ 
+ #### Fecundity 
+ <br>
+ 
+ <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Total_Viable.png' width = 750>
+ <br>
+ 
+ <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Average_Viable.png' width = 750>
+ <br>
+ 
   </details>
   
 <a name="Regression_and_Significance_Test"></a>
 ### Regression and Significance Testing:
 <details open>
 <summary>Show/Hide</summary>
-<br> 
+<br>
+  
+ #### Growth 
+ <table><tr><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Sig_Mass.png' width=500></td><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Sig_Length.png' width=500></td></tr></table>
+ <br>
+ 
+ <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Resid_compare.png' width = 750>
+ <br>
+ 
+  <table><tr><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Gemma_Spearman.png' width=500></td><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Mysis_spearman.png' width=500></td></tr></table>
+ <br>
+ 
+ <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Growth_Linear.png' width = 750>
+ <br>
+ 
+ #### Survival 
+ <br>
+ 
+    <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Deaths_Wilcox.png' width = 750>
+ <br>
+ 
+    <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Census_Wilcox.png' width = 750>
+ <br>
+ 
+ 
+ 
+ #### Sex Sort 
+ <br>
+ 
+   <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Sex_Wilcox.png' width = 750>
+ <br>
+ 
+ 
+ #### Fecundity 
+ <br>
+ 
+  <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/fECUNDITY_Wilcox.png' width = 750>
+ <br>
   </details>
  
 <a name="Evaluation"></a>
-### Evaluation
+### Evaluation:
 <details open>
 <summary>Show/Hide</summary>
 <br>
+ 
  <a name="Future_Improvements"></a>
   
 #### Future Improvements
-  </details>
+ 
+ </details>
   
 A [workflowr][] project.
 
