@@ -191,7 +191,7 @@ Cleaning the data included refactoring data types, simplifying feature names, an
 </details>
   
 <a name="Exploratory_Data_Analysis"></a>
-### Exploratory Data Analysis
+### Exploratory Data Analysis:
 <details open>
 <summary>Show/Hide</summary>
 <br>
@@ -279,7 +279,7 @@ Cleaning the data included refactoring data types, simplifying feature names, an
   </details>
  
 <a name="Evaluation"></a>
-### Evaluation
+### Evaluation:
 <details open>
 <summary>Show/Hide</summary>
 <br>
