@@ -237,18 +237,22 @@ Finally, notice the 3 points at the top of the graph from the Mysis group. These
 <br>
  
  #### Survival 
- <br>
  Each tank was counted every 40 days, coinciding with mass and length measurements. The plot below shows the census of each tank over the course of the study. There is a distinct difference between the Mysis group ( higher survival rate) and the Gemma (lower survival rate). These fish were observed to have died through wounds sustained during fighting. This suggests Mysis provides an outlet for the prey drive. 
-
+<br>
+ 
  <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Survival_Tanks.png' width = 750>
  <br>
  
  When plotted as an average, the difference in census becomes even more clear. The standard errors of each group have a large separation after the second event, indicating a significant difference.
+<br>
  
  <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Survival_Avg.png' width = 750>
  <br>
  
  #### Sex Sort 
+ <br>
+ 
+Sexes were normalized as a percent of the total tank census. This was due to the differences in survivability in each tank at the end of the study. There did not appear to be any difference between feed groups, however, a large skew towards females was noticed for both feed groups.
  <br>
  
  <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Sex_sort_mean.png' width = 750>
@@ -257,7 +261,14 @@ Finally, notice the 3 points at the top of the graph from the Mysis group. These
  #### Fecundity 
  <br>
  
+ 
+First, a plot of total viable embryo production was created for each tank. There is an extra Mysis tank (10C6) as there weren’t enough males and females to create a full tank. This will not be used when calculating the average or any significance testing. However, it was interesting to see that even with fewer males and females, this tank still produced more viable embryos than either of the Gemma tanks. 
+<br>
+ 
  <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Total_Viable.png' width = 750>
+ <br>
+ 
+ When comparing the averages of viable embryos produced for a breeding event, there is a difference between the two groups. Mysis tanks produce more viable embryos than Gemma. This could be due to the vitamin content or high protein ratio of Mysis.
  <br>
  
  <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Average_Viable.png' width = 750>
