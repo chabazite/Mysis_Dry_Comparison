@@ -181,6 +181,11 @@ The largest roadblock was counting embryos within the timeframe, budget, and pre
 <br>
  
 Cleaning the data included refactoring data types, simplifying feature names, and removing features no longer necessary. Recoding was performed on dates and tank locations due to multi-day testing and bulk moves throughout the experiment. This allowed for interesting mutate coding: 
+ <br>
+ ```
+ df_growth <- df_growth %>%
+  mutate(Tank_Location = recode(Tank_Location, !!!setNames(third_tank_locations, first_tank_locations)))
+ ```
 </details>
   
 <a name="Exploratory_Data_Analysis"></a>
