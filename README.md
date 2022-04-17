@@ -244,7 +244,14 @@ Cleaning the data included refactoring data types, simplifying feature names, an
  <table><tr><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Sig_Mass.png' width=500></td><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Sig_Length.png' width=500></td></tr></table>
  <br>
  
+ <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Resid_compare.png' width = 750>
+ <br>
  
+  <table><tr><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Gemma_Spearman.png' width=500></td><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Mysis_spearman.png' width=500></td></tr></table>
+ <br>
+ 
+ <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Growth_Linear.png' width = 750>
+ <br>
  
  #### Survival 
  <br>
