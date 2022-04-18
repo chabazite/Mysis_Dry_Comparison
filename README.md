@@ -311,7 +311,7 @@ The two regression lines, which have the same linear equation were tested to ens
  <br>
  <br>
 
- <strong>Conclusion</strong>: There is no difference in growth for the surface morph of  A. mexicanus when comparing Mysis vs. dry diet for first feedings.  
+ <strong>Conclusion</strong>: There is no difference in growth for the surface morph of *A. mexicanus* when comparing Mysis vs. dry diet for first feedings.  
  <br>
  
  #### Survival 
@@ -332,14 +332,16 @@ The two regression lines, which have the same linear equation were tested to ens
  
  <strong>Conclusion</strong>: From three to twelve months old, a significant difference in populations accumulated between the two feed groups. With more data, this conclusion would most likely strengthen. 
 <br>
+<br>
  
  #### Sex Sort 
  <br>
  
- Due to the difference in ending population, the data was normalized as a percent of total population.There was no significant difference in sex found between feed groups. However, there was a significant sex skew towards female found in both feed groups, common in fish.
+ Due to the difference in surviving populations, the data was normalized as a percent of total population. There was no significant difference in sex found between feed groups. However, there was a significant sex skew towards female found in both feed groups, common in fish.
  <br>
  
    <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Sex_Wilcox.png' width = 750>
+ <br>
  <br>
  
  <strong>Conclusion</strong>: There was no impact on the sex ratios by changing feed type.
@@ -354,8 +356,11 @@ The two regression lines, which have the same linear equation were tested to ens
 
   <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/fECUNDITY_Wilcox.png' width = 750>
  <br>
+ <br>
  
- <strong>Conclusion</strong>:Mysis improves the average viable embryo production in the facility. A critical insight to the study.
+ <strong>Conclusion</strong>: Mysis improves the average viable embryo production in the facility. A critical insight to the study.
+ <br>
+ <br>
  
  </details>
  
@@ -364,10 +369,11 @@ The two regression lines, which have the same linear equation were tested to ens
 <details open>
 <summary>Show/Hide</summary>
 <br>
- Due to the significant difference in census and fecundity, the Mysis feed should continue in the facility. While Mysis is suboptimal for technicians, it is in the best interest of the animals and the lab.
- <br>
  
-It is important to remember that while the dry diet did not outcompete Mysis for this feed replacement, the facility feeds three times a day. The other two feeding times are a dry diet. This provides quality nutrition, while still reaping the aggression-reduction benefits of Mysis.
+Due to the significant difference in census and fecundity, the Mysis feed should continue in the facility. While Mysis is suboptimal for technicians, it is in the best interest of the animals and the lab. 
+<br>
+ 
+It is important to note that while the dry diet did not outcompete Mysis for this feed replacement, the facility feeds three times a day. The other two feeding times are a dry diet. This provides quality nutrition, while still reaping the aggression-reduction benefits of Mysis.
  <br>
  
  <a name="Future_Improvements"></a>
