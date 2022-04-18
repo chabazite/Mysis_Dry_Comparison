@@ -17,7 +17,7 @@ When considering an optimal diet for laboratory fish, Lawrence et al. (2015) quo
 The stakeholders should also consider the indirect & direct costs of Mysis. As a natural resource, it is costly, the quality is variable, and it is time-consuming. The technicians devote an extra 3-4 hours per week preparing and feeding out this feed. 
  <br>
  
-The Skretting Gemma dry feed will be used in this study. It poses a lower risk to biosecurity, provides optimal nutrition, and requires minimal time for preparation. To convince the stakeholders of its viability, this study will focus on the above performance metrics using Mysis and dry feed.
+The Skretting Gemma dry feed will be used in this study. It poses a lower risk to biosecurity, provides optimal nutrition, and requires minimal time for preparation. To convince the stakeholders of its viability, this study will focus on the above performance metrics using Mysis and dry feed. The facility currently uses Mysis in one out of three feeds per day. This experiment will focus on this feed, keeping the remaining two as dry feed.
 <br>
 
  The project objectives are to:
