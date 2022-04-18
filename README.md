@@ -308,13 +308,21 @@ The two regression lines, which have the same linear equation were tested to ens
  #### Survival 
  <br>
  
+ Based on the analysis below, there is no significant difference in occurrences of deaths between census events. However, it is important to investigate data from many different angles.
+ <br>
+ 
  <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Deaths_Wilcox.png' width = 750>
+ <br>
+ 
+ Looking at the census for each sampling event, there is a cumulative effect with deaths. There is no significant difference in population until the final census event. The small quantity of census data could be the cause for a lack of significance for the other census events.
  <br>
  
  <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Census_Wilcox.png' width = 750>
  <br>
+ <br>
  
- 
+ <strong>Conclusion</strong>: From three to twelve months old, a significant difference in populations accumulated between the two feed groups. With more data, this conclusion would most likely strengthen. 
+<br>
  
  #### Sex Sort 
  <br>
