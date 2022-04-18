@@ -283,25 +283,35 @@ First, a plot of total viable embryo production was created for each tank. There
 <br>
   
  #### Growth 
+ <br>
+ 
+ The two major factors for growth: mass and length, were divided into age categories.  When comparing the data between the two feed groups,  no significant difference was found for either feature.
+ <br>
+ 
  <table><tr><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Sig_Mass.png' width=500></td><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Sig_Length.png' width=500></td></tr></table>
  <br>
  
- <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Resid_compare.png' width = 750>
- <br>
- 
-  <table><tr><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Gemma_Spearman.png' width=500></td><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Mysis_spearman.png' width=500></td></tr></table>
+To compare the relationship of each feed group, the non-linear dataset was transformed using log-log.  When using logarithms, the scale switches from absolute to relative. For example, rather than a 1 mg increase in mass for every 1 cm increase in length, this model shows mass will increase 3.2% for every 1% increase in length.
  <br>
  
  <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Growth_Linear.png' width = 750>
  <br>
  
+ 
+The two regression lines, which have the same linear equation were tested to ensure their was no difference. Using Wilcoxon ANCOVA, there was only a significant difference at the extreme end of the lines, where data is sparse. 
+ <br>
+ <br>
+
+ <strong>Conclusion</strong>: There is no difference in growth for the surface morph of  A. mexicanus when comparing Mysis vs. dry diet for first feedings.  
+ <br>
+ 
  #### Survival 
  <br>
  
-    <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Deaths_Wilcox.png' width = 750>
+ <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Deaths_Wilcox.png' width = 750>
  <br>
  
-    <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Census_Wilcox.png' width = 750>
+ <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Census_Wilcox.png' width = 750>
  <br>
  
  
