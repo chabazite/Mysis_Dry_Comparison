@@ -2,32 +2,32 @@
 
 ## Business Case
 
-As a fixture in the cavefish community, Mysis shrimp is used as both a breeding and growth supplement. Unfortunately, when comparing the nutrition to a dry diet, there is a large difference in protein, lipid, and moisture content.  Protein and lipid levels are recommended to be at least 45% Sealey et al. (2009) and 10-15% Sabina et al. (2016) for growth and breeding, respectively.
+As a fixture in the cavefish community, Mysis shrimp is used as both a breeding and growth supplement. Unfortunately, when comparing the nutrition to a dry diet, there is a large difference in protein, lipid, and moisture content. For growth and breeding, Protein and lipid levels are recommended to be at least 45% (Sealey et al., 2009) and 10-15% (Sabina et al., 2016), respecitvely.
 <br>
 
 <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/nutrition_table.png' width =750 align = "middle">
 <br>
 
-Our facility team has also found fish carcasses, plastics, and other unidentifiable items within the frozen packages. This places a question on the biosecurity practices, critical in a laboratory environment.
+The facility team has found fish carcasses, plastics, and other unidentifiable items within the frozen packages. This places a question on Mysis collection biosecurity practices, critical in a laboratory environment.
 <br>
 
-When considering an optimal diet for laboratory fish, Lawrence et al. (2015) quotes “[an optimal diet] is one that efficiently promotes definition and stability in nutritional profile, biosecurity, and maximal performance (growth, survival, and reproduction). While both biosecurity and nutrition are discussed above, the maximal performance of Mysis versus a dry diet is still unknown.
+When considering an optimal diet for laboratory fish, Lawrence et al. (2015) quotes “[an optimal diet] is one that efficiently promotes definition and stability in nutritional profile, biosecurity, and maximal performance (growth, survival, and reproduction)." While both biosecurity and nutrition are discussed above, the maximal performance of Mysis versus a dry diet is still unknown.
 <br>
  
 The stakeholders should also consider the indirect & direct costs of Mysis. As a natural resource, it is costly, the quality is variable, and it is time-consuming. The technicians devote an extra 3-4 hours per week preparing and feeding out this feed. 
  <br>
  
-We will use a standard dry feed in our study. It poses a lower risk to biosecurity, provides optimal nutrition, and requires minimal time for preparation. To convince the stakeholders of its viability, this study will focus on the above performance metrics using Mysis and dry feed.
+The Skretting Gemma dry feed will be used in this study. It poses a lower risk to biosecurity, provides optimal nutrition, and requires minimal time for preparation. To convince the stakeholders of its viability, this study will focus on the above performance metrics using Mysis and dry feed.
 <br>
 
  The project objectives are to:
  <br>
  
-  1. Raise A. mexicanus on a dry feed and compare the growth rate and survivability to fish raised on the traditional Mysis feed
+  1. Raise *A. mexicanus* on a dry feed and compare the growth rate and survivability to fish raised on the traditional Mysis feed.
   2. Compare the embryo fecundity of adult broodstock raised using this alternative feed.
 
 
-Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet-fish-food-analysis-fce185e251bc)
+Read more on Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet-fish-food-analysis-fce185e251bc)
 
 ## Table of Contents
 <details open>
@@ -75,21 +75,21 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
 <br>
  
 * <strong>RStudio</strong>
-     * <strong>Tidyverse</strong>
-     * <strong>Openxlsx</strong>
+     * <strong>tidyverse</strong>
+     * <strong>openxlsx</strong>
      * <strong>gt</strong>
      * <strong>ggridges</strong>
-     * <strong>Viridis</strong>
-     * <strong>Raag</strong>
+     * <strong>viridis</strong>
+     * <strong>raag</strong>
      * <strong>ggResidpanel</strong>
      * <strong>qqplotr</strong>
-     * <strong>EnvStats</strong>
-     * <strong>Rstatix</strong>
-     * <strong>Broom</strong> 
+     * <strong>envstats</strong>
+     * <strong>rstatix</strong>
+     * <strong>broom</strong> 
      * <strong>ggpubr</strong>
-     * <strong>gridExtra</strong>
+     * <strong>gridextra</strong>
      * <strong>wrs2</strong>
-     * <strong>Workflowr</strong>
+     * <strong>workflowr</strong>
  
  
 </details>
@@ -116,7 +116,7 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
       * 1.5 Fecundity
            * Change column names and data types
       * 1.6 Nutrition
-           * Create a dataframe for nutrition facts vased on manufacturers info
+           * Create a dataframe for nutrition facts based on manufacturers' info
            * Use the gt library to construct a nutrition table
            * Format the nutrition table using gt
  2. Exploratory Data Analysis
@@ -150,10 +150,10 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
       * Growth
            * Significance test for Mass between groups
            * Significance test for Length  between groups
-           * Length-Mass Relationship Regression Modelling
+           * Length-Mass Relationship Regression Modeling
                 * Log-log transformation to work with linear model
                 * Spearman correlation for each feed group
-                * Wilcoxon ANOCOVA to compare both feed group regression models
+                * Wilcoxon ANCOVA to compare both feed group regression models
       * Survival
            * Significance test for census events between groups
            * Signficance test for death records between groups
@@ -161,7 +161,7 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
       * Sex Sorts
            * Significance test for sex categories between feed groups
       * Fecundity
-           * Significance tests ffor average viable embryo production per event between feed groups
+           * Significance tests for average viable embryo production per event between feed groups
       * Medium Exports
 
  </details>
@@ -175,7 +175,7 @@ Medium: [Fish Food Analysis](https://medium.com/@Andrew-Ingalls/a-change-in-diet
 <summary>Show/Hide</summary>
 <br>
  
-This phase involved a considerable amount of planning as the data was collected firsthand. This reduced the need for data cleanup after collection. The features to collect would be length, mass, census, viable embryos, and total embryos. As the reduction of stress is important for biological experiment, data was collected under anesthesia. 
+This phase involved a considerable amount of planning as the data was collected firsthand. This reduced the need for data cleanup after collection. The features to collect would be length, mass, census, viable embryos, and total embryos. As the reduction of stress is important for biological experiments, data was collected under anesthesia. 
 <br>
  
 The largest roadblock was counting embryos within the timeframe, budget, and precision. This project used subgroup estimation, providing consistent numbers with reasonable accuracy. If this pilot project warranted a publication, a more robust counting method would be performed. This decision was made based on the needs of the experiment.
@@ -212,12 +212,13 @@ First, the Gemma group has a gradual slope for mass and length after the peak. T
  
 The second takeaway is the non-normal distribution. While not shown here, this was confirmed through Q-Q plots. This indicates a future need for non-parametric significance testing.
 <br>
-<br>
 
-Boxplots for both length and mass provide further insights into the two feeding regimes. First, there is a clear jump in size between five and six months for both length and mass. This shows a growth spurt, which interestingly enough overlaps with aggression studies for A. mexicanus.
- 
+
 <table><tr><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/BoxPlot_Mass.png' width=500></td><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/BoxPlot_Length.png' width=500></td></tr></table>
 
+Boxplots for both length and mass provide further insights into the two feeding regimes. First, there is a clear jump in size between five and six months for both length and mass. This shows a growth spurt, which interestingly enough overlaps with aggression studies for *A. mexicanus*.
+<br>
+ 
 Next, there is a difference in outlier severity and quantity between the two groups. This supports the secondary bumps seen in the density distribution. It also supports the idea of dominant, larger females produced through feed territoriality. 
 <br>
  
