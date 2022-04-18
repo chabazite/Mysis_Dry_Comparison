@@ -248,6 +248,7 @@ Finally, notice the 3 points at the top of the graph from the Mysis group. These
  
   All tanks were counted every 40 days, coinciding with mass and length measurements. The plot below shows the census of each tank over the course of the study. There is a distinct difference between the Mysis group ( higher survival rate) and the Gemma (lower survival rate). These fish were observed to have died through wounds sustained during fighting. This suggests Mysis provides an outlet for the prey drive. 
 <br>
+<br>
  
  <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Survival_Avg.png' width = 750>
  <br>
@@ -272,6 +273,7 @@ Finally, notice the 3 points at the top of the graph from the Mysis group. These
  <br>
 
 First, a plot of total viable embryo production was created for each tank. There is an extra Mysis tank (10C6) as there weren’t enough males and females to create a full tank. This will not be used when calculating the average or any significance testing. However, it was interesting to see that even with fewer males and females, this tank still produced more viable embryos than either of the Gemma tanks. 
+<br>
 <br>
  
  <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Average_Viable.png' width = 750>
