@@ -212,8 +212,8 @@ First, the Gemma group has a gradual slope for mass and length after the peak. T
  
 The second takeaway is the non-normal distribution. While not shown here, this was confirmed through Q-Q plots. This indicates a future need for non-parametric significance testing.
 <br>
-
-
+<br>
+ 
 <table><tr><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/BoxPlot_Mass.png' width=500></td><td><img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/BoxPlot_Length.png' width=500></td></tr></table>
 
 Boxplots for both length and mass provide further insights into the two feeding regimes. First, there is a clear jump in size between five and six months for both length and mass. This shows a growth spurt, which interestingly enough overlaps with aggression studies for *A. mexicanus*.
@@ -226,9 +226,10 @@ Finally, there doesn’t appear to be a significant difference, based on the int
 <br>
 <br>
  
-To understand the differences in growth, a length-mass relationship plot was created. These plots are integral in understanding the growth of fish.
- 
  <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/LMR_SP.png' width = 750>
+
+ To understand the differences in growth, a length-mass relationship plot was created. These plots are integral in understanding the growth of fish.
+ <br>
  
 There doesn’t appear to be any difference between the two groups when plotting out the relationship. There is an interesting polynomial or exponential relationship with length to mass. This is common in fish and is used to judge isometric growth.
  <br>
@@ -238,17 +239,18 @@ Finally, notice the 3 points at the top of the graph from the Mysis group. These
 <br>
  
  #### Survival 
- Each tank was counted every 40 days, coinciding with mass and length measurements. The plot below shows the census of each tank over the course of the study. There is a distinct difference between the Mysis group ( higher survival rate) and the Gemma (lower survival rate). These fish were observed to have died through wounds sustained during fighting. This suggests Mysis provides an outlet for the prey drive. 
-<br>
+ <br>
  
  <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Survival_Tanks.png' width = 750>
  <br>
  
- When plotted as an average, the difference in census becomes even more clear. The standard errors of each group have a large separation after the second event, indicating a significant difference.
+  All tanks were counted every 40 days, coinciding with mass and length measurements. The plot below shows the census of each tank over the course of the study. There is a distinct difference between the Mysis group ( higher survival rate) and the Gemma (lower survival rate). These fish were observed to have died through wounds sustained during fighting. This suggests Mysis provides an outlet for the prey drive. 
 <br>
  
  <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Survival_Avg.png' width = 750>
  <br>
+ When plotted as an average, the difference in census becomes even more clear. The standard errors of each group have a large separation after the second event, indicating a significant difference.
+<br>
  
  #### Sex Sort 
  <br>
