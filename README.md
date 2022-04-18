@@ -327,27 +327,47 @@ The two regression lines, which have the same linear equation were tested to ens
  #### Sex Sort 
  <br>
  
+ Due to the difference in ending population, the data was normalized as a percent of total population.There was no significant difference in sex found between feed groups. However, there was a significant sex skew towards female found in both feed groups, common in fish.
+ <br>
+ 
    <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/Sex_Wilcox.png' width = 750>
  <br>
  
+ <strong>Conclusion</strong>: There was no impact on the sex ratios by changing feed type.
+ <br>
+ <br>
  
  #### Fecundity 
  <br>
  
+ Fecundity was measured over three months. There were two breeding events that occurred each week. All tanks were bred at the same time. A clear and significant difference between the two feed groups can be seen in the analysis below:
+ <br>
+
   <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/Significance%20Testing/fECUNDITY_Wilcox.png' width = 750>
  <br>
-  </details>
+ 
+ <strong>Conclusion</strong>:Mysis improves the average viable embryo production in the facility. A critical insight to the study.
+ 
+ </details>
  
 <a name="Evaluation"></a>
 ### Evaluation:
 <details open>
 <summary>Show/Hide</summary>
 <br>
+ Due to the significant difference in census and fecundity, the Mysis feed should continue in the facility. While Mysis is suboptimal for technicians, it is in the best interest of the animals and the lab.
+ <br>
+ 
+It is important to remember that while the dry diet did not outcompete Mysis for this feed replacement, the facility feeds three times a day. The other two feeding times are a dry diet. This provides quality nutrition, while still reaping the aggression-reduction benefits of Mysis.
+ <br>
  
  <a name="Future_Improvements"></a>
   
 #### Future Improvements
+ 1.  Alternative feeds should continue to be explored such as black soldier fly larvae. Mysis still pose an issue both in biosecurity and labor intensity.
  
+ 2. During the next experiment, a greater emphasis should be placed on census data quantity for better modeling and analysis.
+ <br>
  </details>
   
 A [workflowr][] project.
