@@ -238,8 +238,10 @@ Finally, notice the 3 points at the top of the graph from the Mysis group. These
 <br>
 <br>
  
+ 
  #### Survival 
  <br>
+ 
  
  <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Survival_Tanks.png' width = 750>
  <br>
@@ -252,14 +254,17 @@ Finally, notice the 3 points at the top of the graph from the Mysis group. These
  When plotted as an average, the difference in census becomes even more clear. The standard errors of each group have a large separation after the second event, indicating a significant difference.
 <br>
  
+ 
  #### Sex Sort 
  <br>
  
+
 Sexes were normalized as a percent of the total tank census. This was due to the differences in survivability in each tank at the end of the study. There did not appear to be any difference between feed groups, however, a large skew towards females was noticed for both feed groups.
  <br>
  
  <img src='https://github.com/chabazite/Mysis_Dry_Comparison/blob/main/output/EDA_Figures/Sex_sort_mean.png' width = 750>
  <br>
+ 
  
  #### Fecundity 
  <br>
